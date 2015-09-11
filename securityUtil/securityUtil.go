@@ -6,6 +6,6 @@
 s := "hello world"
 result := Md5String(s, true)
 */
-package security
+package securityUtil
 
 //此文档是专为写包注释而添加的，无实际意义。因此其它文件也不用再添加包注释了
