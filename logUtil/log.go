@@ -79,6 +79,6 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	}
 
 	// 写入内容
-	f.WriteString(timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss") + "---->" + logInfo + "\n")
+	f.WriteString(fmt.Sprintf("%s---->%s\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"), logInfo))
 	f.WriteString(SEPERATOR)
 }
