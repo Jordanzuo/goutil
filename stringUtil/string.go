@@ -1,7 +1,7 @@
 package stringUtil
 
 // 截取字符串
-func Substr(str string, start, length int) string {
+func Substring(str string, start, length int) string {
 	// 先将字符串转化为[]rune格式（由于rune是字符串的基本单位）
 	runeString := []rune(str)
 	runeLength := len(runeString)
