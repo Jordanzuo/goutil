@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	SEPERATOR = "------------------------------------------------------\n"
+	SEPERATOR = "------------------------------------------------------\r\n"
 	MAX_SKIP  = 5
 )
 
@@ -86,15 +86,15 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	LogMutex.Unlock()
 
 	// 组装所有需要写入的内容
-	content := fmt.Sprintf("%s---->\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
-	content += fmt.Sprintf("%s\n", logInfo)
+	content := fmt.Sprintf("%s---->\r\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
+	content += fmt.Sprintf("%s\r\n", logInfo)
 
 	// 如果是Error类型，则同时记录堆栈信息
 	if level == Error {
 		for skip := 0; skip <= MAX_SKIP; skip++ {
 			pc, file, line, ok := runtime.Caller(skip)
 			if ok {
-				content += fmt.Sprintf("skip = %v, pc = %v, file = %v, line = %v\n", skip, pc, file, line)
+				content += fmt.Sprintf("skip = %v, pc = %v, file = %v, line = %v\r\n", skip, pc, file, line)
 			}
 		}
 	}
