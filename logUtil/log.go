@@ -6,6 +6,7 @@ import (
 	"github.com/Jordanzuo/goutil/timeUtil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -13,6 +14,7 @@ import (
 
 const (
 	SEPERATOR = "------------------------------------------------------\n"
+	MAX_SKIP  = 5
 )
 
 var (
@@ -30,6 +32,18 @@ func SetLogPath(path string) {
 // 返回值：日志文件存放路径
 func GetLogPath() string {
 	return LogPath
+}
+
+// 判断目录是否存在
+// path：文件路径
+// 返回值：目录是否存在2
+func isDirExists(path string) bool {
+	file, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return file.IsDir()
+	}
 }
 
 // 记录日志
@@ -64,12 +78,29 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	// 得到最终的fileName
 	fileName = filepath.Join(filePath, fileName)
 
-	// 锁定对象，以避免并发
+	// 判断文件夹是否存在，如果不存在则创建
 	LogMutex.Lock()
-	defer LogMutex.Unlock()
+	if !isDirExists(filePath) {
+		os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
+	}
+	LogMutex.Unlock()
 
-	// 先创建文件夹
-	os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
+	// 组装所有需要写入的内容
+	content := fmt.Sprintf("%s---->\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
+	content += fmt.Sprintf("%s\n", logInfo)
+
+	// 如果是Error类型，则同时记录堆栈信息
+	if level == Error {
+		for skip := 0; skip <= MAX_SKIP; skip++ {
+			pc, file, line, ok := runtime.Caller(skip)
+			if ok {
+				content += fmt.Sprintf("skip = %v, pc = %v, file = %v, line = %v\n", skip, pc, file, line)
+			}
+		}
+	}
+
+	// 加上最后的分隔符
+	content += SEPERATOR
 
 	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
@@ -77,8 +108,10 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 		fmt.Println("打开文件错误：", err)
 		return
 	}
+	defer f.Close()
 
 	// 写入内容
-	f.WriteString(fmt.Sprintf("%s---->%s\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"), logInfo))
-	f.WriteString(SEPERATOR)
+	LogMutex.Lock()
+	f.WriteString(content)
+	LogMutex.Unlock()
 }
