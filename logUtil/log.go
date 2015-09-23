@@ -3,6 +3,7 @@ package logUtil
 import (
 	"errors"
 	"fmt"
+	"github.com/Jordanzuo/goutil/stringUtil"
 	"github.com/Jordanzuo/goutil/timeUtil"
 	"os"
 	"path/filepath"
@@ -13,8 +14,9 @@ import (
 )
 
 const (
-	SEPERATOR = "------------------------------------------------------\r\n"
-	MAX_SKIP  = 5
+	SEPERATOR = "------------------------------------------------------"
+	MIN_SKIP  = 1
+	MAX_SKIP  = 10
 )
 
 var (
@@ -86,21 +88,14 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	LogMutex.Unlock()
 
 	// 组装所有需要写入的内容
-	content := fmt.Sprintf("%s---->\r\n", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
-	content += fmt.Sprintf("%s\r\n", logInfo)
-
-	// 如果是Error类型，则同时记录堆栈信息
-	if level == Error {
-		for skip := 0; skip <= MAX_SKIP; skip++ {
-			pc, file, line, ok := runtime.Caller(skip)
-			if ok {
-				content += fmt.Sprintf("skip = %v, pc = %v, file = %v, line = %v\r\n", skip, pc, file, line)
-			}
-		}
-	}
+	content := fmt.Sprintf("%s---->", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
+	content += stringUtil.GetNewLineString()
+	content += fmt.Sprintf("%s", logInfo)
+	content += stringUtil.GetNewLineString()
 
 	// 加上最后的分隔符
 	content += SEPERATOR
+	content += stringUtil.GetNewLineString()
 
 	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
@@ -114,4 +109,21 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	LogMutex.Lock()
 	f.WriteString(content)
 	LogMutex.Unlock()
+}
+
+// 记录未知错误日志
+// r：recover对象
+// 返回值：无
+func LogUnknownError(r interface{}) {
+	logInfo := fmt.Sprintf("通过recover捕捉到的未处理异常：%v", r)
+	logInfo += stringUtil.GetNewLineString()
+	for skip := MIN_SKIP; skip <= MAX_SKIP; skip++ {
+		_, file, line, ok := runtime.Caller(skip)
+		if !ok {
+			break
+		}
+		logInfo += fmt.Sprintf("skip = %d, file = %s, line = %d", skip, file, line)
+		logInfo += stringUtil.GetNewLineString()
+	}
+	Log(logInfo, Error, true)
 }

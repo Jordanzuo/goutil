@@ -1,5 +1,9 @@
 package stringUtil
 
+import (
+	"runtime"
+)
+
 // 截取字符串
 func Substring(str string, start, length int) string {
 	// 先将字符串转化为[]rune格式（由于rune是字符串的基本单位）
@@ -23,4 +27,14 @@ func Substring(str string, start, length int) string {
 	}
 
 	return string(runeString[start:end])
+}
+
+// 获取换行符
+func GetNewLineString() string {
+	switch os := runtime.GOOS; os {
+	case "windows":
+		return "\r\n"
+	default:
+		return "\n"
+	}
 }
