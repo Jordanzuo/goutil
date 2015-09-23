@@ -97,6 +97,10 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	content += SEPERATOR
 	content += stringUtil.GetNewLineString()
 
+	// 锁定文件
+	LogMutex.Lock()
+	defer LogMutex.Unlock()
+
 	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
 	if err != nil {
@@ -106,9 +110,7 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	defer f.Close()
 
 	// 写入内容
-	LogMutex.Lock()
 	f.WriteString(content)
-	LogMutex.Unlock()
 }
 
 // 记录未知错误日志
