@@ -6,6 +6,12 @@ import (
 
 func GetSizeDesc(size int64) string {
 	str := ""
+
+	// 判断输入是否超过int64的范围
+	if size < 0 || size > (1<<63-1) {
+		return str
+	}
+
 	switch {
 	case size >= 1024*1024*1024*1024*1024*1024:
 		str = fmt.Sprintf("%.2fEB", float64(size)/1024/1024/1024/1024/1024/1024)
