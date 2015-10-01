@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -116,9 +117,15 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 // 记录未知错误日志
 // r：recover对象
 // 返回值：无
-func LogUnknownError(r interface{}) {
+func LogUnknownError(r interface{}, args ...string) {
 	logInfo := fmt.Sprintf("通过recover捕捉到的未处理异常：%v", r)
 	logInfo += stringUtil.GetNewLineString()
+
+	if len(args) > 0 {
+		logInfo += fmt.Sprintf("附加信息：%s", strings.Join(args, "-"))
+		logInfo += stringUtil.GetNewLineString()
+	}
+
 	for skip := MIN_SKIP; skip <= MAX_SKIP; skip++ {
 		_, file, line, ok := runtime.Caller(skip)
 		if !ok {
