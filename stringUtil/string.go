@@ -1,6 +1,10 @@
 package stringUtil
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"github.com/Jordanzuo/goutil/securityUtil"
+	"io"
 	"runtime"
 )
 
@@ -37,4 +41,14 @@ func GetNewLineString() string {
 	default:
 		return "\n"
 	}
+}
+
+// 获取新的GUID字符串
+func GetNewGUID() string {
+	b := make([]byte, 48)
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		return ""
+	}
+
+	return securityUtil.Md5String(base64.URLEncoding.EncodeToString(b), true)
 }
