@@ -7,7 +7,7 @@ import (
 )
 
 func TestFormat(t *testing.T) {
-	now := time.Now()
+	now := time.Date(2015, 9, 11, 10, 10, 10, 0, time.Local)
 	expectedString := "2015/09/11"
 	result := Format(now, "yyyy/MM/dd")
 	if result != expectedString {
