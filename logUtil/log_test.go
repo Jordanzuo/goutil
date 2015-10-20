@@ -17,6 +17,11 @@ func TestSetLogPath(t *testing.T) {
 	if retPath != logPath {
 		t.Errorf("设置路径不正确，Expected:%s, Got:%s", logPath, retPath)
 	}
+
+	Log("test Info", Info, true)
+	Log("test Debug", Debug, true)
+	Log("test Error", Error, true)
+	Log("test Fatal", Fatal, true)
 }
 
 func TestLog(t *testing.T) {

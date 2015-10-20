@@ -10,7 +10,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -21,9 +20,79 @@ const (
 )
 
 var (
-	LogPath  string
-	LogMutex sync.Mutex
+	LogPath     string
+	logObjectCh = make(chan *LogObject, 128)
 )
+
+func init() {
+	go flushLog()
+}
+
+func flushLog() {
+	defer func() {
+		if r := recover(); r != nil {
+
+		}
+	}()
+
+	for {
+		select {
+		case logObj := <-logObjectCh:
+			writeLog(logObj)
+		default:
+			// 休眠一下，防止CPU过高
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
+}
+
+func isDirExists(path string) bool {
+	file, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return file.IsDir()
+	}
+}
+
+func writeLog(logObj *LogObject) {
+	// 获取当前时间
+	now := time.Now()
+
+	// 获得年、月、日、时的字符串形式
+	yearString := strconv.Itoa(now.Year())
+	monthString := strconv.Itoa(int(now.Month()))
+	dayString := strconv.Itoa(now.Day())
+	hourString := strconv.Itoa(now.Hour())
+
+	// 构造文件路径和文件名
+	filePath := filepath.Join(LogPath, yearString, monthString)
+	fileName := ""
+	if logObj.IfIncludeHour {
+		fileName = fmt.Sprintf("%s-%s-%s-%s.%s.%s", yearString, monthString, dayString, hourString, logObj.Level, "txt")
+	} else {
+		fileName = fmt.Sprintf("%s-%s-%s.%s.%s", yearString, monthString, dayString, logObj.Level, "txt")
+	}
+
+	// 得到最终的fileName
+	fileName = filepath.Join(filePath, fileName)
+
+	// 判断文件夹是否存在，如果不存在则创建
+	if !isDirExists(filePath) {
+		os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
+	}
+
+	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
+	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
+	if err != nil {
+		fmt.Println("打开文件错误：", err)
+		return
+	}
+	defer f.Close()
+
+	// 写入内容
+	f.WriteString(logObj.LogInfo)
+}
 
 // 设置日志存放的路径
 // path：日志文件存放路径
@@ -35,18 +104,6 @@ func SetLogPath(path string) {
 // 返回值：日志文件存放路径
 func GetLogPath() string {
 	return LogPath
-}
-
-// 判断目录是否存在
-// path：文件路径
-// 返回值：目录是否存在2
-func isDirExists(path string) bool {
-	file, err := os.Stat(path)
-	if err != nil {
-		return os.IsExist(err)
-	} else {
-		return file.IsDir()
-	}
 }
 
 // 记录日志
@@ -63,55 +120,19 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	// 获取当前时间
 	now := time.Now()
 
-	// 获得年、月、日、时的字符串形式
-	yearString := strconv.Itoa(now.Year())
-	monthString := strconv.Itoa(int(now.Month()))
-	dayString := strconv.Itoa(now.Day())
-	hourString := strconv.Itoa(now.Hour())
-
-	// 构造文件路径和文件名
-	filePath := filepath.Join(LogPath, yearString, monthString)
-	fileName := ""
-	if ifIncludeHour {
-		fileName = fmt.Sprintf("%s-%s-%s-%s.%s.%s", yearString, monthString, dayString, hourString, level, "txt")
-	} else {
-		fileName = fmt.Sprintf("%s-%s-%s.%s.%s", yearString, monthString, dayString, level, "txt")
-	}
-
-	// 得到最终的fileName
-	fileName = filepath.Join(filePath, fileName)
-
-	// 判断文件夹是否存在，如果不存在则创建
-	LogMutex.Lock()
-	if !isDirExists(filePath) {
-		os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
-	}
-	LogMutex.Unlock()
-
 	// 组装所有需要写入的内容
-	content := fmt.Sprintf("%s---->", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
-	content += stringUtil.GetNewLineString()
-	content += fmt.Sprintf("%s", logInfo)
-	content += stringUtil.GetNewLineString()
+	newLogInfo := fmt.Sprintf("%s---->", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
+	newLogInfo += stringUtil.GetNewLineString()
+	newLogInfo += fmt.Sprintf("%s", logInfo)
+	newLogInfo += stringUtil.GetNewLineString()
 
 	// 加上最后的分隔符
-	content += SEPERATOR
-	content += stringUtil.GetNewLineString()
+	newLogInfo += SEPERATOR
+	newLogInfo += stringUtil.GetNewLineString()
 
-	// 锁定文件
-	LogMutex.Lock()
-	defer LogMutex.Unlock()
-
-	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
-	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
-	if err != nil {
-		fmt.Println("打开文件错误：", err)
-		return
-	}
-	defer f.Close()
-
-	// 写入内容
-	f.WriteString(content)
+	// 构造对象并添加到队列中
+	logObj := NewLogObject(newLogInfo, level, ifIncludeHour)
+	logObjectCh <- logObj
 }
 
 // 记录未知错误日志
@@ -121,11 +142,13 @@ func LogUnknownError(r interface{}, args ...string) {
 	logInfo := fmt.Sprintf("通过recover捕捉到的未处理异常：%v", r)
 	logInfo += stringUtil.GetNewLineString()
 
+	// 获取附加信息
 	if len(args) > 0 {
 		logInfo += fmt.Sprintf("附加信息：%s", strings.Join(args, "-"))
 		logInfo += stringUtil.GetNewLineString()
 	}
 
+	// 获取堆栈信息
 	for skip := MIN_SKIP; skip <= MAX_SKIP; skip++ {
 		_, file, line, ok := runtime.Caller(skip)
 		if !ok {
@@ -134,5 +157,8 @@ func LogUnknownError(r interface{}, args ...string) {
 		logInfo += fmt.Sprintf("skip = %d, file = %s, line = %d", skip, file, line)
 		logInfo += stringUtil.GetNewLineString()
 	}
-	Log(logInfo, Error, true)
+
+	// 构造对象并添加到队列中
+	logObj := NewLogObject(logInfo, Error, true)
+	logObjectCh <- logObj
 }
