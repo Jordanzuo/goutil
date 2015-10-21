@@ -139,7 +139,13 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 // r：recover对象
 // 返回值：无
 func LogUnknownError(r interface{}, args ...string) {
-	logInfo := fmt.Sprintf("通过recover捕捉到的未处理异常：%v", r)
+	// 获取当前时间
+	now := time.Now()
+
+	// 组装所有需要写入的内容
+	logInfo := fmt.Sprintf("%s---->", timeUtil.Format(now, "yyyy-MM-dd HH:mm:ss"))
+	logInfo += stringUtil.GetNewLineString()
+	logInfo += fmt.Sprintf("通过recover捕捉到的未处理异常：%v", r)
 	logInfo += stringUtil.GetNewLineString()
 
 	// 获取附加信息
@@ -157,6 +163,10 @@ func LogUnknownError(r interface{}, args ...string) {
 		logInfo += fmt.Sprintf("skip = %d, file = %s, line = %d", skip, file, line)
 		logInfo += stringUtil.GetNewLineString()
 	}
+
+	// 加上最后的分隔符
+	newLogInfo += SEPERATOR
+	newLogInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
 	logObj := NewLogObject(logInfo, Error, true)
