@@ -14,14 +14,15 @@ import (
 )
 
 const (
-	SEPERATOR = "------------------------------------------------------"
-	MIN_SKIP  = 1
-	MAX_SKIP  = 10
+	FILE_SUFFIX = "txt"
+	SEPERATOR   = "------------------------------------------------------"
+	MIN_SKIP    = 1
+	MAX_SKIP    = 10
 )
 
 var (
-	LogPath     string
-	logObjectCh = make(chan *LogObject, 128)
+	mLogPath     string
+	mLogObjectCh = make(chan *LogObject, 128)
 )
 
 func init() {
@@ -29,15 +30,9 @@ func init() {
 }
 
 func flushLog() {
-	defer func() {
-		if r := recover(); r != nil {
-
-		}
-	}()
-
 	for {
 		select {
-		case logObj := <-logObjectCh:
+		case logObj := <-mLogObjectCh:
 			writeLog(logObj)
 		default:
 			// 休眠一下，防止CPU过高
@@ -56,6 +51,12 @@ func isDirExists(path string) bool {
 }
 
 func writeLog(logObj *LogObject) {
+	defer func() {
+		if r := recover(); r != nil {
+
+		}
+	}()
+
 	// 获取当前时间
 	now := time.Now()
 
@@ -66,12 +67,12 @@ func writeLog(logObj *LogObject) {
 	hourString := strconv.Itoa(now.Hour())
 
 	// 构造文件路径和文件名
-	filePath := filepath.Join(LogPath, yearString, monthString)
+	filePath := filepath.Join(mLogPath, yearString, monthString)
 	fileName := ""
 	if logObj.IfIncludeHour {
-		fileName = fmt.Sprintf("%s-%s-%s-%s.%s.%s", yearString, monthString, dayString, hourString, logObj.Level, "txt")
+		fileName = fmt.Sprintf("%s-%s-%s-%s.%s.%s", yearString, monthString, dayString, hourString, logObj.Level, FILE_SUFFIX)
 	} else {
-		fileName = fmt.Sprintf("%s-%s-%s.%s.%s", yearString, monthString, dayString, logObj.Level, "txt")
+		fileName = fmt.Sprintf("%s-%s-%s.%s.%s", yearString, monthString, dayString, logObj.Level, FILE_SUFFIX)
 	}
 
 	// 得到最终的fileName
@@ -97,13 +98,13 @@ func writeLog(logObj *LogObject) {
 // 设置日志存放的路径
 // path：日志文件存放路径
 func SetLogPath(path string) {
-	LogPath = path
+	mLogPath = path
 }
 
 // 获取日志文件存放路径
 // 返回值：日志文件存放路径
 func GetLogPath() string {
-	return LogPath
+	return mLogPath
 }
 
 // 记录日志
@@ -113,7 +114,7 @@ func GetLogPath() string {
 // 返回值：无
 func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	// 判断路径是否为空
-	if len(LogPath) == 0 {
+	if mLogPath == "" {
 		panic(errors.New("日志存放路径不能为空，请先设置"))
 	}
 
@@ -132,7 +133,7 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 
 	// 构造对象并添加到队列中
 	logObj := NewLogObject(newLogInfo, level, ifIncludeHour)
-	logObjectCh <- logObj
+	mLogObjectCh <- logObj
 }
 
 // 记录未知错误日志
@@ -170,5 +171,5 @@ func LogUnknownError(r interface{}, args ...string) {
 
 	// 构造对象并添加到队列中
 	logObj := NewLogObject(logInfo, Error, true)
-	logObjectCh <- logObj
+	mLogObjectCh <- logObj
 }
