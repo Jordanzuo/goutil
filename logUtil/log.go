@@ -165,8 +165,8 @@ func LogUnknownError(r interface{}, args ...string) {
 	}
 
 	// 加上最后的分隔符
-	newLogInfo += SEPERATOR
-	newLogInfo += stringUtil.GetNewLineString()
+	logInfo += SEPERATOR
+	logInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
 	logObj := NewLogObject(logInfo, Error, true)
