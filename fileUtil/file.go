@@ -1,22 +1,24 @@
 package fileUtil
 
 import (
-	"errors"
 	"fmt"
-	"github.com/Jordanzuo/goutil/stringUtil"
-	"github.com/Jordanzuo/goutil/timeUtil"
 	"os"
 	"path/filepath"
-	"runtime"
-	"strconv"
-	"strings"
 	"sync"
-	"time"
 )
 
 var (
 	mutex sync.Mutex
 )
+
+func isDirExists(path string) bool {
+	file, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	} else {
+		return file.IsDir()
+	}
+}
 
 // 写入文件
 // filePath：文件夹路径
