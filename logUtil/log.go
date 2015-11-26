@@ -3,6 +3,7 @@ package logUtil
 import (
 	"errors"
 	"fmt"
+	"github.com/Jordanzuo/goutil/fileUtil"
 	"github.com/Jordanzuo/goutil/stringUtil"
 	"github.com/Jordanzuo/goutil/timeUtil"
 	"os"
@@ -41,15 +42,6 @@ func flushLog() {
 	}
 }
 
-func isDirExists(path string) bool {
-	file, err := os.Stat(path)
-	if err != nil {
-		return os.IsExist(err)
-	} else {
-		return file.IsDir()
-	}
-}
-
 func writeLog(logObj *LogObject) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -79,7 +71,7 @@ func writeLog(logObj *LogObject) {
 	fileName = filepath.Join(filePath, fileName)
 
 	// 判断文件夹是否存在，如果不存在则创建
-	if !isDirExists(filePath) {
+	if !fileUtil.IsDirExists(filePath) {
 		os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
 	}
 
