@@ -37,7 +37,7 @@ func flushLog() {
 			writeLog(logObj)
 		default:
 			// 休眠一下，防止CPU过高
-			time.Sleep(50 * time.Millisecond)
+			time.Sleep(5 * time.Millisecond)
 		}
 	}
 }
