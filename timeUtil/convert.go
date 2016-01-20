@@ -32,3 +32,15 @@ func ConverToStandardFormat(str string) time.Time {
 
 	return time.Date(intSlice[0], time.Month(intSlice[1]), intSlice[2], intSlice[3], intSlice[4], intSlice[5], 0, time.Local)
 }
+
+// 将时间转换为int类型（20160120，共8位）
+// t：时间
+// 返回值：
+// int类型的数字
+func ConvertToInt(t time.Time) int {
+	year := int(t.Year())
+	month := int(t.Month())
+	day := int(t.Day())
+
+	return year*10e3 + month*10e1 + day
+}

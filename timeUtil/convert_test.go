@@ -14,3 +14,13 @@ func TestConverToStandardFormat(t *testing.T) {
 		t.Errorf("转换不正确，期待：%s, 实际：%s", expectDate, finalDate)
 	}
 }
+
+func TestConvertToInt(t *testing.T) {
+	now := time.Now()
+	finalInt := ConvertToInt(now)
+	expecteInt := 20160120
+
+	if finalInt != expecteInt {
+		t.Errorf("转换不正确，期待：%d, 实际：%d", expecteInt, finalInt)
+	}
+}
