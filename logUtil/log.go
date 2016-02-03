@@ -23,24 +23,7 @@ const (
 
 var (
 	mLogPath     string
-	mLogObjectCh = make(chan *LogObject, 128)
 )
-
-func init() {
-	go flushLog()
-}
-
-func flushLog() {
-	for {
-		select {
-		case logObj := <-mLogObjectCh:
-			writeLog(logObj)
-		default:
-			// 休眠一下，防止CPU过高
-			time.Sleep(5 * time.Millisecond)
-		}
-	}
-}
 
 func writeLog(logObj *LogObject) {
 	defer func() {
@@ -124,8 +107,7 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	newLogInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	logObj := NewLogObject(newLogInfo, level, ifIncludeHour)
-	mLogObjectCh <- logObj
+	writeLog(NewLogObject(newLogInfo, level, ifIncludeHour))
 }
 
 // 记录未知错误日志
@@ -162,6 +144,5 @@ func LogUnknownError(r interface{}, args ...string) {
 	logInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	logObj := NewLogObject(logInfo, Error, true)
-	mLogObjectCh <- logObj
+	writeLog(NewLogObject(logInfo, Error, true))
 }
