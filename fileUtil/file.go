@@ -139,9 +139,9 @@ func WriteFile(filePath, fileName string, ifAppend bool, args ...string) {
 	var f *os.File
 	var err error
 	if ifAppend == false {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm|os.ModeTemporary)
 	} else {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModePerm|os.ModeTemporary)
 	}
 
 	if err != nil {
