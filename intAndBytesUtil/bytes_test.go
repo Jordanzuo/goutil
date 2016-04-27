@@ -5,25 +5,66 @@ import (
 	"testing"
 )
 
-var (
-	GivenBigEndian    []byte
-	GivenLittleEndian []byte
-	ExpectedInt       int = 256
-)
-
-func init() {
-	GivenBigEndian = []byte{0, 0, 1, 0}
-	GivenLittleEndian = []byte{0, 1, 0, 0}
-}
-
 func TestBytesToInt(t *testing.T) {
-	result := BytesToInt(GivenBigEndian, binary.BigEndian)
-	if result != ExpectedInt {
-		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", GivenBigEndian, result, ExpectedInt)
+	var givenBigEndian []byte = []byte{0, 0, 1, 0}
+	var givenLittleEndian []byte = []byte{0, 1, 0, 0}
+	var expectedInt int32 = 256
+
+	result := BytesToInt32(givenBigEndian, binary.BigEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenBigEndian, result, expectedInt)
 	}
 
-	result = BytesToInt(GivenLittleEndian, binary.LittleEndian)
-	if result != ExpectedInt {
-		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", GivenLittleEndian, result, ExpectedInt)
+	result = BytesToInt32(givenLittleEndian, binary.LittleEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenLittleEndian, result, expectedInt)
+	}
+}
+
+func TestBytesToInt16(t *testing.T) {
+	var givenBigEndian []byte = []byte{1, 0}
+	var givenLittleEndian []byte = []byte{0, 1}
+	var expectedInt int16 = 256
+
+	result := BytesToInt16(givenBigEndian, binary.BigEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenBigEndian, result, expectedInt)
+	}
+
+	result = BytesToInt16(givenLittleEndian, binary.LittleEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenLittleEndian, result, expectedInt)
+	}
+}
+
+func TestBytesToInt32(t *testing.T) {
+	var givenBigEndian []byte = []byte{0, 0, 1, 0}
+	var givenLittleEndian []byte = []byte{0, 1, 0, 0}
+	var expectedInt int32 = 256
+
+	result := BytesToInt32(givenBigEndian, binary.BigEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenBigEndian, result, expectedInt)
+	}
+
+	result = BytesToInt32(givenLittleEndian, binary.LittleEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenLittleEndian, result, expectedInt)
+	}
+}
+
+func TestBytesToInt64(t *testing.T) {
+	var givenBigEndian []byte = []byte{0, 0, 0, 0, 0, 0, 1, 0}
+	var givenLittleEndian []byte = []byte{0, 1, 0, 0, 0, 0, 0, 0}
+	var expectedInt int64 = 256
+
+	result := BytesToInt64(givenBigEndian, binary.BigEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenBigEndian, result, expectedInt)
+	}
+
+	result = BytesToInt64(givenLittleEndian, binary.LittleEndian)
+	if result != expectedInt {
+		t.Errorf("BytesToInt(%v) failed.Got %v, expected %v", givenLittleEndian, result, expectedInt)
 	}
 }
