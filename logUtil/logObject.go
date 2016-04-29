@@ -5,13 +5,13 @@ type logObject struct {
 	logInfo string
 
 	// 日志等级
-	level LogType
+	level logType
 
 	// 日志文件名称是否包含小时
 	ifIncludeHour bool
 }
 
-func NewLogObject(_logInfo string, _level LogType, _ifIncludeHour bool) *logObject {
+func newLogObject(_logInfo string, _level logType, _ifIncludeHour bool) *logObject {
 	return &logObject{
 		logInfo:       _logInfo,
 		level:         _level,

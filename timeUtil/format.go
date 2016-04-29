@@ -7,6 +7,10 @@ import (
 )
 
 // format time like java, such as: yyyy-MM-dd HH:mm:ss
+// t：时间
+// format：格式化字符串
+// 返回值：
+// 格式化后的字符串
 func Format(t time.Time, format string) string {
 	//year
 	if strings.ContainsAny(format, "y") {

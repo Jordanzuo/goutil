@@ -9,6 +9,10 @@ import (
 )
 
 // 截取字符串
+// start：开始位置
+// length：截取长度
+// 返回值：
+// 截取后的字符串
 func Substring(str string, start, length int) string {
 	// 先将字符串转化为[]rune格式（由于rune是字符串的基本单位）
 	runeString := []rune(str)
@@ -33,7 +37,9 @@ func Substring(str string, start, length int) string {
 	return string(runeString[start:end])
 }
 
-// 获取换行符
+// 根据不同平台获取换行符
+// 返回值：
+// 换行符
 func GetNewLineString() string {
 	switch os := runtime.GOOS; os {
 	case "windows":
@@ -44,6 +50,8 @@ func GetNewLineString() string {
 }
 
 // 获取新的GUID字符串
+// 返回值：
+// 新的GUID字符串
 func GetNewGUID() string {
 	b := make([]byte, 48)
 	if _, err := io.ReadFull(rand.Reader, b); err != nil {

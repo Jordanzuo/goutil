@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+// 获取字节大小的描述信息
+// size：字节大小
+// 返回值：
+// 描述信息
 func GetSizeDesc(size int64) string {
 	str := ""
 

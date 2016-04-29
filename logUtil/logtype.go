@@ -1,11 +1,11 @@
 package logUtil
 
-type LogType int
+type logType int
 
 // 日志等级
 const (
 	// 信息
-	Info LogType = iota
+	Info logType = iota
 
 	// 警告
 	Warn
@@ -28,6 +28,6 @@ var levels = [...]string{
 	"Fatal",
 }
 
-func (t LogType) String() string {
+func (t logType) String() string {
 	return levels[t]
 }

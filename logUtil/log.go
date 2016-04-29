@@ -82,7 +82,7 @@ func GetLogPath() string {
 // level：日志级别
 // ifIncludeHour：日志文件名称是否包含小时
 // 返回值：无
-func Log(logInfo string, level LogType, ifIncludeHour bool) {
+func Log(logInfo string, level logType, ifIncludeHour bool) {
 	// 判断路径是否为空
 	if logPath == "" {
 		panic(errors.New("日志存放路径不能为空，请先设置"))
@@ -102,7 +102,7 @@ func Log(logInfo string, level LogType, ifIncludeHour bool) {
 	newLogInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	writeLog(NewLogObject(newLogInfo, level, ifIncludeHour))
+	writeLog(newLogObject(newLogInfo, level, ifIncludeHour))
 }
 
 // 记录未知错误日志
@@ -139,5 +139,5 @@ func LogUnknownError(r interface{}, args ...string) {
 	logInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	writeLog(NewLogObject(logInfo, Error, true))
+	writeLog(newLogObject(logInfo, Error, true))
 }
