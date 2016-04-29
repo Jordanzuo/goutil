@@ -10,7 +10,7 @@ var (
 )
 
 func TestReadJsonConfig_Array(t *testing.T) {
-	config_Array, err_Array = ReadJsonConfig_Array("jsonConfigArray.ini")
+	config_Array, err_Array = ReadJsonConfig_Array("testdata/jsonConfigArray.ini")
 	if err_Array != nil {
 		t.Errorf("读取JSON配置失败，错误信息为：%s", err_Array)
 	}
