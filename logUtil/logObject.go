@@ -1,20 +1,20 @@
 package logUtil
 
-type LogObject struct {
+type logObject struct {
 	// 日志信息
-	LogInfo string
+	logInfo string
 
 	// 日志等级
-	Level LogType
+	level LogType
 
 	// 日志文件名称是否包含小时
-	IfIncludeHour bool
+	ifIncludeHour bool
 }
 
-func NewLogObject(logInfo string, level LogType, ifIncludeHour bool) *LogObject {
-	return &LogObject{
-		LogInfo:       logInfo,
-		Level:         level,
-		IfIncludeHour: ifIncludeHour,
+func NewLogObject(_logInfo string, _level LogType, _ifIncludeHour bool) *logObject {
+	return &logObject{
+		logInfo:       _logInfo,
+		level:         _level,
+		ifIncludeHour: _ifIncludeHour,
 	}
 }
