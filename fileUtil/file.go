@@ -155,3 +155,11 @@ func WriteFile(filePath, fileName string, ifAppend bool, args ...string) {
 		f.WriteString(arg)
 	}
 }
+
+// 删除文件
+// filename：文件的绝对路径
+// 返回值：
+// 错误对象
+func DeleteFile(filename string) error {
+	return os.Remove(filename)
+}
