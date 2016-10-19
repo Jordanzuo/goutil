@@ -1,6 +1,6 @@
 package dfaUtil
 
-type dfa struct {
+type DFAUtil struct {
 	// 根节点
 	Root *node
 }
@@ -10,7 +10,7 @@ type dfa struct {
 // ch:字符
 // 返回值：
 // 子节点
-func (util *dfa) findNode(nodeObj *node, ch rune) *node {
+func (util *DFAUtil) findNode(nodeObj *node, ch rune) *node {
 	for _, value := range nodeObj.nodeList {
 		if value.ch == ch {
 			return value
@@ -24,7 +24,7 @@ func (util *dfa) findNode(nodeObj *node, ch rune) *node {
 // currNodeObj:当前节点
 // chArr:字符集合
 // index:字符位于字符集合的索引
-func (util *dfa) insertNode(currNodeObj *node, chArr []rune, index int) {
+func (util *DFAUtil) insertNode(currNodeObj *node, chArr []rune, index int) {
 	// 判断字符是否已经存在于当前节点的子节点中
 	subNode := util.findNode(currNodeObj, chArr[index])
 
@@ -65,7 +65,7 @@ func (util *dfa) insertNode(currNodeObj *node, chArr []rune, index int) {
 // input:输入数据
 // 返回值:
 // 特殊字符所处的索引区间列表
-func (util *dfa) SearchWord(input string) []*finalIndex {
+func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 	// 最终的索引范围列表<索引下限、索引上限>
 	finalIndexList := make([]*finalIndex, 0, 32)
 
@@ -149,7 +149,7 @@ func (util *dfa) SearchWord(input string) []*finalIndex {
 // input:输入数据
 // 返回值:
 // 是否匹配
-func (util *dfa) IsMatch(input string) bool {
+func (util *DFAUtil) IsMatch(input string) bool {
 	return len(util.SearchWord(input)) > 0
 }
 
@@ -158,7 +158,7 @@ func (util *dfa) IsMatch(input string) bool {
 // replaceCh:替换的字符
 // 返回值:
 // 处理后的字符串
-func (util *dfa) HandleWord(input string, replaceCh rune) string {
+func (util *DFAUtil) HandleWord(input string, replaceCh rune) string {
 	// 最终的索引范围列表<索引下限、索引上限>
 	finalIndexList := util.SearchWord(input)
 
@@ -194,8 +194,8 @@ func (util *dfa) HandleWord(input string, replaceCh rune) string {
 
 // 创建新的DFAUtil对象
 // wordList:词语列表
-func newDFAUtil(wordList []string) *dfa {
-	util := &dfa{
+func newDFAUtil(wordList []string) *DFAUtil {
+	util := &DFAUtil{
 		Root: newNode('R', con_Normal),
 	}
 
