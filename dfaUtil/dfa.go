@@ -194,7 +194,7 @@ func (util *DFAUtil) HandleWord(input string, replaceCh rune) string {
 
 // 创建新的DFAUtil对象
 // wordList:词语列表
-func newDFAUtil(wordList []string) *DFAUtil {
+func NewDFAUtil(wordList []string) *DFAUtil {
 	util := &DFAUtil{
 		Root: newNode('R', con_Normal),
 	}
