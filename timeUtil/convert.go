@@ -25,7 +25,7 @@ func ConverToStandardFormat(str string) (time.Time, error) {
 	}
 
 	// 检查数量
-	if len(intSlice) != 6 {
+	if len(intSlice) < 6 {
 		return time.Now(), fmt.Errorf("输入字符串的格式错误:%s", str)
 	}
 
