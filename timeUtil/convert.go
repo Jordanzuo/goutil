@@ -12,21 +12,20 @@ import (
 // 返回值：
 // 标准时间格式对象
 func ConverToStandardFormat(str string) (time.Time, error) {
-	str = strings.Replace(str, "T", ":", -1)
-	str = strings.Replace(str, "-", ":", -1)
-	slice := strings.Split(str, ":")
+	newStr := strings.Replace(str, "T", ":", -1)
+	newStr = strings.Replace(newStr, "-", ":", -1)
+	newStr = strings.Replace(newStr, ".", ":", -1)
+	slice := strings.Split(newStr, ":")
+	// 只取前6位（表示年-月-日 时:分:秒）
+	slice = slice[:6]
+
 	intSlice := make([]int, len(slice))
 	for index, item := range slice {
 		if intItem, err := strconv.Atoi(item); err != nil {
-			return time.Now(), fmt.Errorf("输入字符串的格式错误:%s", str)
+			return time.Now(), fmt.Errorf("输入字符串的格式错误:%s,转换后的格式为:%s", str, newStr)
 		} else {
 			intSlice[index] = intItem
 		}
-	}
-
-	// 检查数量
-	if len(intSlice) < 6 {
-		return time.Now(), fmt.Errorf("输入字符串的格式错误:%s", str)
 	}
 
 	return time.Date(intSlice[0], time.Month(intSlice[1]), intSlice[2], intSlice[3], intSlice[4], intSlice[5], 0, time.Local), nil
