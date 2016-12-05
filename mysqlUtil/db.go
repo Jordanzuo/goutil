@@ -67,7 +67,7 @@ func OpenMysqlConnection(connectionString string) (*sql.DB, error) {
 		return nil, fmt.Errorf("Ping数据库失败,连接字符串为：%s,错误信息为：%s", connectionString, err)
 	}
 
-	return db
+	return db, nil
 }
 
 // 开始事务
