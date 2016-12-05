@@ -6,6 +6,8 @@ import (
 	"github.com/Jordanzuo/goutil/securityUtil"
 	"io"
 	"runtime"
+	"strconv"
+	"strings"
 )
 
 // 截取字符串
@@ -59,4 +61,31 @@ func GetNewGUID() string {
 	}
 
 	return securityUtil.Md5String(base64.URLEncoding.EncodeToString(b), true)
+}
+
+// 将字符串切割为[]int
+// str:输入字符串
+// 返回值:
+// []int
+// error
+func SplitToIntSlice(s, sep string) ([]int, error) {
+	// 先按照分隔符进行切割
+	strSlice := strings.Split(s, sep)
+
+	// 定义int slice
+	intSlice := make([]int, 0, len(strSlice))
+	for _, value := range strSlice {
+		// 去除空格
+		if value = strings.TrimSpace(value); value == "" {
+			continue
+		}
+
+		if value_int, err := strconv.Atoi(value); err != nil {
+			return nil, err
+		} else {
+			intSlice = append(intSlice, value_int)
+		}
+	}
+
+	return intSlice, nil
 }
