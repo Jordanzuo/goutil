@@ -32,7 +32,7 @@ func UnMarshalWithNumberType(s string) (map[string]interface{}, error) {
 // 返回值:
 // 新对象
 // 错误对象
-func DeepClone(src interface{}) (map[string]interface{}, error) {
+func DeepClone(src interface{}) (interface{}, error) {
 	var byteSlice []byte
 	var err error
 
@@ -42,7 +42,7 @@ func DeepClone(src interface{}) (map[string]interface{}, error) {
 	}
 
 	// 再反序列化成对象
-	var result map[string]interface{}
+	var result interface{}
 	if err := json.Unmarshal(byteSlice, &result); err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func DeepClone(src interface{}) (map[string]interface{}, error) {
 // 返回值:
 // 新对象
 // 错误对象
-func DeepCloneWithNumberType(src interface{}) (map[string]interface{}, error) {
+func DeepCloneWithNumberType(src interface{}) (interface{}, error) {
 	var byteSlice []byte
 	var err error
 
@@ -69,7 +69,7 @@ func DeepCloneWithNumberType(src interface{}) (map[string]interface{}, error) {
 	decode.UseNumber()
 
 	// decode
-	var result map[string]interface{}
+	var result interface{}
 	if err := decode.Decode(&result); err != nil {
 		return nil, err
 	}
