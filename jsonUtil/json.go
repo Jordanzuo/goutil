@@ -13,13 +13,13 @@ import (
 // 返回值:
 // 反序列化后的数据
 // 错误对象
-func UnMarshalWithNumberType(s string) (map[string]interface{}, error) {
+func UnMarshalWithNumberType(s string) (interface{}, error) {
 	// 构造decode对象
 	var decode = json.NewDecoder(strings.NewReader(s))
 	decode.UseNumber()
 
 	// decode
-	var result map[string]interface{}
+	var result interface{}
 	if err := decode.Decode(&result); err != nil {
 		return nil, err
 	}

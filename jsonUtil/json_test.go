@@ -17,16 +17,37 @@ func TestUnMarshalWithNumberType(t *testing.T) {
 		t.Errorf("Marshal src failed\n")
 	}
 
-	if target, err := UnMarshalWithNumberType(string(byteSlice)); err != nil {
+	if target_interface, err := UnMarshalWithNumberType(string(byteSlice)); err != nil {
 		t.Errorf("Expected got nil, but got err:%s\n", err)
 	} else {
-		money, ok := target["Money"].(json.Number)
-		money_int, err := money.Int64()
-		if !ok || err != nil || money_int != 100000000 {
-			t.Errorf("Expected got 100000000, but got %v, ok:%v, err:%s\n", money_int, ok, err)
-		}
+		if target_map, ok := target_interface.(map[string]interface{}); !ok {
+			t.Errorf("Expected got nil, but got err:%s\n", err)
+		} else {
+			money, ok := target_map["Money"].(json.Number)
+			money_int, err := money.Int64()
+			if !ok || err != nil || money_int != 100000000 {
+				t.Errorf("Expected got 100000000, but got %v, ok:%v, err:%s\n", money_int, ok, err)
+			}
 
-		fmt.Printf("target:%v\n", target)
+			fmt.Printf("target_map:%v\n", target_map)
+		}
+	}
+
+	intSlice1 := []int{1, 2, 3, 5}
+
+	if byteSlice, err = json.Marshal(intSlice1); err != nil {
+		t.Errorf("Marshal src failed\n")
+	}
+
+	if target_interface, err := UnMarshalWithNumberType(string(byteSlice)); err != nil {
+		t.Errorf("Expected got nil, but got err\n", err)
+	} else {
+		fmt.Printf("target_interface:%v\n", target_interface)
+		if target_slice, ok := target_interface.([]interface{}); !ok {
+			t.Errorf("Expected got []int, but failed.\n")
+		} else {
+			fmt.Printf("target_slice:%v\n", target_slice)
+		}
 	}
 }
 
