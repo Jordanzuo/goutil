@@ -43,3 +43,20 @@ func TestSubstr(t *testing.T) {
 		t.Errorf("%s should not be equal with %s", guid1, guid2)
 	}
 }
+
+func TestSplitToIntSlice(t *testing.T) {
+	s := "1, 2, 3, 4, 5, a"
+	if _, err := SplitToIntSlice(s, ","); err == nil {
+		t.Errorf("Expected got err, but got nil")
+	}
+
+	s = "1, 5, 39,"
+	if intSlice, err := SplitToIntSlice(s, ","); err != nil {
+		t.Errorf("Expected got nil, but got error:%s", err)
+	} else {
+		// fmt.Printf("intSlice:%v\n", intSlice)
+		if intSlice[0] != 1 || intSlice[1] != 5 || intSlice[2] != 39 {
+			t.Errorf("Expected got %s, but got %v", s, intSlice)
+		}
+	}
+}

@@ -2,7 +2,6 @@ package configUtil
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -16,13 +15,13 @@ func ReadJsonConfig_Array(config_file_path string) ([]map[string]interface{}, er
 	// 读取配置文件（一次性读取整个文件，则使用ioutil）
 	bytes, err := ioutil.ReadFile(config_file_path)
 	if err != nil {
-		return nil, errors.New("读取配置文件的内容出错")
+		return nil, fmt.Errorf("读取配置文件的内容出错:%s", err)
 	}
 
 	// 使用json反序列化
 	config := make([]map[string]interface{}, 0, 4)
 	if err = json.Unmarshal(bytes, &config); err != nil {
-		return nil, errors.New("反序列化配置文件的内容出错")
+		return nil, fmt.Errorf("反序列化配置文件的内容出错:%s", err)
 	}
 
 	return config, nil
