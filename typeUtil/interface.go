@@ -1,4 +1,4 @@
-package typeutil
+package typeUtil
 
 import (
 	"strconv"

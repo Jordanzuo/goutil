@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Jordanzuo/goutil/stringUtil"
 )
 
 // format time like java, such as: yyyy-MM-dd HH:mm:ss
@@ -152,7 +154,7 @@ func ToDateTimeString(timeVal time.Time) string {
 
 // 转换成日期格式
 func ToDateTime(timeVal string) time.Time {
-	if IsEmpty(timeVal) {
+	if stringUtil.IsEmpty(timeVal) {
 		return time.Time{}
 	}
 
@@ -166,7 +168,7 @@ func ToDateTime(timeVal string) time.Time {
 
 // 转换成时间格式
 func ToDate(timeVal string) time.Time {
-	if IsEmpty(timeVal) {
+	if stringUtil.IsEmpty(timeVal) {
 		return time.Time{}
 	}
 

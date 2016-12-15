@@ -1,4 +1,4 @@
-package typeutil
+package typeUtil
 
 // bool值转换为int
 // val:待转换的值

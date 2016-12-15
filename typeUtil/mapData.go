@@ -1,4 +1,4 @@
-package typeutil
+package typeUtil
 
 // KeyValue数据集合
 type MapData map[string]interface{}
