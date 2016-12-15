@@ -3,6 +3,7 @@ package logUtil
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -111,6 +112,14 @@ func Log(logInfo string, level logType, ifIncludeHour bool) {
 // level：日志级别
 func NormalLog(logInfo string, level logType) {
 	Log(logInfo, level, true)
+}
+
+// 记录到文件并且答应到控制台
+// logInfo：需要记录的日志信息
+// level：日志级别
+func LogAndPrint(logInfo string, level logType) {
+	NormalLog(logInfo, level)
+	log.Print(logInfo)
 }
 
 // 记录未知错误日志
