@@ -101,5 +101,7 @@ func IsEmpty(content string) bool {
 		return true
 	}
 
-	return strings.IndexFunc(content, unicode.IsSpace) >= 0
+	return strings.IndexFunc(content, func(item rune) bool {
+		return unicode.IsSpace(item) == false
+	}) < 0
 }
