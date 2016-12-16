@@ -14,8 +14,8 @@ type LockUtil struct {
 }
 
 // 创建新的锁工具类
-func NewLockUtil() LockUtil {
-	return LockUtil{
+func NewLockUtil() *LockUtil {
+	return &LockUtil{
 		lockData: make(map[string]sync.Locker),
 	}
 }

@@ -14,8 +14,8 @@ type RWMutexUtil struct {
 }
 
 // 创建新的锁工具类
-func NewRWMutexUtil() RWMutexUtil {
-	return RWMutexUtil{
+func NewRWMutexUtil() *RWMutexUtil {
+	return &RWMutexUtil{
 		lockData: make(map[string]*sync.RWMutex),
 	}
 }
