@@ -3,15 +3,17 @@ package logUtil
 import (
 	"errors"
 	"fmt"
-	"github.com/Jordanzuo/goutil/fileUtil"
-	"github.com/Jordanzuo/goutil/stringUtil"
-	"github.com/Jordanzuo/goutil/timeUtil"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Jordanzuo/goutil/fileUtil"
+	"github.com/Jordanzuo/goutil/stringUtil"
+	"github.com/Jordanzuo/goutil/timeUtil"
 )
 
 const (
@@ -103,6 +105,21 @@ func Log(logInfo string, level logType, ifIncludeHour bool) {
 
 	// 构造对象并添加到队列中
 	writeLog(newLogObject(newLogInfo, level, ifIncludeHour))
+}
+
+// 常规的日志记录接口(ifIncludeHour=true)
+// logInfo：需要记录的日志信息
+// level：日志级别
+func NormalLog(logInfo string, level logType) {
+	Log(logInfo, level, true)
+}
+
+// 记录到文件并且答应到控制台
+// logInfo：需要记录的日志信息
+// level：日志级别
+func LogAndPrint(logInfo string, level logType) {
+	NormalLog(logInfo, level)
+	log.Print(logInfo)
 }
 
 // 记录未知错误日志

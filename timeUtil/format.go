@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Jordanzuo/goutil/stringUtil"
 )
 
 // format time like java, such as: yyyy-MM-dd HH:mm:ss
@@ -110,4 +112,70 @@ func Format(t time.Time, format string) string {
 	}
 
 	return format
+}
+
+// 转换成日期字符串
+// timeVal：待转换的时间
+// 返回值：
+// string:格式形如：2016-10-10
+/*
+前面是含义，后面是 go 的表示值,多种表示,逗号","分割
+月份 1,01,Jan,January
+日　 2,02,_2
+时　 3,03,15,PM,pm,AM,am
+分　 4,04
+秒　 5,05
+年　 06,2006
+时区 -07,-0700,Z0700,Z07:00,-07:00,MST
+周几 Mon,Monday
+*/
+func ToDateString(timeVal time.Time) string {
+	return timeVal.Local().Format("2006-01-02")
+}
+
+// 转换成时间字符串
+// timeVal：待转换的时间
+// 返回值：
+// string:格式形如：2016-10-10 10:10:10
+/*
+前面是含义，后面是 go 的表示值,多种表示,逗号","分割
+月份 1,01,Jan,January
+日　 2,02,_2
+时　 3,03,15,PM,pm,AM,am
+分　 4,04
+秒　 5,05
+年　 06,2006
+时区 -07,-0700,Z0700,Z07:00,-07:00,MST
+周几 Mon,Monday
+*/
+func ToDateTimeString(timeVal time.Time) string {
+	return timeVal.Local().Format("2006-01-02 15:04:05")
+}
+
+// 转换成日期格式
+func ToDateTime(timeVal string) time.Time {
+	if stringUtil.IsEmpty(timeVal) {
+		return time.Time{}
+	}
+
+	tmpval, errMsg := time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
+	if errMsg != nil {
+		return time.Time{}
+	}
+
+	return tmpval
+}
+
+// 转换成时间格式
+func ToDate(timeVal string) time.Time {
+	if stringUtil.IsEmpty(timeVal) {
+		return time.Time{}
+	}
+
+	tmpval, errMsg := time.ParseInLocation("2006-01-02", timeVal, time.Local)
+	if errMsg != nil {
+		return time.Time{}
+	}
+
+	return tmpval
 }

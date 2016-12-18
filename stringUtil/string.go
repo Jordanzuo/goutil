@@ -3,11 +3,13 @@ package stringUtil
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"github.com/Jordanzuo/goutil/securityUtil"
 	"io"
 	"runtime"
 	"strconv"
 	"strings"
+	"unicode"
+
+	"github.com/Jordanzuo/goutil/securityUtil"
 )
 
 // 截取字符串
@@ -88,4 +90,18 @@ func SplitToIntSlice(s, sep string) ([]int, error) {
 	}
 
 	return intSlice, nil
+}
+
+// 检查一个字符串是否是空字符串
+// content:上下文字符串
+// 返回值：
+// bool:true：空字符串 false：非空字符串
+func IsEmpty(content string) bool {
+	if len(content) <= 0 {
+		return true
+	}
+
+	return strings.IndexFunc(content, func(item rune) bool {
+		return unicode.IsSpace(item) == false
+	}) < 0
 }

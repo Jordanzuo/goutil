@@ -14,6 +14,11 @@ func SetDebug(_isDebug bool) {
 	isDebug = _isDebug
 }
 
+// 是否处于调试状态
+func IsDebug() bool {
+	return isDebug
+}
+
 // Print formats using the default formats for its operands and writes to standard output.
 // Spaces are added between operands when neither is a string.
 // It returns the number of bytes written and any write error encountered.
