@@ -60,3 +60,24 @@ func TestSplitToIntSlice(t *testing.T) {
 		}
 	}
 }
+
+// test IsEmpty
+func TestIsEmpty(t *testing.T) {
+	isOk := IsEmpty("")
+	if isOk == false {
+		t.Error("\"\" test is Not pass")
+		return
+	}
+
+	isOk = IsEmpty(" ")
+	if isOk == false {
+		t.Error("\" \" test is Not pass")
+		return
+	}
+
+	isOk = IsEmpty(" \t\n")
+	if isOk == false {
+		t.Error("\" \\t\\n\" test is Not pass")
+		return
+	}
+}
