@@ -29,12 +29,12 @@ func Int(val interface{}) (int, bool) {
 	case float64:
 		return int(val.(float64)), true
 	case string:
-		result, errMsg := strconv.Atoi(val.(string))
+		result, errMsg := strconv.ParseFloat(val.(string), 64)
 		if errMsg != nil {
 			return 0, false
 		}
 
-		return result, true
+		return int(result), true
 	}
 
 	return 0, false
