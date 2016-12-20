@@ -53,5 +53,15 @@ func (this *LockUtil) ReleaseLock(lockName string) {
 	this.lockObj.Lock()
 	defer this.lockObj.Unlock()
 
+	lockItem, isExist := this.lockData[lockName]
+	if isExist == false {
+		return
+	}
+
+	// 刪除鎖前，先锁住。避免外部死锁(defer 中 也get时，之前的代码有可能死锁)
+	lockItem.Lock()
+	defer lockItem.Unlock()
+
 	delete(this.lockData, lockName)
+
 }
