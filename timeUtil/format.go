@@ -130,7 +130,7 @@ func Format(t time.Time, format string) string {
 周几 Mon,Monday
 */
 func ToDateString(timeVal time.Time) string {
-	return timeVal.Format("2006-01-02")
+	return timeVal.Local().Format("2006-01-02")
 }
 
 // 转换成时间字符串
@@ -149,7 +149,7 @@ func ToDateString(timeVal time.Time) string {
 周几 Mon,Monday
 */
 func ToDateTimeString(timeVal time.Time) string {
-	return timeVal.Format("2006-01-02 15:04:05")
+	return timeVal.Local().Format("2006-01-02 15:04:05")
 }
 
 // 转换成日期格式
@@ -158,7 +158,7 @@ func ToDateTime(timeVal string) time.Time {
 		return time.Time{}
 	}
 
-	tmpval, errMsg := time.Parse("2006-01-02 15:04:05", timeVal)
+	tmpval, errMsg := time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
 	if errMsg != nil {
 		return time.Time{}
 	}
@@ -172,7 +172,7 @@ func ToDate(timeVal string) time.Time {
 		return time.Time{}
 	}
 
-	tmpval, errMsg := time.Parse("2006-01-02", timeVal)
+	tmpval, errMsg := time.ParseInLocation("2006-01-02", timeVal, time.Local)
 	if errMsg != nil {
 		return time.Time{}
 	}
