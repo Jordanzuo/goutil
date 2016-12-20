@@ -97,13 +97,15 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 			if len(roundIndexList) > 0 {
 				//查找最后一个NodeFlag==1的数据项
 				//1、如果找到了，则需要当作有效路径来处理
-				//2、如果没有找到，则丢弃，并向后倒退一个位置，以避免当前位置的字符被误判的情况
+				//2、如果没有找到，则丢弃，并向后倒退roundIndexList.Count个位置，以避免当前位置的字符被误判的情况
+				//例如有两个关键字叠加“习近平的”，“近平”
+				//相当于每次只判断一个字符
 				lastItem := searchShortPath(roundIndexList)
 				if lastItem != nil {
 					//将本轮的索引列表添加到最终的索引列表中
 					finalIndexList = append(finalIndexList, newFinalIndex(roundIndexList[0].index, lastItem.index))
 				} else {
-					index = index - 1
+					index = index - len(roundIndexList)
 				}
 			}
 
