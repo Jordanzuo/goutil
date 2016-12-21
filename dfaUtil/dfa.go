@@ -133,14 +133,28 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 			// 将对应的index添加到本轮的索引列表中
 			roundIndexList = append(roundIndexList, newRoundIndex(index, nodeObj.flag))
 		}
-	}
 
-	// 判断是否存在没有完全匹配的数据
-	if len(roundIndexList) > 0 {
-		lastItem := searchShortPath(roundIndexList)
-		if lastItem != nil {
-			// 将本轮的索引列表添加到最终的索引列表中
-			finalIndexList = append(finalIndexList, newFinalIndex(roundIndexList[0].index, lastItem.index))
+		// 最后一个字处理完成后，需要再进行一次判断，以避免当前位置的字符被误判的情况
+		// 例如有两个关键字叠加“习近平的”，“近平”
+		// 相当于每次只判断一个字符
+		if index == len(chArr)-1 {
+			// 判断是否存在没有完全匹配的数据
+			if len(roundIndexList) > 0 {
+				lastItem := searchShortPath(roundIndexList)
+				if lastItem != nil {
+					// 将本轮的索引列表添加到最终的索引列表中
+					finalIndexList = append(finalIndexList, newFinalIndex(roundIndexList[0].index, lastItem.index))
+					break
+				} else {
+					index = index - (len(roundIndexList) - 1)
+				}
+			}
+
+			// 清空本轮的索引列表
+			roundIndexList = roundIndexList[:0]
+
+			// 重新从根节点开始计算
+			nodeObj = util.Root
 		}
 	}
 
