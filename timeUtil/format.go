@@ -160,7 +160,6 @@ func ToDateTime(timeVal string) time.Time {
 	}
 
 	tmpval, errMsg := time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
-	fmt.Println("time loc:", tmpval.Location().String())
 	if errMsg != nil {
 		return time.Time{}
 	}
