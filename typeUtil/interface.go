@@ -40,6 +40,30 @@ func Int(val interface{}) (int, bool) {
 	return 0, false
 }
 
+// 转换为Int列表
+// val:待转换的数据列表
+// 返回值:
+// []int:结果
+// bool:是否转换成功
+func IntArray(val []interface{}) ([]int, bool) {
+	array := make([]int, 0, len(val))
+	if val == nil {
+		return array, true
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, isOk := Int(item)
+		if isOk == false {
+			return nil, isOk
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, true
+}
+
 // 类型转换为float64
 // 返回值:
 // float64:结果
@@ -75,6 +99,30 @@ func Float64(val interface{}) (float64, bool) {
 	}
 
 	return 0, false
+}
+
+// 转换为Int列表
+// val:待转换的数据列表
+// 返回值:
+// []int:结果
+// bool:是否转换成功
+func Float64Array(val []interface{}) ([]float64, bool) {
+	array := make([]float64, 0, len(val))
+	if val == nil {
+		return array, true
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, isOk := Float64(item)
+		if isOk == false {
+			return nil, isOk
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, true
 }
 
 // 类型转换为bool
@@ -113,6 +161,30 @@ func Bool(val interface{}) (bool, bool) {
 	return false, false
 }
 
+// 转换为Int列表
+// val:待转换的数据列表
+// 返回值:
+// []int:结果
+// bool:是否转换成功
+func BoolArray(val []interface{}) ([]bool, bool) {
+	array := make([]bool, 0, len(val))
+	if val == nil {
+		return array, true
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, isOk := Bool(item)
+		if isOk == false {
+			return nil, isOk
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, true
+}
+
 // 类型转换为字符串
 // 返回值:
 // string:结果
@@ -142,4 +214,28 @@ func String(val interface{}) (string, bool) {
 	}
 
 	return "", false
+}
+
+// 转换为Int列表
+// val:待转换的数据列表
+// 返回值:
+// []int:结果
+// bool:是否转换成功
+func StringArray(val []interface{}) ([]string, bool) {
+	array := make([]string, 0, len(val))
+	if val == nil {
+		return array, true
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, isOk := String(item)
+		if isOk == false {
+			return nil, isOk
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, true
 }
