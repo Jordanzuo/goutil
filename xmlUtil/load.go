@@ -11,13 +11,13 @@ import (
 // 返回值:
 // *Node:根节点对象
 // error:错误信息
-func LoadFile(filePath string) (*Node, error) {
+func LoadFromFile(filePath string) (*Node, error) {
 	data, errMsg := ioutil.ReadFile(filePath)
 	if errMsg != nil {
 		return nil, errMsg
 	}
 
-	return LoadByte(data)
+	return LoadFromByte(data)
 }
 
 // 从字节数组加载
@@ -25,8 +25,8 @@ func LoadFile(filePath string) (*Node, error) {
 // 返回值:
 // *Node:根节点对象
 // error:错误信息
-func LoadByte(data []byte) (*Node, error) {
-	return LoadString(string(data))
+func LoadFromByte(data []byte) (*Node, error) {
+	return LoadFromString(string(data))
 }
 
 // 文档字符串
@@ -34,7 +34,7 @@ func LoadByte(data []byte) (*Node, error) {
 // 返回值:
 // *Node:根节点对象
 // error:错误信息
-func LoadString(doc string) (*Node, error) {
+func LoadFromString(doc string) (*Node, error) {
 	// xml.Decoder doesn't properly handle whitespace in some doc
 	// see songTextString.xml test case ...
 	reg, _ := regexp.Compile("[ \t\n\r]*<")
@@ -42,5 +42,5 @@ func LoadString(doc string) (*Node, error) {
 
 	b := bytes.NewBufferString(doc)
 
-	return ParseXML(b)
+	return LoadFromReader(b)
 }

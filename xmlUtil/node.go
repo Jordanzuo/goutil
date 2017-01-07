@@ -195,7 +195,7 @@ func addSibling(sibling, n *Node) {
 	}
 }
 
-func ParseXML(r io.Reader) (*Node, error) {
+func LoadFromReader(r io.Reader) (*Node, error) {
 	var (
 		decoder  = xml.NewDecoder(r) //// xml解码对象
 		doc      = &Node{Type: DocumentNode}

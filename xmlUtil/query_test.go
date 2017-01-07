@@ -145,7 +145,7 @@ func loadXml() *Node {
       environment.</description>
    </book>
 </catalog>`
-	node, err := ParseXML(strings.NewReader(s))
+	node, err := LoadFromReader(strings.NewReader(s))
 	if err != nil {
 		panic(err)
 	}
