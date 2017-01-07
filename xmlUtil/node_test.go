@@ -8,7 +8,7 @@ import (
 func findNode(root *Node, name string) *Node {
 	node := root.FirstChild
 	for {
-		if node == nil || node.Data == name {
+		if node == nil || node.NodeName == name {
 			break
 		}
 		node = node.NextSibling
@@ -23,7 +23,7 @@ func childNodes(root *Node, name string) []*Node {
 		if node == nil {
 			break
 		}
-		if node.Data == name {
+		if node.NodeName == name {
 			list = append(list, node)
 		}
 		node = node.NextSibling
@@ -32,8 +32,8 @@ func childNodes(root *Node, name string) []*Node {
 }
 
 func testNode(t *testing.T, n *Node, expected string) {
-	if n.Data != expected {
-		t.Fatalf("expected node name is %s,but got %s", expected, n.Data)
+	if n.NodeName != expected {
+		t.Fatalf("expected node name is %s,but got %s", expected, n.NodeName)
 	}
 }
 
@@ -43,7 +43,7 @@ func testAttr(t *testing.T, n *Node, name, expected string) {
 			return
 		}
 	}
-	t.Fatalf("not found attribute %s in the node %s", name, n.Data)
+	t.Fatalf("not found attribute %s in the node %s", name, n.NodeName)
 }
 
 func testValue(t *testing.T, val, expected string) {
@@ -89,10 +89,10 @@ func TestParse(t *testing.T) {
 	}
 
 	bookstore := root.LastChild
-	if bookstore.Data != "bookstore" {
+	if bookstore.NodeName != "bookstore" {
 		t.Fatal("bookstore elem not found")
 	}
-	if bookstore.FirstChild.Data != "\n" {
+	if bookstore.FirstChild.NodeName != "\n" {
 		t.Fatal("first child node of bookstore is not empty node(\n)")
 	}
 	books := childNodes(bookstore, "book")
@@ -143,12 +143,12 @@ func TestTooNested(t *testing.T) {
 		t.Fatal("AAA node not exists")
 	}
 	ccc := aaa.LastChild
-	if ccc.Data != "CCC" {
-		t.Fatalf("expected node is CCC,but got %s", ccc.Data)
+	if ccc.NodeName != "CCC" {
+		t.Fatalf("expected node is CCC,but got %s", ccc.NodeName)
 	}
 	bbb := ccc.PrevSibling
-	if bbb.Data != "BBB" {
-		t.Fatalf("expected node is bbb,but got %s", bbb.Data)
+	if bbb.NodeName != "BBB" {
+		t.Fatalf("expected node is bbb,but got %s", bbb.NodeName)
 	}
 	ddd := findNode(bbb, "DDD")
 	testNode(t, ddd, "DDD")

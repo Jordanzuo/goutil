@@ -25,7 +25,7 @@ type Node struct {
 	Parent, FirstChild, LastChild, PrevSibling, NextSibling *Node
 
 	Type      NodeType
-	Data      string
+	NodeName  string
 	Namespace string
 	Attr      []xml.Attr
 
@@ -35,7 +35,7 @@ type Node struct {
 // InnerText returns the text between the start and end tags of the object.
 func (n *Node) InnerText() string {
 	if n.Type == TextNode || n.Type == CommentNode {
-		return n.Data
+		return n.NodeName
 	}
 
 	var buf bytes.Buffer
@@ -47,10 +47,10 @@ func (n *Node) InnerText() string {
 
 func outputXML(buf *bytes.Buffer, n *Node) {
 	if n.Type == TextNode || n.Type == CommentNode {
-		buf.WriteString(strings.TrimSpace(n.Data))
+		buf.WriteString(strings.TrimSpace(n.NodeName))
 		return
 	}
-	buf.WriteString("<" + n.Data)
+	buf.WriteString("<" + n.NodeName)
 	for _, attr := range n.Attr {
 		if attr.Name.Space != "" {
 			buf.WriteString(fmt.Sprintf(` %s:%s="%s"`, attr.Name.Space, attr.Name.Local, attr.Value))
@@ -62,7 +62,7 @@ func outputXML(buf *bytes.Buffer, n *Node) {
 	for child := n.FirstChild; child != nil; child = child.NextSibling {
 		outputXML(buf, child)
 	}
-	buf.WriteString(fmt.Sprintf("</%s>", n.Data))
+	buf.WriteString(fmt.Sprintf("</%s>", n.NodeName))
 }
 
 // OutputXML returns the text that including tags name.
@@ -154,7 +154,7 @@ func (this *Node) OutALL() {
 			stack.PushFront(item)
 		}
 
-		fmt.Println("name:", nowNode.Data, " level: ", nowNode.level, " attr:", nowNode.Attr)
+		fmt.Println("name:", nowNode.NodeName, " level: ", nowNode.level, " attr:", nowNode.Attr)
 	}
 }
 func addAttr(n *Node, key, val string) {
@@ -222,7 +222,7 @@ func LoadFromReader(r io.Reader) (*Node, error) {
 			}
 			node := &Node{
 				Type:      ElementNode,
-				Data:      tok.Name.Local,
+				NodeName:  tok.Name.Local,
 				Namespace: tok.Name.Space,
 				Attr:      tok.Attr,
 				level:     level,
@@ -243,14 +243,14 @@ func LoadFromReader(r io.Reader) (*Node, error) {
 		case xml.EndElement:
 			level--
 		case xml.CharData:
-			node := &Node{Type: TextNode, Data: string(tok), level: level}
+			node := &Node{Type: TextNode, NodeName: string(tok), level: level}
 			if level == prev.level {
 				addSibling(prev, node)
 			} else if level > prev.level {
 				addChild(prev, node)
 			}
 		case xml.Comment:
-			node := &Node{Type: CommentNode, Data: string(tok), level: level}
+			node := &Node{Type: CommentNode, NodeName: string(tok), level: level}
 			if level == prev.level {
 				addSibling(prev, node)
 			} else if level > prev.level {

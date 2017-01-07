@@ -93,7 +93,7 @@ func (x *xmlNodeNavigator) LocalName() string {
 	if x.attr != -1 {
 		return x.curr.Attr[x.attr].Name.Local
 	}
-	return x.curr.Data
+	return x.curr.NodeName
 
 }
 
@@ -104,14 +104,14 @@ func (x *xmlNodeNavigator) Prefix() string {
 func (x *xmlNodeNavigator) Value() string {
 	switch x.curr.Type {
 	case CommentNode:
-		return x.curr.Data
+		return x.curr.NodeName
 	case ElementNode:
 		if x.attr != -1 {
 			return x.curr.Attr[x.attr].Value
 		}
 		return x.curr.InnerText()
 	case TextNode:
-		return x.curr.Data
+		return x.curr.NodeName
 	}
 	return ""
 }

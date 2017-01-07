@@ -30,7 +30,7 @@ var xml string = `
 `
 
 func main() {
-	root, errMsg := xmlUtil.LoadString(xml)
+	root, errMsg := xmlUtil.LoadFromString(xml)
 	if errMsg != nil {
 		fmt.Println(errMsg)
 		return
@@ -46,6 +46,6 @@ func main() {
 	}
 
 	for i, node := range nodes {
-		fmt.Println("index:", i, "  name:", node.Data)
+		fmt.Println("index:", i, "  name:", node.NodeName)
 	}
 }
