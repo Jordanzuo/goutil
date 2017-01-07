@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore"
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/xpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/xpath"
 )
 
 // SelectElements finds child elements with the specified name.
@@ -40,7 +40,7 @@ func CreateXPathNavigator(top *Node) xpath.NodeNavigator {
 }
 
 func Find(top *Node, expr string) []*Node {
-	t := xmlCore.Select(CreateXPathNavigator(top), expr)
+	t := gxpath.Select(CreateXPathNavigator(top), expr)
 	var elems []*Node
 	for t.MoveNext() {
 		elems = append(elems, (t.Current().(*xmlNodeNavigator)).curr)
@@ -49,7 +49,7 @@ func Find(top *Node, expr string) []*Node {
 }
 
 func FindOne(top *Node, expr string) *Node {
-	t := xmlCore.Select(CreateXPathNavigator(top), expr)
+	t := gxpath.Select(CreateXPathNavigator(top), expr)
 	var elem *Node
 	if t.MoveNext() {
 		elem = (t.Current().(*xmlNodeNavigator)).curr
@@ -59,7 +59,7 @@ func FindOne(top *Node, expr string) *Node {
 
 // FindEach searches the html.Node and calls functions cb.
 func FindEach(top *Node, expr string, cb func(int, *Node)) {
-	t := xmlCore.Select(CreateXPathNavigator(top), expr)
+	t := gxpath.Select(CreateXPathNavigator(top), expr)
 	var i int
 	for t.MoveNext() {
 		cb(i, (t.Current().(*xmlNodeNavigator)).curr)

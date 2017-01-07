@@ -1,11 +1,11 @@
-package xmlCore
+package gxpath
 
 import (
 	"bytes"
 	"strings"
 	"testing"
 
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/xpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/xpath"
 )
 
 var html *TNode = example()

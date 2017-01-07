@@ -3,7 +3,7 @@ package query
 import (
 	"reflect"
 
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/xpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/xpath"
 )
 
 // An XPath query interface.

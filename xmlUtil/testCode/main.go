@@ -36,10 +36,10 @@ func main() {
 		return
 	}
 
-	root.OutALL()
+	//root.OutALL()
 
 	// document.OutALL()
-	nodes := root.SelectElements("//*[@id='1']")
+	nodes := root.SelectElements("html/body")
 	if nodes == nil {
 		fmt.Println("节点后去失败")
 		return
@@ -48,4 +48,5 @@ func main() {
 	for i, node := range nodes {
 		fmt.Println("index:", i, "  name:", node.NodeName)
 	}
+
 }

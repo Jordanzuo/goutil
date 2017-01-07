@@ -1,9 +1,9 @@
-package xmlCore
+package gxpath
 
 import (
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/internal/build"
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/internal/query"
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/xpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/internal/build"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/internal/query"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/xpath"
 )
 
 // NodeIterator holds all matched Node object.
@@ -35,7 +35,6 @@ func Select(root xpath.NodeNavigator, expr string) *NodeIterator {
 	if err != nil {
 		panic(err)
 	}
-
 	t := &NodeIterator{query: qy, node: root}
 	return t
 }

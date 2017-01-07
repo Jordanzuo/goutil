@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/internal/query"
-	"github.com/Jordanzuo/goutil/xmlUtil/xmlCore/xpath"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/internal/query"
+	"github.com/Jordanzuo/goutil/xmlUtil/gxpath/xpath"
 )
 
 func predicate(q query.Query) func(xpath.NodeNavigator) bool {

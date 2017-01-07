@@ -217,8 +217,21 @@ func LoadFromReader(r io.Reader) (*Node, error) {
 			//if !declared { // if have no xml node，we also need add children
 			//	return nil, errors.New("xml: document is invalid")
 			//}
+			// if there is no xml node.then create it
 			if declared == false {
 				level++
+
+				tmpNode := &Node{Type: DeclarationNode, level: level}
+				addAttr(tmpNode, "version", "1.0")
+				addAttr(tmpNode, "encoding", "UTF-8")
+				declared = true
+				if level == prev.level {
+					addSibling(prev, tmpNode)
+				} else if level > prev.level {
+					addChild(prev, tmpNode)
+				}
+
+				prev = tmpNode
 			}
 			node := &Node{
 				Type:      ElementNode,
