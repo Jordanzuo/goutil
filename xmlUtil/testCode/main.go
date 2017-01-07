@@ -6,6 +6,7 @@ import (
 	"github.com/Jordanzuo/goutil/xmlUtil"
 )
 
+// <?xml version="1.0" encoding="UTF-8"?>
 var xml string = `
 		<html lang="en">
 		   <head>
@@ -35,14 +36,16 @@ func main() {
 		return
 	}
 
+	root.OutALL()
+
 	// document.OutALL()
-	nodes := root.SelectElements("//@id")
+	nodes := root.SelectElements("//*[@id='1']")
 	if nodes == nil {
 		fmt.Println("节点后去失败")
 		return
 	}
 
 	for i, node := range nodes {
-		fmt.Println("index:", i, "  name:", node.Namespace)
+		fmt.Println("index:", i, "  name:", node.Data)
 	}
 }

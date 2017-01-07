@@ -2,6 +2,7 @@ package xmlUtil
 
 import (
 	"bytes"
+	"container/list"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -129,6 +130,33 @@ func (n *Node) AttributeLen() int {
 	return len(n.Attr)
 }
 
+// 输出所有
+func (this *Node) OutALL() {
+	stack := list.New()
+	tmpItem := this
+	for {
+		if tmpItem != nil {
+			stack.PushBack(tmpItem)
+			tmpItem = tmpItem.NextSibling
+		}
+
+		break
+	}
+
+	for {
+		if stack.Len() <= 0 {
+			break
+		}
+
+		nowNode := stack.Front().Value.(*Node)
+		stack.Remove(stack.Front())
+		for _, item := range nowNode.Children() {
+			stack.PushFront(item)
+		}
+
+		fmt.Println("name:", nowNode.Data, " level: ", nowNode.level, " attr:", nowNode.Attr)
+	}
+}
 func addAttr(n *Node, key, val string) {
 	var attr xml.Attr
 	if i := strings.Index(key, ":"); i > 0 {
@@ -169,7 +197,7 @@ func addSibling(sibling, n *Node) {
 
 func ParseXML(r io.Reader) (*Node, error) {
 	var (
-		decoder  = xml.NewDecoder(r)
+		decoder  = xml.NewDecoder(r) //// xml解码对象
 		doc      = &Node{Type: DocumentNode}
 		level    = 0
 		declared = false
@@ -186,8 +214,11 @@ func ParseXML(r io.Reader) (*Node, error) {
 
 		switch tok := tok.(type) {
 		case xml.StartElement:
-			if !declared {
-				return nil, errors.New("xml: document is invalid")
+			//if !declared { // if have no xml node，we also need add children
+			//	return nil, errors.New("xml: document is invalid")
+			//}
+			if declared == false {
+				level++
 			}
 			node := &Node{
 				Type:      ElementNode,
