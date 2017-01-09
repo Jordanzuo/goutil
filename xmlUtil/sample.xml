@@ -1,0 +1,20 @@
+﻿<html lang="en">
+   <head>
+	   <title>  <!-- 阿斯大三大四的 -->      
+	   这里有中文哦</title>
+	   <meta name="language" content="en"/>
+   </head>
+   <body>
+		<h1> This is a H1 </h1>
+		<ul>
+			<li><a id="1" href="/">阿萨德</a></li>
+			<li><a id="2" href="/about">哈哈哈</a></li>
+			<li><a id="3" href="/account">他写的</a></li>
+			<li></li>
+		</ul>
+		<p>
+			Hello,This is an example for gxpath.
+		</p>
+		<footer>footer script</footer>
+   </body>
+</html>

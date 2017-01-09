@@ -2,6 +2,7 @@ package configUtil
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Jordanzuo/goutil/typeUtil"
 	"github.com/Jordanzuo/goutil/xmlUtil"
@@ -96,6 +97,7 @@ func (this *XmlConfig) DefaultInt64(xpath string, attrName string, defaultval in
 	if err != nil {
 		return defaultval
 	}
+
 	return v
 
 }
@@ -126,6 +128,7 @@ func (this *XmlConfig) DefaultFloat(xpath string, attrName string, defaultval fl
 	if err != nil {
 		return defaultval
 	}
+
 	return v
 }
 
@@ -146,10 +149,11 @@ func (this *XmlConfig) String(xpath string, attrName string) (string, error) {
 //　返回值：
 // string:结果
 func (this *XmlConfig) DefaultString(xpath string, attrName string, defaultval string) string {
-	v, _ := this.String(xpath, attrName)
-	if v == "" {
+	v, errMsg := this.String(xpath, attrName)
+	if errMsg != nil {
 		return defaultval
 	}
+
 	return v
 }
 
@@ -180,7 +184,7 @@ func (this *XmlConfig) getVal(xpath string, attrName string) (string, error) {
 
 	val := ""
 	if attrName == "" {
-		val = targetRoot.InnerText()
+		val = strings.TrimSpace(targetRoot.InnerText())
 	} else {
 		val = targetRoot.SelectAttr(attrName)
 	}

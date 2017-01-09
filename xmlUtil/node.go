@@ -14,13 +14,23 @@ import (
 type NodeType uint
 
 const (
+	// 文档对象节点（根节点）
 	DocumentNode NodeType = iota
+
+	// 头不声明节点
 	DeclarationNode
+
+	// 元素节点
 	ElementNode
+
+	// 节点文本
 	TextNode
+
+	// 注释
 	CommentNode
 )
 
+// xml节点对象
 type Node struct {
 	Parent, FirstChild, LastChild, PrevSibling, NextSibling *Node
 
@@ -40,8 +50,14 @@ func (n *Node) InnerText() string {
 
 	var buf bytes.Buffer
 	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		// filt commentnode
+		if child.Type == CommentNode {
+			continue
+		}
+
 		buf.WriteString(child.InnerText())
 	}
+
 	return buf.String()
 }
 
@@ -130,7 +146,7 @@ func (n *Node) AttributeLen() int {
 	return len(n.Attr)
 }
 
-// 输出所有
+// 输出所有(主要用于测试)
 func (this *Node) OutALL() {
 	stack := list.New()
 	tmpItem := this
@@ -157,6 +173,34 @@ func (this *Node) OutALL() {
 		fmt.Println("name:", nowNode.NodeName, " level: ", nowNode.level, " attr:", nowNode.Attr)
 	}
 }
+
+// SelectElements finds child elements with the specified name.
+func (n *Node) SelectElements(name string) []*Node {
+	return Find(n, name)
+}
+
+// SelectElements finds child elements with the specified name.
+func (n *Node) SelectElement(name string) *Node {
+	return FindOne(n, name)
+}
+
+// SelectAttr returns the attribute value with the specified name.
+func (n *Node) SelectAttr(name string) string {
+	var local, space string
+	local = name
+	if i := strings.Index(name, ":"); i > 0 {
+		space = name[:i]
+		local = name[i+1:]
+	}
+	for _, attr := range n.Attr {
+		if attr.Name.Local == local && attr.Name.Space == space {
+			return attr.Value
+		}
+	}
+	return ""
+}
+
+// 给节点添加属性值
 func addAttr(n *Node, key, val string) {
 	var attr xml.Attr
 	if i := strings.Index(key, ":"); i > 0 {
@@ -174,6 +218,7 @@ func addAttr(n *Node, key, val string) {
 	n.Attr = append(n.Attr, attr)
 }
 
+// 给节点添加子节点
 func addChild(parent, n *Node) {
 	n.Parent = parent
 	if parent.FirstChild == nil {
@@ -186,6 +231,7 @@ func addChild(parent, n *Node) {
 	parent.LastChild = n
 }
 
+// 给节点添加兄弟节点
 func addSibling(sibling, n *Node) {
 	n.Parent = sibling.Parent
 	sibling.NextSibling = n
@@ -195,6 +241,7 @@ func addSibling(sibling, n *Node) {
 	}
 }
 
+// 从reader里面加载xml文档
 func LoadFromReader(r io.Reader) (*Node, error) {
 	var (
 		decoder  = xml.NewDecoder(r) //// xml解码对象
