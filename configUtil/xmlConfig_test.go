@@ -187,7 +187,8 @@ func getxmlConfigData() (xmlConfigData *XmlConfig, errMsg error) {
 	var root *xmlUtil.Node
 	root, errMsg = xmlUtil.LoadFromString(content)
 	if errMsg == nil {
-		xmlConfigData = NewXmlConfig(root)
+		xmlConfigData = NewXmlConfig()
+		xmlConfigData.LoadFromXmlNode(root)
 	}
 
 	return

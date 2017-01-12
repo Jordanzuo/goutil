@@ -8,9 +8,11 @@ import (
 type MapData map[string]interface{}
 
 // 创建新的MapData
-// 返回新的Map对象
-func NewMapData() MapData {
-	return MapData(make(map[string]interface{}))
+// mapData:原有的map数据
+// 返回
+// 新的Map对象
+func NewMapData(mapData map[string]interface{}) MapData {
+	return MapData(mapData)
 }
 
 // 类型转换为int

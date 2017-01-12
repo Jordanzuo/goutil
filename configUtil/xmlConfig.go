@@ -12,6 +12,43 @@ type XmlConfig struct {
 	root *xmlUtil.Node
 }
 
+// 从文件加载
+// xmlFilePath:xml文件路径
+// 返回值:
+// error:错误信息
+func (this *XmlConfig) LoadFromFile(xmlFilePath string) error {
+	if this.root != nil {
+		return fmt.Errorf("have loaded")
+	}
+
+	root, errMsg := xmlUtil.LoadFromFile(xmlFilePath)
+	if errMsg != nil {
+		return errMsg
+	}
+
+	this.root = root
+
+	return nil
+}
+
+// 从node节点加载（会取其根节点）
+// xmlRoot:xml节点
+// 返回值:
+// error:错误信息
+func (this *XmlConfig) LoadFromXmlNode(xmlRoot *xmlUtil.Node) error {
+	if this.root != nil {
+		return fmt.Errorf("have loaded")
+	}
+
+	if xmlRoot == nil {
+		return fmt.Errorf("xmlRoot is nil")
+	}
+
+	this.root = xmlRoot
+
+	return nil
+}
+
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
@@ -193,8 +230,6 @@ func (this *XmlConfig) getVal(xpath string, attrName string) (string, error) {
 }
 
 // 创建新的xml配置对象
-func NewXmlConfig(_root *xmlUtil.Node) *XmlConfig {
-	return &XmlConfig{
-		root: _root,
-	}
+func NewXmlConfig() *XmlConfig {
+	return &XmlConfig{}
 }
