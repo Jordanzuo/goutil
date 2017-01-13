@@ -92,6 +92,29 @@ func SplitToIntSlice(s, sep string) ([]int, error) {
 	return intSlice, nil
 }
 
+// 将字符串切割为[]int32
+// str:输入字符串
+// 返回值:
+// []int
+// error
+func SplitToInt32Slice(s, sep string) ([]int32, error) {
+	// 先获得int slice
+	count := 0
+	if intSlice, err := SplitToIntSlice(s, sep); err != nil {
+		return nil, err
+	} else {
+		count = len(intSlice)
+	}
+
+	// 定义int32 slice
+	int32Slice := make([]int32, 0, count)
+	for _, item := range int32Slice {
+		int32Slice = append(int32Slice, int32(item))
+	}
+
+	return int32Slice, nil
+}
+
 // 检查一个字符串是否是空字符串
 // content:上下文字符串
 // 返回值：
