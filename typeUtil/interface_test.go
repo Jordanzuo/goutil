@@ -5,6 +5,39 @@ import (
 )
 
 // 转换为int测试
+func TestToInt32(t *testing.T) {
+	_, errMsg := Int32(1)
+	if errMsg != nil {
+		t.Error("int=>int32 error")
+		return
+	}
+
+	_, errMsg = Int32(1.1)
+	if errMsg != nil {
+		t.Error("float=>int32 error")
+		return
+	}
+
+	_, errMsg = Int32(1.1)
+	if errMsg != nil {
+		t.Error("float=>int32 error")
+		return
+	}
+
+	_, errMsg = Int32("1")
+	if errMsg != nil {
+		t.Error("int string=>int32 error")
+		return
+	}
+
+	_, errMsg = Int32("1.1")
+	if errMsg != nil {
+		t.Error("float string=>int32 error")
+		return
+	}
+}
+
+// 转换为int测试
 func TestToInt(t *testing.T) {
 	_, errMsg := Int(1)
 	if errMsg != nil {

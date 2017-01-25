@@ -5,6 +5,66 @@ import (
 	"strconv"
 )
 
+// 类型转换为int32
+// 返回值:
+// int:结果
+// error:错误数据
+func Int32(val interface{}) (int32, error) {
+	if val == nil {
+		return 0, fmt.Errorf("val is nil")
+	}
+
+	switch val.(type) {
+	case int:
+		return int32(val.(int)), nil
+	case int32:
+		return val.(int32), nil
+	case int64:
+		return int32(val.(int64)), nil
+	case int8:
+		return int32(val.(int8)), nil
+	case int16:
+		return int32(val.(int16)), nil
+	case float32:
+		return int32(val.(float32)), nil
+	case float64:
+		return int32(val.(float64)), nil
+	case string:
+		result, errMsg := strconv.ParseFloat(val.(string), 64)
+		if errMsg != nil {
+			return 0, fmt.Errorf("string convert error")
+		}
+
+		return int32(result), nil
+	}
+
+	return 0, fmt.Errorf("val is not base type")
+}
+
+// 转换为Int列表
+// val:待转换的数据列表
+// 返回值:
+// []int:结果
+// error:错误数据
+func Int32Array(val []interface{}) ([]int32, error) {
+	array := make([]int32, 0, len(val))
+	if val == nil {
+		return array, fmt.Errorf("val is nil")
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, errMsg := Int32(item)
+		if errMsg != nil {
+			return nil, errMsg
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, nil
+}
+
 // 类型转换为int
 // 返回值:
 // int:结果
