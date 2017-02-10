@@ -19,6 +19,19 @@ func NewMapData(mapData map[string]interface{}) MapData {
 // 返回值:
 // int:结果
 // error:错误数据
+func (this MapData) Int32(key string) (int32, error) {
+	val, isExist := this[key]
+	if isExist == false || val == nil {
+		return 0, fmt.Errorf("no exist target key")
+	}
+
+	return Int32(val)
+}
+
+// 类型转换为int
+// 返回值:
+// int:结果
+// error:错误数据
 func (this MapData) Int(key string) (int, error) {
 	val, isExist := this[key]
 	if isExist == false || val == nil {
