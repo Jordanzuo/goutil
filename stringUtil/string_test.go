@@ -37,8 +37,8 @@ func TestSubstr(t *testing.T) {
 
 	guid1 := GetNewGUID()
 	guid2 := GetNewGUID()
-	fmt.Printf("guid1:%s, guid2:%s", guid1, guid2)
-	fmt.Println("length of %s is %d", guid1, len(guid1))
+	fmt.Printf("guid1:%s, guid2:%s,", guid1, guid2)
+	fmt.Printf("length of %s is %d\n", guid1, len(guid1))
 	if guid1 == guid2 {
 		t.Errorf("%s should not be equal with %s", guid1, guid2)
 	}
