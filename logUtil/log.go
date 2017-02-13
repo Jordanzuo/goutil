@@ -23,7 +23,7 @@ const (
 )
 
 var (
-	logPath string = "DefaultLogPath"
+	logPath = "DefaultLogPath"
 )
 
 func writeLog(logObj *logObject) {
