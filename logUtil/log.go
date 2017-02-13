@@ -1,7 +1,6 @@
 package logUtil
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -24,7 +23,7 @@ const (
 )
 
 var (
-	logPath string
+	logPath string = "DefaultLogPath"
 )
 
 func writeLog(logObj *logObject) {
@@ -85,11 +84,6 @@ func GetLogPath() string {
 // ifIncludeHour：日志文件名称是否包含小时
 // 返回值：无
 func Log(logInfo string, level logType, ifIncludeHour bool) {
-	// 判断路径是否为空
-	if logPath == "" {
-		panic(errors.New("日志存放路径不能为空，请先设置"))
-	}
-
 	// 获取当前时间
 	now := time.Now()
 
