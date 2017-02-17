@@ -135,13 +135,13 @@ func WriteFile(filePath, fileName string, ifAppend bool, args ...string) {
 	}
 	mutex.Unlock()
 
-	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以读写模式打开。)
+	// 打开文件(如果文件存在就以写模式打开，并追加写入；如果文件不存在就创建，然后以写模式打开。)
 	var f *os.File
 	var err error
 	if ifAppend == false {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm|os.ModeTemporary)
 	} else {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm|os.ModeTemporary)
 	}
 
 	if err != nil {
