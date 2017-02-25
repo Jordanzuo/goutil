@@ -2,6 +2,8 @@ package typeUtil
 
 import (
 	"testing"
+
+	"github.com/Jordanzuo/goutil/timeUtil"
 )
 
 // 转换为int测试
@@ -133,5 +135,35 @@ func TestToString(t *testing.T) {
 	if errMsg != nil {
 		t.Error("float string=>String error")
 		return
+	}
+}
+
+// 转换为时间类型
+func TestToDateTime(t *testing.T) {
+	timeVal := "2017-02-14 05:20:00"
+	val, errMsg := DateTime(timeVal)
+	if errMsg != nil {
+		t.Error(errMsg)
+		return
+	} else {
+		t.Log("转换的时间为:", val)
+	}
+
+	val, _ = timeUtil.ToDateTime(timeVal)
+	val, errMsg = DateTime(val)
+	if errMsg != nil {
+		t.Error(errMsg)
+		return
+	} else {
+		t.Log("转换的时间为:", val)
+	}
+
+	val, _ = timeUtil.ToDateTime(timeVal)
+	val, errMsg = DateTime(val.Unix())
+	if errMsg != nil {
+		t.Error(errMsg)
+		return
+	} else {
+		t.Log("转换的时间为:", val)
 	}
 }

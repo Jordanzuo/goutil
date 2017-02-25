@@ -3,6 +3,9 @@ package typeUtil
 import (
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/Jordanzuo/goutil/timeUtil"
 )
 
 // 类型转换为int32
@@ -351,6 +354,98 @@ func StringArray(val []interface{}) ([]string, error) {
 	// 转换成数组
 	for _, item := range val {
 		tmpResult, errMsg := String(item)
+		if errMsg != nil {
+			return nil, errMsg
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, fmt.Errorf("val is not base type")
+}
+
+// 转换成时间格式
+// val:待转换的数据,如果是字符串，则要求是格式:2006-01-02 15:04:05
+// *time.Time:转换结果
+// error:转换的错误信息
+func DateTime(val interface{}) (time.Time, error) {
+	if val == nil {
+		return time.Time{}, fmt.Errorf("val is nil")
+	}
+
+	switch val.(type) {
+	case time.Time:
+		return val.(time.Time), nil
+	case string:
+		return timeUtil.ToDateTime(val.(string))
+	case int, int64, float32, float64:
+		intVal, _ := Int64(val)
+		return time.Unix(intVal, 0).Local(), nil
+	default:
+		return time.Time{}, fmt.Errorf("unknown data type")
+	}
+}
+
+// 转换成时间格式
+// val:待转换的数据,如果是字符串，则要求是格式:2006-01-02 15:04:05
+// *time.Time:转换结果
+// error:转换的错误信息
+func DateTimeArray(val []interface{}) ([]time.Time, error) {
+	array := make([]time.Time, 0, len(val))
+	if val == nil {
+		return array, fmt.Errorf("val is nil")
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, errMsg := DateTime(item)
+		if errMsg != nil {
+			return nil, errMsg
+		}
+
+		array = append(array, tmpResult)
+	}
+
+	return array, fmt.Errorf("val is not base type")
+}
+
+// 转换成时间格式
+// val:待转换的数据,如果是字符串，则使用format进行转换
+// format:时间格式
+// *time.Time:转换结果
+// error:转换的错误信息
+func DateTimeByFormat(val interface{}, format string) (time.Time, error) {
+	if val == nil {
+		return time.Time{}, fmt.Errorf("val is nil")
+	}
+
+	switch val.(type) {
+	case time.Time:
+		return val.(time.Time), nil
+	case string:
+		return time.ParseInLocation(val.(string), format, time.Local)
+	case int, int64, float32, float64:
+		intVal, _ := Int64(val)
+		return time.Unix(intVal, 0).Local(), nil
+	default:
+		return time.Time{}, fmt.Errorf("unknown data type")
+	}
+}
+
+// 转换成时间格式
+// val:待转换的数据,如果是字符串，则使用format进行转换
+// format:时间格式
+// *time.Time:转换结果
+// error:转换的错误信息
+func DateTimeArrayByFormat(val []interface{}, format string) ([]time.Time, error) {
+	array := make([]time.Time, 0, len(val))
+	if val == nil {
+		return array, fmt.Errorf("val is nil")
+	}
+
+	// 转换成数组
+	for _, item := range val {
+		tmpResult, errMsg := DateTimeByFormat(item, format)
 		if errMsg != nil {
 			return nil, errMsg
 		}
