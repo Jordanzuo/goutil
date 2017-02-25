@@ -8,7 +8,47 @@ import (
 	"github.com/Jordanzuo/goutil/timeUtil"
 )
 
+// 字节数据类型转换
+// val:待转换的值
+// 返回值:
+// byte:结果
+// error:错误数据
+func Byte(val interface{}) (byte, error) {
+	if val == nil {
+		return 0, fmt.Errorf("val is nil")
+	}
+
+	switch val.(type) {
+	case byte:
+		return val.(byte), nil
+	case int:
+		return byte(val.(int)), nil
+	case int32:
+		return byte(val.(int32)), nil
+	case int64:
+		return byte(val.(int64)), nil
+	case int8:
+		return byte(val.(int8)), nil
+	case int16:
+		return byte(val.(int16)), nil
+	case float32:
+		return byte(val.(float32)), nil
+	case float64:
+		return byte(val.(float64)), nil
+	case string:
+		result, errMsg := strconv.ParseFloat(val.(string), 64)
+		if errMsg != nil {
+			return 0, fmt.Errorf("string convert error")
+		}
+
+		return byte(result), nil
+	}
+
+	return 0, fmt.Errorf("val is not base type")
+}
+
 // 类型转换为int32
+// val:待转换的值
 // 返回值:
 // int:结果
 // error:错误数据
@@ -18,6 +58,8 @@ func Int32(val interface{}) (int32, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return int32(val.(byte)), nil
 	case int:
 		return int32(val.(int)), nil
 	case int32:
@@ -78,6 +120,8 @@ func Int(val interface{}) (int, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return int(val.(byte)), nil
 	case int:
 		return val.(int), nil
 	case int32:
@@ -138,6 +182,8 @@ func Int64(val interface{}) (int64, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return int64(val.(byte)), nil
 	case int:
 		return int64(val.(int)), nil
 	case int32:
@@ -199,16 +245,28 @@ func Float64(val interface{}) (float64, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return float64(val.(byte)), nil
 	case int:
 		return float64(val.(int)), nil
+	case uint:
+		return float64(val.(uint)), nil
 	case int32:
 		return float64(val.(int32)), nil
+	case uint32:
+		return float64(val.(uint32)), nil
 	case int64:
 		return float64(val.(int64)), nil
+	case uint64:
+		return float64(val.(uint64)), nil
 	case int8:
 		return float64(val.(int8)), nil
+	case uint8:
+		return float64(val.(uint8)), nil
 	case int16:
 		return float64(val.(int16)), nil
+	case uint16:
+		return float64(val.(uint16)), nil
 	case float32:
 		return float64(val.(float32)), nil
 	case float64:
@@ -259,16 +317,28 @@ func Bool(val interface{}) (bool, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return (val.(byte)) > 0, nil
 	case int:
-		return int(val.(int)) > 0, nil
+		return (val.(int)) > 0, nil
+	case uint:
+		return (val.(uint)) > 0, nil
 	case int32:
-		return int32(val.(int32)) > 0, nil
+		return (val.(int32)) > 0, nil
+	case uint32:
+		return (val.(uint32)) > 0, nil
 	case int64:
-		return int64(val.(int64)) > 0, nil
+		return (val.(int64)) > 0, nil
+	case uint64:
+		return (val.(uint64)) > 0, nil
 	case int8:
-		return int8(val.(int8)) > 0, nil
+		return (val.(int8)) > 0, nil
+	case uint8:
+		return (val.(uint8)) > 0, nil
 	case int16:
-		return int8(val.(int16)) > 0, nil
+		return (val.(int16)) > 0, nil
+	case uint16:
+		return (val.(uint16)) > 0, nil
 	case float32:
 		return int(val.(float32)) > 0, nil
 	case float64:
@@ -276,7 +346,14 @@ func Bool(val interface{}) (bool, error) {
 	case string:
 		result, errMsg := strconv.ParseBool(val.(string))
 		if errMsg != nil {
-			return false, fmt.Errorf("string convert error")
+			// 先尝试转换成数值值，再进行bool转换
+			var tmpVal float64
+			tmpVal, errMsg = strconv.ParseFloat(val.(string), 64)
+			if errMsg != nil {
+				return false, fmt.Errorf("string convert error")
+			}
+
+			result = int(tmpVal) > 0
 		}
 
 		return result, nil
@@ -319,16 +396,28 @@ func String(val interface{}) (string, error) {
 	}
 
 	switch val.(type) {
+	case byte:
+		return string(val.(byte)), nil
 	case int:
 		return string(val.(int)), nil
+	case uint:
+		return string(val.(uint)), nil
 	case int32:
 		return string(val.(int32)), nil
+	case uint32:
+		return string(val.(uint32)), nil
 	case int64:
 		return string(val.(int64)), nil
+	case uint64:
+		return string(val.(uint64)), nil
 	case int8:
 		return string(val.(int8)), nil
+	case uint8:
+		return string(val.(uint8)), nil
 	case int16:
 		return string(val.(int16)), nil
+	case uint16:
+		return string(val.(uint16)), nil
 	case float32:
 		return strconv.FormatFloat(float64(val.(float32)), 'F', 5, 32), nil
 	case float64:
