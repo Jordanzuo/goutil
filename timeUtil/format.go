@@ -1,6 +1,7 @@
 package timeUtil
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -153,29 +154,19 @@ func ToDateTimeString(timeVal time.Time) string {
 }
 
 // 转换成日期格式
-func ToDateTime(timeVal string) time.Time {
+func ToDateTime(timeVal string) (time.Time, error) {
 	if stringUtil.IsEmpty(timeVal) {
-		return time.Time{}
+		return time.Time{}, fmt.Errorf("timeval is empty")
 	}
 
-	tmpval, errMsg := time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
-	if errMsg != nil {
-		return time.Time{}
-	}
-
-	return tmpval
+	return time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
 }
 
 // 转换成时间格式
-func ToDate(timeVal string) time.Time {
+func ToDate(timeVal string) (time.Time, error) {
 	if stringUtil.IsEmpty(timeVal) {
-		return time.Time{}
+		return time.Time{}, fmt.Errorf("timeval is empty")
 	}
 
-	tmpval, errMsg := time.ParseInLocation("2006-01-02", timeVal, time.Local)
-	if errMsg != nil {
-		return time.Time{}
-	}
-
-	return tmpval
+	return time.ParseInLocation("2006-01-02", timeVal, time.Local)
 }
