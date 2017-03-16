@@ -2,6 +2,7 @@ package redisUtil
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"testing"
 	"time"
@@ -26,6 +27,13 @@ func TestGetAddress(t *testing.T) {
 	exptectedAddress := "10.1.0.21:6379"
 	if actualAddress := redisPoolObj.GetAddress(); actualAddress != exptectedAddress {
 		t.Errorf("GetAddress should be %s, but got %s", exptectedAddress, actualAddress)
+	}
+}
+
+func TestTest(t *testing.T) {
+	if err := redisPoolObj.Test(); err != nil {
+		t.Errorf("Test connection failed, err:%s", err)
+		os.Exit(1)
 	}
 }
 

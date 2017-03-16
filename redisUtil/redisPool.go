@@ -42,6 +42,16 @@ func (this *RedisPool) GetConnection() redis.Conn {
 	return this.pool.Get()
 }
 
+// 测试连接
+// 返回值:
+// 错误对象
+func (this *RedisPool) Test() error {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	return this.pool.TestOnBorrow(conn, time.Now())
+}
+
 // 关闭自定义连接池
 func (this *RedisPool) Close() {
 	this.pool.Close()
