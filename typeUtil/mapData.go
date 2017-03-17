@@ -169,5 +169,5 @@ func (this MapData) Interface(key string) (interface{}, error) {
 		return nil, fmt.Errorf("no exist target key")
 	}
 
-	return val
+	return val, nil
 }
