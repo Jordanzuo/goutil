@@ -580,6 +580,8 @@ func Bool(val interface{}) (bool, error) {
 		return int(val.(float32)) > 0, nil
 	case float64:
 		return int(val.(float64)) > 0, nil
+	case bool:
+		return val.(bool), nil
 	case string:
 		result, errMsg := strconv.ParseBool(val.(string))
 		if errMsg != nil {

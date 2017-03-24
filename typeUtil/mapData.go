@@ -158,3 +158,16 @@ func (this MapData) DateTime(key string) (time.Time, error) {
 
 	return DateTime(val)
 }
+
+// 获取指定的值
+// 返回值:
+// interface{}:结果
+// error:错误信息
+func (this MapData) Interface(key string) (interface{}, error) {
+	val, isExist := this[key]
+	if isExist == false || val == nil {
+		return nil, fmt.Errorf("no exist target key")
+	}
+
+	return val, nil
+}
