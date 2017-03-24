@@ -170,3 +170,15 @@ func ToDate(timeVal string) (time.Time, error) {
 
 	return time.ParseInLocation("2006-01-02", timeVal, time.Local)
 }
+
+// 转换成yyyyMMddHHmmssms的格式
+func ToInt64(timeVal time.Time) int64 {
+	year := timeVal.Year()
+	month := int(timeVal.Month())
+	day := timeVal.Day()
+	hour := timeVal.Hour()
+	minute := timeVal.Minute()
+	second := timeVal.Second()
+
+	return int64(year*1e10) + int64(month*1e8) + int64(day*1e6) + int64(hour*1e4) + int64(minute*1e2) + int64(second)
+}
