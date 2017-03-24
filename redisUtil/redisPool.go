@@ -374,6 +374,59 @@ func (this *RedisPool) RPop(key string) (item string, exists bool, err error) {
 	return
 }
 
+// 让指定Key递增1
+// key:key
+// 返回值:
+// 递增之后的值
+// 错误对象
+func (this *RedisPool) Incr(key string) (item int64, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	item, err = redis.Int64(conn.Do("INCR", key))
+	return
+}
+
+// 让指定Key递增指定值
+// key:key
+// increment:增加值
+// 返回值:
+// 增加之后的值
+// 错误对象
+func (this *RedisPool) IncrBy(key string, increment int64) (item int64, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	item, err = redis.Int64(conn.Do("INCRBY", key, increment))
+	return
+}
+
+// 让指定key递减1
+// key:key
+// 返回值:
+// 递减之后的值
+// 错误对象
+func (this *RedisPool) Decr(key string) (item int64, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	item, err = redis.Int64(conn.Do("DECR", key))
+	return
+}
+
+// 让指定key递减指定值
+// key:key
+// 返回值:
+// 递减之后的值
+// 错误对象
+func (this *RedisPool) DecrBy(key string, decrement int64) (item int64, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	item, err = redis.Int64(conn.Do("DECRBY", key, decrement))
+	return
+}
+
 // 创建新的Redis连接池对象
 // _name:连接池对象名称
 // _address:Redis服务器连接地址

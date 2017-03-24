@@ -305,3 +305,127 @@ func TestLRange(t *testing.T) {
 		t.Errorf("RPOP should be not exists, but now exists")
 	}
 }
+
+func TestIncr(t *testing.T) {
+	key := "OrderSeed"
+	var count int64
+	var expected int64
+	var err error
+	var effected int
+
+	if count, err = redisPoolObj.Incr(key); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+
+	expected = 1
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if count, err = redisPoolObj.Incr(key); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+	expected = 2
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if effected, err = redisPoolObj.Del(key); err != nil {
+		t.Errorf("Del failed, err:%s", err)
+	} else if effected != 1 {
+		t.Errorf("Del should return 1, but now return %d", count)
+	}
+}
+
+func TestIncrBy(t *testing.T) {
+	key := "OrderSeed"
+	var count int64
+	var expected int64
+	var err error
+	var effected int
+
+	if count, err = redisPoolObj.IncrBy(key, 2); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+
+	expected = 2
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if count, err = redisPoolObj.IncrBy(key, 3); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+	expected = 5
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if effected, err = redisPoolObj.Del(key); err != nil {
+		t.Errorf("Del failed, err:%s", err)
+	} else if effected != 1 {
+		t.Errorf("Del should return 1, but now return %d", count)
+	}
+}
+
+func TestDecr(t *testing.T) {
+	key := "OrderSeed"
+	var count int64
+	var expected int64
+	var err error
+	var effected int
+
+	if count, err = redisPoolObj.Decr(key); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+
+	expected = -1
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if count, err = redisPoolObj.Decr(key); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+	expected = -2
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if effected, err = redisPoolObj.Del(key); err != nil {
+		t.Errorf("Del failed, err:%s", err)
+	} else if effected != 1 {
+		t.Errorf("Del should return 1, but now return %d", count)
+	}
+}
+
+func TestDecrBy(t *testing.T) {
+	key := "OrderSeed"
+	var count int64
+	var expected int64
+	var err error
+	var effected int
+
+	if count, err = redisPoolObj.DecrBy(key, 2); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+
+	expected = -2
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if count, err = redisPoolObj.DecrBy(key, 3); err != nil {
+		t.Errorf("Incr falied, err:%s", err)
+	}
+	expected = -5
+	if count != expected {
+		t.Errorf("Expected %d, but now got %d.", expected, count)
+	}
+
+	if effected, err = redisPoolObj.Del(key); err != nil {
+		t.Errorf("Del failed, err:%s", err)
+	} else if effected != 1 {
+		t.Errorf("Del should return 1, but now return %d", count)
+	}
+}
