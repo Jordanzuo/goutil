@@ -1,4 +1,4 @@
-package smsTool
+package smsUtil
 
 import (
 	"testing"
