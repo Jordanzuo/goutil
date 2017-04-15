@@ -30,11 +30,11 @@ func TestQCloudMsg(t *testing.T) {
 }
 
 func TestQCloudSend(t *testing.T) {
-	q := qcloud.New("1400027050", "a4bfbf5df3043ee858dd21a8ae80d8be")
+	q := qcloud.New("123123123123", "123123123123123213")
 	sms, err := q.TmplSms([]string{"86"},
 		[]string{"10000000000"},
 		14176, []string{"9527"},
-		"摩奇互娱", "", "hello-world!")
+		"hello", "", "hello-world!")
 	if err != nil {
 		t.Errorf("qcloud.NewSms (type:tmpl) error: %v", err)
 		return
