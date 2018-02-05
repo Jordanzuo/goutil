@@ -83,9 +83,15 @@ func GetRandNumList(minValue, maxValue, count int, ifAllowDuplicate bool) ([]int
 	resultList := make([]int, 0, count)
 
 	// 获取随机的索引列表
-	randIndextList := getRandIndexList(count, ifAllowDuplicate)
+	randIndextList := getRandIndexList(len(source), ifAllowDuplicate)
 	for _, index := range randIndextList {
+		// 判断是否已经取到足够数量的数据？
+		if count <= 0 {
+			break
+		}
+
 		resultList = append(resultList, source[index])
+		count -= 1
 	}
 
 	return resultList, nil
@@ -107,9 +113,15 @@ func GetRandIntList(source []int, count int, ifAllowDuplicate bool) ([]int, erro
 	resultList := make([]int, 0, count)
 
 	// 获取随机的索引列表
-	randIndextList := getRandIndexList(count, ifAllowDuplicate)
+	randIndextList := getRandIndexList(len(source), ifAllowDuplicate)
 	for _, index := range randIndextList {
+		// 判断是否已经取到足够数量的数据？
+		if count <= 0 {
+			break
+		}
+
 		resultList = append(resultList, source[index])
+		count -= 1
 	}
 
 	return resultList, nil
@@ -131,9 +143,15 @@ func GetRandInterfaceList(source []interface{}, count int, ifAllowDuplicate bool
 	resultList := make([]interface{}, 0, count)
 
 	// 获取随机的索引列表
-	randIndextList := getRandIndexList(count, ifAllowDuplicate)
+	randIndextList := getRandIndexList(len(source), ifAllowDuplicate)
 	for _, index := range randIndextList {
+		// 判断是否已经取到足够数量的数据？
+		if count <= 0 {
+			break
+		}
+
 		resultList = append(resultList, source[index])
+		count -= 1
 	}
 
 	return resultList, nil
@@ -181,4 +199,37 @@ func getRandIndexList(count int, ifAllowDuplicate bool) []int {
 	}
 
 	return randIndextList
+}
+
+// 获取带权重的随机数据
+// source:源数据
+// 返回值
+// 数据项
+// 错误对象
+func GetRandWeight(source []IWeight) (result IWeight, err error) {
+	if source == nil || len(source) == 0 {
+		err = errors.New("待随机的列表为空")
+		return
+	}
+
+	// 计算出总的数据量，并随机一个[0, total)的值
+	total := 0
+	for _, item := range source {
+		total += item.GetWeight()
+	}
+
+	randNum := GetRandInt(total)
+
+	// 根据随机出来的值，判断位于哪个区间
+	total = 0
+	for _, item := range source {
+		total += item.GetWeight()
+		if randNum < total {
+			result = item
+			return
+		}
+	}
+
+	err = errors.New("未找到有效的数据")
+	return
 }

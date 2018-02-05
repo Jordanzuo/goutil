@@ -8,6 +8,7 @@ redisUtil对Redis的连接池进行了一定程度的封装
 package redisUtil
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -42,14 +43,16 @@ func (this *RedisPool) GetConnection() redis.Conn {
 	return this.pool.Get()
 }
 
-// 测试连接
+// 测试连接情况
 // 返回值:
 // 错误对象
-func (this *RedisPool) Test() error {
+func (this *RedisPool) TestConnection() error {
 	conn := this.GetConnection()
 	defer conn.Close()
 
-	return this.pool.TestOnBorrow(conn, time.Now())
+	_, err := conn.Do("PING")
+
+	return err
 }
 
 // 关闭自定义连接池
@@ -165,6 +168,74 @@ func (this *RedisPool) Set(key string, value interface{}) error {
 	_, err := conn.Do("SET", key, value)
 
 	return err
+}
+
+// 设置key和对应的value
+// key:key
+// value:value
+// expireVal:超时时间值
+// expireType:设置的超时类型
+// 返回值:
+// 错误对象
+func (this *RedisPool) Set2(key string, value interface{}, expireType ExpireType, expireVal int) error {
+	if expireType != Expire_Millisecond && expireType != Expire_Seond {
+		return errors.New("ExpireTypeError")
+	}
+
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	_, err := conn.Do("SET", key, value, string(expireType), expireVal)
+
+	return err
+}
+
+// 设置key和对应的value
+// key:key
+// value:value
+// expireVal:超时时间值
+// expireType:设置的超时类型
+// setType:值存储类型
+// 返回值:
+// 错误对象
+func (this *RedisPool) SetDetail(key string, value interface{}, expireType ExpireType, expireVal int, setType SetType) error {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	paramList := []interface{}{key, value}
+
+	// 超时设置组装
+	if expireType != Expire_NoExpire {
+		paramList = append(paramList, string(expireType), expireVal)
+	}
+
+	// 设置组装
+	if setType != Set_Write {
+		paramList = append(paramList, string(setType))
+	}
+
+	_, err := conn.Do("SET", paramList...)
+
+	return err
+}
+
+// 当Key不存在时，设置key和对应的value
+// key:key
+// value:value
+// 返回值:
+// 错误对象
+func (this *RedisPool) SetNX(key string, value interface{}) (success bool, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	result, err := redis.Int(conn.Do("SETNX", key, value))
+	if err != nil {
+		return
+	}
+
+	success = result == 1
+
+	return
 }
 
 // 获取指定key的Hash表的field值
@@ -427,28 +498,157 @@ func (this *RedisPool) DecrBy(key string, decrement int64) (item int64, err erro
 	return
 }
 
-// 创建新的Redis连接池对象
+// 往set中添加value
+// key:set的key
+// values:待添加的值，如果value已经存在，则添加操作仍然成功，只是影响的记录数不会增加
+// 返回值:
+// newCount:影响的记录数
+// err:错误信息
+func (this *RedisPool) SAdd(key string, values ...string) (newCount int, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	args := make([]interface{}, 0, len(values)+1)
+	args = append(args, key)
+	for _, value := range values {
+		args = append(args, value)
+	}
+
+	newCount, err = redis.Int(conn.Do("SADD", args...))
+
+	return
+}
+
+// 获取指定key的set的记录数
+// key:set的key
+// values:待添加的值
+// 返回值:
+// nowCount:当前的记录数
+// err:错误信息
+func (this *RedisPool) SCard(key string) (nowCount int, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	nowCount, err = redis.Int(conn.Do("SCARD", key))
+
+	return
+}
+
+// 查看指定值是否在set中
+// key:set的key
+// values:待添加的值
+// 返回值:
+// isMember:是否是集合的成员
+// err:错误信息
+func (this *RedisPool) SIsMember(key string, value string) (isMember bool, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	isMember, err = redis.Bool(conn.Do("SISMEMBER", key, value))
+
+	return
+}
+
+// 获取指定key的set的记录数
+// key:set的key
+// 返回值:
+// values:获取到的值的个数
+// err:错误信息
+func (this *RedisPool) SMembers(key string) (values []string, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	values, err = redis.Strings(conn.Do("SMEMBERS", key))
+
+	return
+}
+
+// 从set中随机获取一定数量的元素(获取而不移除)
+// key:set的key
+// count:需要获取的记录数，
+//    如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。
+//    如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。
+// 返回值:
+// values:获取的记录集合
+// err:错误信息
+func (this *RedisPool) SRandMember(key string, count int) (values []string, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	values, err = redis.Strings(conn.Do("SRANDMEMBER", key, count))
+
+	return
+}
+
+// 从set中获取并移除一项
+// key:set的key
+// 返回值:
+// value:获取的记录项
+// err:错误信息
+func (this *RedisPool) SPop(key string) (value string, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	value, err = redis.String(conn.Do("SPOP", key))
+
+	return
+}
+
+// 从set移除指定的value
+// key:set的key
+// values:需要移除的value集合（如果value项不存在，执行仍然成功）
+// 返回值:
+// delCount:成功移除的项的个数
+// err:错误信息
+func (this *RedisPool) SRem(key string, values ...string) (delCount int, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	args := make([]interface{}, 0, len(values)+1)
+	args = append(args, key)
+	for _, value := range values {
+		args = append(args, value)
+	}
+
+	delCount, err = redis.Int(conn.Do("SREM", args...))
+
+	return
+}
+
+// 创建新的Redis连接池对象(obsolete，建议使用NewRedisPool2)
 // _name:连接池对象名称
-// _address:Redis服务器连接地址
+// connectionString:Redis服务器连接地址
 // password：Redis服务器连接密码
 // database：Redis服务器选择的数据库
 // maxActive：Redis连接池允许的最大活跃连接数量
 // maxIdle：Redis连接池允许的最大空闲数量
 // idleTimeout：连接被回收前的空闲时间
 // dialConnectTimeout：连接Redis服务器超时时间
-func NewRedisPool(_name, _address, password string, database, maxActive, maxIdle int, idleTimeout, dialConnectTimeout time.Duration) *RedisPool {
+// 返回值：
+// Redis连接池对象
+func NewRedisPool(_name, connectionString, password string, database, maxActive, maxIdle int, idleTimeout, dialConnectTimeout time.Duration) *RedisPool {
+	redisConfig := NewRedisConfig2(connectionString, password, database, maxActive, maxIdle, idleTimeout, dialConnectTimeout)
+	return NewRedisPool2(_name, redisConfig)
+}
+
+// 创建新的Redis连接池对象
+// _name:连接池对象名称
+// redisConfig:Redis配置对象
+// 返回值：
+// Redis连接池对象
+func NewRedisPool2(_name string, redisConfig *RedisConfig) *RedisPool {
 	_pool := &redis.Pool{
-		MaxActive:   maxActive,
-		MaxIdle:     maxIdle,
-		IdleTimeout: idleTimeout,
+		MaxActive:   redisConfig.MaxActive,
+		MaxIdle:     redisConfig.MaxIdle,
+		IdleTimeout: redisConfig.IdleTimeout,
 		Dial: func() (redis.Conn, error) {
 			options := make([]redis.DialOption, 0, 4)
-			options = append(options, redis.DialConnectTimeout(dialConnectTimeout))
-			if password != "" {
-				options = append(options, redis.DialPassword(password))
+			options = append(options, redis.DialConnectTimeout(redisConfig.DialConnectTimeout))
+			if redisConfig.Password != "" {
+				options = append(options, redis.DialPassword(redisConfig.Password))
 			}
-			options = append(options, redis.DialDatabase(database))
-			c, err := redis.Dial("tcp", _address, options...)
+			options = append(options, redis.DialDatabase(redisConfig.Database))
+			c, err := redis.Dial("tcp", redisConfig.ConnectionString, options...)
 			if err != nil {
 				return nil, fmt.Errorf("Dial failed, err:%s", err)
 			}
@@ -463,7 +663,7 @@ func NewRedisPool(_name, _address, password string, database, maxActive, maxIdle
 
 	return &RedisPool{
 		name:    _name,
-		address: _address,
+		address: redisConfig.ConnectionString,
 		pool:    _pool,
 	}
 }

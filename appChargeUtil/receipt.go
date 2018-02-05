@@ -3,8 +3,9 @@ package appChargeUtil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Jordanzuo/goutil/typeUtil"
 	"strconv"
+
+	"github.com/Jordanzuo/goutil/typeUtil"
 )
 
 // APP Store充值收据对象
@@ -78,11 +79,12 @@ func newReceipt(receiptInfo string) (receiptObj *Receipt, err error) {
 	if status, err = mapData.Int("status"); err != nil {
 		return
 	}
+
+	receiptObj.Status = status
+
 	if status != 0 {
 		err = fmt.Errorf("状态:%s不正确", status)
 		return
-	} else {
-		receiptObj.Status = status
 	}
 
 	// Receipt is actually a child

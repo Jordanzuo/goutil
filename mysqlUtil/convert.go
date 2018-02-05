@@ -1,6 +1,8 @@
 package mysqlUtil
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -13,16 +15,16 @@ func ConvertConnectionStringFromCSharpToGo(connString string) string {
 
 	// 将字符串按;进行切割
 	connStringList := strings.Split(connString, ";")
-	var datasource string      // DataSource=10.162.2.205;
-	var port string            // port=3306;
-	var userid string          // UserId=admin;
-	var password string        // Password=MOQIkaka$#@!1234;
-	var database string        // Database=s201_dzz_log;
-	var charset string         // charset=utf8;
-	var pooling string         // pooling=true;
-	var minimumpoolsize string // MinimumPoolSize=20;
-	var maximumpoolsize string // maximumpoolsize=200;
-	var commandtimeout string  // command timeout=60;
+	var datasource string
+	var port string
+	var userid string
+	var password string
+	var database string
+	var charset string
+	var pooling string
+	var minimumpoolsize string
+	var maximumpoolsize string
+	var commandtimeout string
 
 	// 遍历处理
 	for _, item := range connStringList {
@@ -50,9 +52,9 @@ func ConvertConnectionStringFromCSharpToGo(connString string) string {
 			charset = subItemList[1]
 		case "pooling":
 			pooling = subItemList[1]
-		case "minimumpoolsize":
+		case "minimumpoolsize", "min pool size":
 			minimumpoolsize = subItemList[1]
-		case "maximumpoolsize":
+		case "maximumpoolsize", "max pool size":
 			maximumpoolsize = subItemList[1]
 		case "command timeout":
 			commandtimeout = subItemList[1]
@@ -76,4 +78,69 @@ func ConvertConnectionStringFromCSharpToGo(connString string) string {
 	}
 
 	return goConnString
+}
+
+// 解析连接字符串(obsolete，建议使用NewDBConfig2)
+// connString：数据库连接字符串
+// 返回值
+// 有效的连接字符串
+// 最大开启连接数量
+// 最大空闲连接数量
+// 错误对象
+func ParseConnectionString(connString string) (conn string, maxOpenConns int, maxIdleConns int, err error) {
+	connSlice := strings.Split(connString, "||")
+	length := len(connSlice)
+	if length != 1 && length != 3 {
+		err = fmt.Errorf("connString:%s格式不正确，length:%d", connString, length)
+		return
+	}
+
+	// 获取连接字符串
+	conn = connSlice[0]
+	if conn == "" {
+		err = fmt.Errorf("connString:%s格式不正确，length:%d", connString, length)
+		return
+	}
+
+	// 如果只配置了连接字符串，则MaxOpenConns、MaxIdleConns取默认值
+	if length == 1 {
+		return
+	}
+
+	// 获取连接池相关
+	maxOpenConns_string := strings.Replace(connSlice[1], "MaxOpenConns=", "", 1)
+	maxOpenConns, err = strconv.Atoi(maxOpenConns_string)
+	if err != nil {
+		err = fmt.Errorf("MaxOpenConns必须为int型,连接字符串为：%s", connString)
+		return
+	}
+
+	maxIdleConns_string := strings.Replace(connSlice[2], "MaxIdleConns=", "", 1)
+	maxIdleConns, err = strconv.Atoi(maxIdleConns_string)
+	if err != nil {
+		err = fmt.Errorf("MaxIdleConns必须为int型,连接字符串为：%s", connString)
+		return
+	}
+
+	return
+}
+
+// 连接字符串是否为C#格式
+func IsCSharpStyle(connString string) bool {
+	lowerString := strings.ToLower(connString)
+	if strings.Contains(lowerString, "datasource") && strings.Contains(lowerString, "port") {
+		return true
+	}
+
+	return false
+}
+
+// 连接字符串是否为Go格式
+func IsGoStyle(connString string) bool {
+	lowerString := strings.ToLower(connString)
+	if strings.Contains(lowerString, "@tcp") {
+		return true
+	}
+
+	return false
 }

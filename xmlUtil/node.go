@@ -185,7 +185,7 @@ func (n *Node) SelectElement(name string) *Node {
 }
 
 // SelectAttr returns the attribute value with the specified name.
-func (n *Node) SelectAttr(name string) string {
+func (n *Node) SelectAttr(name string) (string, bool) {
 	var local, space string
 	local = name
 	if i := strings.Index(name, ":"); i > 0 {
@@ -194,10 +194,10 @@ func (n *Node) SelectAttr(name string) string {
 	}
 	for _, attr := range n.Attr {
 		if attr.Name.Local == local && attr.Name.Space == space {
-			return attr.Value
+			return attr.Value, true
 		}
 	}
-	return ""
+	return "", false
 }
 
 // 给节点添加属性值

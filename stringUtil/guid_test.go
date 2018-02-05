@@ -6,7 +6,7 @@ import (
 
 func TestGetNewGUID(t *testing.T) {
 	guidMap := make(map[string]bool, 1024)
-	count := 1000000
+	count := 10
 	for i := 0; i < count; i++ {
 		guid := GetNewGUID()
 		guidMap[guid] = true

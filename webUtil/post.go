@@ -7,91 +7,200 @@ import (
 	"net/url"
 )
 
+var (
+	ContentType_Json = map[string]string{"Content-Type": "application/json;charset=UTF-8"}
+	ContentType_Form = map[string]string{"Content-Type": "application/x-www-form-urlencoded"}
+)
+
 // POST数据
 // weburl：远程服务器地址
-// postDict：post的数据字典
-// headers：包头
+// data：post的数据集合
+// header：包头集合
 // 返回值：
 // 返回的字节
 // 错误对象
-func PostWebData(weburl string, postDict map[string]string, headers map[string]string) ([]byte, error) {
+func PostWebData(weburl string, data map[string]string, header map[string]string) (result []byte, err error) {
 	// 组装POST数据
 	postValues := url.Values{}
-	for key, value := range postDict {
+	for key, value := range data {
 		postValues.Set(key, value)
 	}
-
 	postDataStr := postValues.Encode()
-	postDataBytes := []byte(postDataStr)
-	postDataBytesReader := bytes.NewReader(postDataBytes)
+	byteData := []byte(postDataStr)
 
-	// 构造请求对象
-	httpRequest, _ := http.NewRequest("POST", weburl, postDataBytesReader)
+	// 调用发送Byte数组的方法
+	result, err = PostByteData(weburl, byteData, header)
 
-	// 处理头部
-	httpRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	if headers != nil {
-		for key, value := range headers {
-			httpRequest.Header.Add(key, value)
-		}
-	}
-
-	// 构造httpClient对象
-	httpClient := &http.Client{}
-
-	// 发送数据
-	httpResponse, err := httpClient.Do(httpRequest)
-	if err != nil {
-		return nil, err
-	}
-	defer httpResponse.Body.Close()
-
-	// 读取数据
-	body, err := ioutil.ReadAll(httpResponse.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+	return
 }
 
 // POST Byte数组
 // weburl：远程服务器地址
 // data：post的Byte数组
-// headers：包头
+// header：包头集合
 // 返回值：
 // 返回的字节
 // 错误对象
-func PostByteData(weburl string, data []byte, headers map[string]string) ([]byte, error) {
+func PostByteData(weburl string, data []byte, header map[string]string) (result []byte, err error) {
 	// 组装POST数据
-	postDataBytesReader := bytes.NewReader(data)
+	reader := bytes.NewReader(data)
 
 	// 构造请求对象
-	httpRequest, _ := http.NewRequest("POST", weburl, postDataBytesReader)
+	var request *http.Request
+	request, err = http.NewRequest("POST", weburl, reader)
+	if err != nil {
+		return
+	}
 
-	// 处理头部
-	httpRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	if headers != nil {
-		for key, value := range headers {
-			httpRequest.Header.Add(key, value)
+	// 处理头部（包括默认头部，以及传入的头部集合）
+	if header == nil {
+		for k, v := range ContentType_Form {
+			request.Header.Add(k, v)
+		}
+	} else {
+		for k, v := range header {
+			request.Header.Add(k, v)
 		}
 	}
 
 	// 构造httpClient对象
-	httpClient := &http.Client{}
+	client := &http.Client{}
 
 	// 发送数据
-	httpResponse, err := httpClient.Do(httpRequest)
+	var response *http.Response
+	response, err = client.Do(request)
 	if err != nil {
-		return nil, err
+		return
 	}
-	defer httpResponse.Body.Close()
+	defer response.Body.Close()
 
 	// 读取数据
-	body, err := ioutil.ReadAll(httpResponse.Body)
+	result, err = ioutil.ReadAll(response.Body)
+
+	return
+}
+
+// POST Byte数组
+// weburl：远程服务器地址
+// data：post的Byte数组
+// header：包头集合
+// transport: transport对象
+// 返回值：
+// 返回的字节
+// 错误对象
+func PostByteDataWithTransport(weburl string, data []byte, header map[string]string, transport *http.Transport) (result *[]byte, err error) {
+	// 组装POST数据
+	reader := bytes.NewReader(data)
+
+	// 构造请求对象
+	var request *http.Request
+	request, err = http.NewRequest("POST", weburl, reader)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return body, nil
+	// 处理头部
+	if header != nil {
+		for k, v := range header {
+			request.Header.Add(k, v)
+		}
+	}
+
+	// 构造httpClient对象
+	var client *http.Client
+	if transport == nil {
+		client = &http.Client{}
+	} else {
+		client = &http.Client{Transport: transport}
+	}
+
+	// 发送数据
+	var response *http.Response
+	response, err = client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	body, err1 := ioutil.ReadAll(response.Body)
+	if err1 != nil {
+		err = err1
+		return
+	}
+
+	result = &body
+
+	return
+}
+
+// POST map类型的数据
+// weburl:远程服务器地址
+// data:数据
+// header:包头内容
+// transport:transport对象
+// 返回值
+// http StatusCode
+// 字节数组
+// 错误对象
+func PostMapData(weburl string, data map[string]string, header map[string]string, transport *http.Transport) (statusCode int, result []byte, err error) {
+	// 组装POST数据
+	postValues := url.Values{}
+	for key, value := range data {
+		postValues.Set(key, value)
+	}
+	postDataStr := postValues.Encode()
+	byteData := []byte(postDataStr)
+
+	statusCode, result, err = PostByteData2(weburl, byteData, header, transport)
+	return
+}
+
+// POST byte类型的数据（新方法）
+// weburl:远程服务器地址
+// data:数据
+// header:包头内容
+// transport:transport对象
+// 返回值
+// http StatusCode
+// 字节数组
+// 错误对象
+func PostByteData2(weburl string, data []byte, header map[string]string, transport *http.Transport) (statusCode int, result []byte, err error) {
+	// 组装POST数据
+	reader := bytes.NewReader(data)
+
+	// 构造请求对象
+	var request *http.Request
+	request, err = http.NewRequest("POST", weburl, reader)
+	if err != nil {
+		return
+	}
+
+	// 处理头部
+	if header != nil {
+		for k, v := range header {
+			request.Header.Add(k, v)
+		}
+	}
+
+	// 构造httpClient对象
+	var client *http.Client
+	if transport == nil {
+		client = &http.Client{}
+	} else {
+		client = &http.Client{Transport: transport}
+	}
+
+	// 发送数据
+	var response *http.Response
+	response, err = client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	// 获取返回值
+	statusCode = response.StatusCode
+	result, err = ioutil.ReadAll(response.Body)
+
+	return
 }

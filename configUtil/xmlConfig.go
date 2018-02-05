@@ -2,6 +2,7 @@ package configUtil
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/Jordanzuo/goutil/typeUtil"
@@ -210,6 +211,58 @@ func (this *XmlConfig) Node(xpath string) *xmlUtil.Node {
 	return this.root.SelectElement(xpath)
 }
 
+// 反序列化指定的整个节点
+// xpath:xml的path
+// data:反序列化得到的数据
+// 返回值:
+// error:错误信息
+func (this *XmlConfig) Unmarshal(xpath string, data interface{}) error {
+	if nodeItem := this.Node(xpath); nodeItem == nil {
+		return fmt.Errorf("节点不存在,XPATH:%s", xpath)
+	}
+
+	value := reflect.ValueOf(data)
+	if value.Kind() == reflect.Ptr {
+		value = value.Elem()
+	}
+	dataType := value.Type()
+	var err error
+
+	// 依次设置字段值
+	fieldCount := value.NumField()
+	for i := 0; i < fieldCount; i++ {
+		fieldItem := value.Field(i)
+		fieldName := dataType.Field(i).Name
+
+		// 读取数据
+		var valueString string
+		tmpXpath := fmt.Sprintf("%s/%s", xpath, fieldName)
+		if valueString, err = this.getVal(tmpXpath, ""); err != nil {
+			valueString, err = this.getVal(xpath, fieldName)
+			if err != nil {
+				// 压根儿无此字段的配置数据，则略过
+				continue
+			}
+		}
+
+		// 字符串转换成目标值
+		fieldValue, err := typeUtil.Convert(valueString, fieldItem.Kind())
+		if err != nil {
+			return fmt.Errorf("读取字段失败, DataType:%s FieldName:%s Value:%v 错误信息:%v ", dataType.Name(), fieldName, valueString, err)
+		}
+
+		// 设置到字段上面
+		valType := reflect.ValueOf(fieldValue)
+		if valType.Type() == fieldItem.Type() {
+			fieldItem.Set(valType)
+		} else {
+			fieldItem.Set(valType.Convert(fieldItem.Type()))
+		}
+	}
+
+	return nil
+}
+
 // 获取指定路径的之
 // xpath:xpath路径
 // attrName:要获取的属性值，如果为空，则返回内部文本
@@ -221,9 +274,13 @@ func (this *XmlConfig) getVal(xpath string, attrName string) (string, error) {
 
 	val := ""
 	if attrName == "" {
-		val = strings.TrimSpace(targetRoot.InnerText())
-	} else {
-		val = targetRoot.SelectAttr(attrName)
+		return strings.TrimSpace(targetRoot.InnerText()), nil
+	}
+
+	exist := false
+	val, exist = targetRoot.SelectAttr(attrName)
+	if exist == false {
+		return "", fmt.Errorf("no find target attr, node:%v attr:%v", xpath, attrName)
 	}
 
 	return val, nil

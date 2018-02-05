@@ -180,5 +180,5 @@ func ToInt64(timeVal time.Time) int64 {
 	minute := timeVal.Minute()
 	second := timeVal.Second()
 
-	return int64(year*1e10) + int64(month*1e8) + int64(day*1e6) + int64(hour*1e4) + int64(minute*1e2) + int64(second)
+	return int64(int64(year)*1e10) + int64(month*1e8) + int64(day*1e6) + int64(hour*1e4) + int64(minute*1e2) + int64(second)
 }

@@ -1,13 +1,19 @@
 package appChargeUtil
 
 import (
+	"errors"
 	"fmt"
+
 	"github.com/Jordanzuo/goutil/webUtil"
 )
 
 const (
 	con_SandBoxUrl    = "https://sandbox.itunes.apple.com/verifyReceipt"
 	con_ProductionUrl = "https://buy.itunes.apple.com/verifyReceipt"
+)
+
+var (
+	NetworkError = errors.New("NetWorkError")
 )
 
 // 验证充值是否有效
@@ -18,16 +24,15 @@ const (
 // 返回值：
 // 充值收据对象
 // 是否有效
-func ValidateCharge(bundleIdentifierList []string, productId, receiptData string, isSandBox bool) (receiptObj *Receipt, isValid bool) {
+// 错误对象（如果err==NetWorkError,则表明为网络错误）
+func ValidateCharge(bundleIdentifierList []string, productId, receiptData string, isSandBox bool) (receiptObj *Receipt, isValid bool, err error) {
 	// 判断参数是否为空
 	if len(bundleIdentifierList) == 0 || productId == "" || receiptData == "" {
 		return
 	}
 
 	// 获取Receipt对象
-	var err error
 	if receiptObj, err = getReceipt(receiptData, isSandBox); err != nil {
-		fmt.Printf("err:%s\n", err)
 		return
 	}
 
@@ -52,6 +57,7 @@ func getReceipt(receiptData string, isSandBox bool) (receiptObj *Receipt, err er
 	data := []byte(convertReceiptToPost(receiptData))
 	var returnBytes []byte
 	if returnBytes, err = webUtil.PostByteData(weburl, data, nil); err != nil {
+		err = NetworkError
 		return
 	}
 

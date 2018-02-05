@@ -42,3 +42,58 @@ func ConvertToInt(t time.Time) int {
 
 	return year*10e3 + month*10e1 + day
 }
+
+// 计算两个时间的日期差值
+func SubDay(time1, time2 time.Time) int {
+	// 当前时间距离00:00:00的秒数
+	awayFromZero := func(val time.Time) int64 {
+		hour := val.Hour()
+		minute := val.Minute()
+		second := val.Second()
+		return int64(hour*3600 + minute*60 + second)
+	}
+
+	// 每天对应的秒数
+	var eachDaySecond int64 = 24 * 3600
+
+	// 计算出两个时间对应的00:00:00时的时间戳
+	unix1 := time1.Unix() - awayFromZero(time1)
+	unix2 := time2.Unix() - awayFromZero(time2)
+
+	if unix1 < unix2 {
+		return int((unix2 - unix1) / eachDaySecond)
+	} else {
+		return int((unix1 - unix2) / eachDaySecond)
+	}
+}
+
+// 解析时间字符串，要求时间格式形式为：12:59:59 这种形式
+// timeStr:时间字符串
+// 返回值:
+// err:错误信息
+// hour:小时值
+// minute:分钟值
+// second:秒数
+func ParseTimeString(timeStr string) (err error, hour int, minute int, second int) {
+	timeSlice := strings.Split(timeStr, ":")
+	if len(timeSlice) != 3 {
+		err = fmt.Errorf("时间字符串格式不正确：%v", timeStr)
+		return
+	}
+
+	hour, _ = strconv.Atoi(timeSlice[0])
+	minute, _ = strconv.Atoi(timeSlice[1])
+	second, _ = strconv.Atoi(timeSlice[2])
+
+	return
+}
+
+// 获取时间的日期值
+// timeVal:时间值
+// 返回值:
+// time.Time:日期值
+func GetDate(timeVal time.Time) time.Time {
+	year, month, day := timeVal.Date()
+
+	return time.Date(year, month, day, 0, 0, 0, 0, timeVal.Location())
+}

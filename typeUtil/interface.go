@@ -2,6 +2,7 @@ package typeUtil
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -780,4 +781,60 @@ func DateTimeArrayByFormat(val []interface{}, format string) ([]time.Time, error
 	}
 
 	return array, fmt.Errorf("val is not base type")
+}
+
+// 类型转换（基础数据类型）
+// val:原始值
+// targetType:目标值类型
+// 返回值:
+// interface{}:结果
+// error:错误信息
+func Convert(val interface{}, targetType reflect.Kind) (interface{}, error) {
+	switch targetType {
+	case reflect.Int:
+		return Int(val)
+	case reflect.Int8:
+		{
+			val, err := Int(val)
+			return int8(val), err
+		}
+	case reflect.Int16:
+		{
+			val, err := Int(val)
+			return int16(val), err
+		}
+	case reflect.Int32:
+		return Int32(val)
+	case reflect.Int64:
+		return Int64(val)
+	case reflect.Uint:
+		return Uint(val)
+	case reflect.Uint8:
+		{
+			val, err := Uint(val)
+			return uint8(val), err
+		}
+	case reflect.Uint16:
+		{
+			val, err := Uint(val)
+			return uint16(val), err
+		}
+	case reflect.Uint32:
+		return Uint32(val)
+	case reflect.Uint64:
+		return Uint64(val)
+	case reflect.Float32:
+		{
+			val, err := Float64(val)
+			return float32(val), err
+		}
+	case reflect.Float64:
+		return Float64(val)
+	case reflect.Bool:
+		return Bool(val)
+	case reflect.String:
+		return String(val)
+	}
+
+	return nil, fmt.Errorf("Unknown DataType:%s", targetType.String())
 }

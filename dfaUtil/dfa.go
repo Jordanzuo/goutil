@@ -1,63 +1,49 @@
 package dfaUtil
 
+// dfa助手对象
 type DFAUtil struct {
 	// 根节点
-	Root *node
-}
-
-// 查找子节点
-// nodeObj:当前节点
-// ch:字符
-// 返回值：
-// 子节点
-func (util *DFAUtil) findNode(nodeObj *node, ch rune) *node {
-	for _, value := range nodeObj.nodeList {
-		if value.ch == ch {
-			return value
-		}
-	}
-
-	return nil
+	root *node
 }
 
 // 插入子节点
-// currNodeObj:当前节点
+// currNode:当前节点
 // chArr:字符集合
 // index:字符位于字符集合的索引
-func (util *DFAUtil) insertNode(currNodeObj *node, chArr []rune, index int) {
+func (this *DFAUtil) insertNode(currNode *node, chArr []rune, index int) {
 	// 判断字符是否已经存在于当前节点的子节点中
-	subNode := util.findNode(currNodeObj, chArr[index])
+	childNode, exists := currNode.getChild(chArr[index])
 
 	// 如果存在，且index已经是chArr最后一个字符，则说明子节点应该是一个短节点；如果该子节点的Flag=Normal，则将其设置为ShortTerminal
-	if subNode != nil && index == len(chArr)-1 && subNode.flag == con_Normal {
-		subNode.flag = con_ShortTerminal
+	if exists && index == len(chArr)-1 && childNode.flag == con_Normal {
+		childNode.flag = con_ShortTerminal
 	}
 
 	// 如果不存在此节点，则创建节点，并添加到当前节点的子节点列表中
 	//  1、判断是否为最后一个字符，如果是则设置为长终节点；
 	//  2、同时需要判断当前节点是否为长终节点，如果是则需要将其置为短终节点（因为具有子节点的一定不能是长终节点，而只能是短终节点）
-	if subNode == nil {
-		subNode = newNode(chArr[index], con_Normal)
+	if !exists {
+		childNode = newNode(chArr[index], con_Normal)
 
 		// 注释1
 		if index == len(chArr)-1 {
-			subNode.flag = con_LongTerminal
+			childNode.flag = con_LongTerminal
 		}
 
 		// 注释2
-		if currNodeObj.flag == con_LongTerminal {
-			currNodeObj.flag = con_ShortTerminal
+		if currNode.flag == con_LongTerminal {
+			currNode.flag = con_ShortTerminal
 		}
 
-		// 添加到列表中
-		currNodeObj.nodeList = append(currNodeObj.nodeList, subNode)
+		//添加子节点
+		currNode.addChild(childNode)
 	}
 
 	// 自增并向后继续插入
 	index++
 	if index < len(chArr) {
 		// 使用的是尾递归，以节约内存和效率
-		util.insertNode(subNode, chArr, index)
+		this.insertNode(childNode, chArr, index)
 	}
 }
 
@@ -65,7 +51,7 @@ func (util *DFAUtil) insertNode(currNodeObj *node, chArr []rune, index int) {
 // input:输入数据
 // 返回值:
 // 特殊字符所处的索引区间列表
-func (util *DFAUtil) SearchWord(input string) []*finalIndex {
+func (this *DFAUtil) SearchWord(input string) []*finalIndex {
 	// 最终的索引范围列表<索引下限、索引上限>
 	finalIndexList := make([]*finalIndex, 0, 32)
 
@@ -88,10 +74,11 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 	}
 
 	//从根节点开始遍历
-	nodeObj := util.Root
+	nodeObj := this.root
+	exists := false
 	for index := 0; index < len(chArr); index++ {
-		nodeObj = util.findNode(nodeObj, chArr[index])
-		if nodeObj == nil {
+		nodeObj, exists = nodeObj.getChild(chArr[index])
+		if !exists {
 			// 如果没有找到匹配的节点，说明此轮判断结束
 			// 需要判断是否有符合条件的短搜索路径
 			if len(roundIndexList) > 0 {
@@ -113,7 +100,7 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 			roundIndexList = roundIndexList[:0]
 
 			// 重新从根节点开始计算
-			nodeObj = util.Root
+			nodeObj = this.root
 		} else if nodeObj.flag == con_LongTerminal {
 			// 如果是长终节点，说明已经找到最长路径了，于是本轮结束
 			// 将对应的index添加到本轮的索引列表中
@@ -126,7 +113,7 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 			roundIndexList = roundIndexList[:0]
 
 			// 重新从根节点开始计算
-			nodeObj = util.Root
+			nodeObj = this.root
 		} else {
 			// 如果是非终节点，则添加到本轮的列表中，然后继续往后搜索
 			// 如果是短终节点，则添加到本轮的列表中，然后继续往后搜索，以便于查找是否还有更长的搜索路径
@@ -154,7 +141,7 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 			roundIndexList = roundIndexList[:0]
 
 			// 重新从根节点开始计算
-			nodeObj = util.Root
+			nodeObj = this.root
 		}
 	}
 
@@ -165,8 +152,8 @@ func (util *DFAUtil) SearchWord(input string) []*finalIndex {
 // input:输入数据
 // 返回值:
 // 是否匹配
-func (util *DFAUtil) IsMatch(input string) bool {
-	return len(util.SearchWord(input)) > 0
+func (this *DFAUtil) IsMatch(input string) bool {
+	return len(this.SearchWord(input)) > 0
 }
 
 // 处理单词，用指定字符替换特殊字符
@@ -174,9 +161,9 @@ func (util *DFAUtil) IsMatch(input string) bool {
 // replaceCh:替换的字符
 // 返回值:
 // 处理后的字符串
-func (util *DFAUtil) HandleWord(input string, replaceCh rune) string {
+func (this *DFAUtil) HandleWord(input string, replaceCh rune) string {
 	// 最终的索引范围列表<索引下限、索引上限>
-	finalIndexList := util.SearchWord(input)
+	finalIndexList := this.SearchWord(input)
 
 	// 判断是否需要替换
 	if len(finalIndexList) == 0 {
@@ -208,19 +195,19 @@ func (util *DFAUtil) HandleWord(input string, replaceCh rune) string {
 	return string(chArr)
 }
 
-// 创建新的DFAUtil对象
+// 创建新的dfaUtil对象
 // wordList:词语列表
 func NewDFAUtil(wordList []string) *DFAUtil {
-	util := &DFAUtil{
-		Root: newNode('R', con_Normal),
+	this := &DFAUtil{
+		root: newNode('R', con_Normal),
 	}
 
 	for _, word := range wordList {
 		chArr := []rune(word)
 		if len(chArr) > 0 {
-			util.insertNode(util.Root, chArr, 0)
+			this.insertNode(this.root, chArr, 0)
 		}
 	}
 
-	return util
+	return this
 }

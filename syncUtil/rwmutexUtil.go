@@ -5,9 +5,8 @@ import (
 )
 
 type RWMutexUtil struct {
-
 	// 锁集合
-	lockData map[string]*sync.RWMutex
+	lockData map[string]*RWLocker
 
 	// 锁对象
 	lockObj sync.RWMutex
@@ -16,7 +15,7 @@ type RWMutexUtil struct {
 // 创建新的锁工具类
 func NewRWMutexUtil() *RWMutexUtil {
 	return &RWMutexUtil{
-		lockData: make(map[string]*sync.RWMutex),
+		lockData: make(map[string]*RWLocker),
 	}
 }
 
@@ -24,12 +23,16 @@ func NewRWMutexUtil() *RWMutexUtil {
 // lockName:锁名
 // 返回值：
 // sync.RWMutex:锁对象
-func (this *RWMutexUtil) GetLock(lockName string) *sync.RWMutex {
-	this.lockObj.RLock()
+func (this *RWMutexUtil) GetLock(lockName string) *RWLocker {
+	var lockItem *RWLocker
+	var isExist bool
 
-	lockItem, isExist := this.lockData[lockName]
+	func() {
+		this.lockObj.RLock()
+		defer this.lockObj.RUnlock()
 
-	this.lockObj.RUnlock()
+		lockItem, isExist = this.lockData[lockName]
+	}()
 
 	if isExist == true {
 		return lockItem
@@ -40,27 +43,9 @@ func (this *RWMutexUtil) GetLock(lockName string) *sync.RWMutex {
 
 	lockItem, isExist = this.lockData[lockName]
 	if isExist == false {
-		lockItem = new(sync.RWMutex)
+		lockItem = NewRWLocker()
 		this.lockData[lockName] = lockItem
 	}
 
 	return lockItem
-}
-
-// 释放锁对象
-// lockName:锁名
-func (this *RWMutexUtil) ReleaseLock(lockName string) {
-	this.lockObj.Lock()
-	defer this.lockObj.Unlock()
-
-	lockItem, isExist := this.lockData[lockName]
-	if isExist == false {
-		return
-	}
-
-	// 刪除鎖前，先锁住。避免外部死锁(defer 中 也get时，之前的代码有可能死锁)
-	lockItem.Lock()
-	defer lockItem.Unlock()
-
-	delete(this.lockData, lockName)
 }

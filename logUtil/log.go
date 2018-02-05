@@ -8,8 +8,10 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/Jordanzuo/goutil/debugUtil"
 	"github.com/Jordanzuo/goutil/fileUtil"
 	"github.com/Jordanzuo/goutil/stringUtil"
 	"github.com/Jordanzuo/goutil/timeUtil"
@@ -24,39 +26,103 @@ const (
 
 var (
 	logPath = "DefaultLogPath"
+
+	// 用于控制压缩文件的并发逻辑
+	mutex sync.Mutex
+
+	// 上一次日志压缩的日期 时间戳
+	preCompressDate int64
+
+	// 压缩锁对象
+	compressLock sync.Mutex
 )
 
-func writeLog(logObj *logObject) {
-	// 获取当前时间
-	now := time.Now()
+// 日志压缩
+func compress() {
+	defer func() {
+		if r := recover(); r != nil {
+			// 将错误输出，而不是记录到文件，是因为可能导致死循环
+			fmt.Println(r)
+		}
+	}()
 
-	// 获得年、月、日、时的字符串形式
-	yearString := strconv.Itoa(now.Year())
-	monthString := strconv.Itoa(int(now.Month()))
-	dayString := strconv.Itoa(now.Day())
-	hourString := strconv.Itoa(now.Hour())
+	// 获取昨天的日期，并获取昨天对应的文件夹
+	yesterday := time.Now().AddDate(0, 0, -1)
+	dateString := timeUtil.Format(yesterday, "yyyy-MM-dd")
+	fileAbsoluteDirectory := filepath.Join(logPath, strconv.Itoa(yesterday.Year()), strconv.Itoa(int(yesterday.Month())))
 
-	// 构造文件路径和文件名
-	filePath := filepath.Join(logPath, yearString, monthString)
-	fileName := ""
-	if logObj.ifIncludeHour {
-		fileName = fmt.Sprintf("%s-%s-%s-%s.%s.%s", yearString, monthString, dayString, hourString, logObj.level, con_FILE_SUFFIX)
-	} else {
-		fileName = fmt.Sprintf("%s-%s-%s.%s.%s", yearString, monthString, dayString, logObj.level, con_FILE_SUFFIX)
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// 判断是否已经存在压缩文件
+	compressFileName := fmt.Sprintf("%s.tar.gz", dateString)
+	compressAbsolutePath := filepath.Join(fileAbsoluteDirectory, compressFileName)
+	if exists, err := fileUtil.IsFileExists(compressAbsolutePath); err == nil && exists {
+		return
 	}
 
-	// 得到最终的fileName
-	fileName = filepath.Join(filePath, fileName)
+	// 获取昨天的文件列表
+	fileList, err := fileUtil.GetFileList2(fileAbsoluteDirectory, dateString, con_FILE_SUFFIX)
+	if err != nil {
+		fmt.Printf("logUtil.compress.fileUtil.GetFileList2 err:%s\n", err)
+		return
+	}
+	if len(fileList) == 0 {
+		return
+	}
+
+	// 进行tar操作，得到yyyy-MM-dd.tar
+	tarFileName := fmt.Sprintf("%s.tar", dateString)
+	tarAbsolutePath := filepath.Join(fileAbsoluteDirectory, tarFileName)
+	if err := fileUtil.Tar(fileList, tarAbsolutePath); err != nil {
+		fmt.Printf("logUtil.compress.fileUtil.Tar err:%s\n", err)
+	}
+
+	// 进行gzip操作，得到yyyy-MM-dd.tar.gz
+	if err := fileUtil.Gzip(tarAbsolutePath, ""); err != nil {
+		fmt.Printf("logUtil.compress.fileUtil.Gzip err:%s\n", err)
+	}
+
+	// 删除原始文件
+	for _, item := range fileList {
+		fileUtil.DeleteFile(item)
+	}
+
+	// 删除tar文件
+	fileUtil.DeleteFile(tarAbsolutePath)
+}
+
+// 写日志
+// logObj:日志对象
+func writeLog(logObj *logObject) {
+	if logObj.level == Warn || logObj.level == Error || logObj.level == Fatal {
+		debugUtil.Println(logObj.logInfo)
+	}
+
+	// 获取当前时间
+	now := time.Now()
+	fileAbsoluteDirectory := filepath.Join(logPath, strconv.Itoa(now.Year()), strconv.Itoa(int(now.Month())))
+	fileName := ""
+	fileAbsolutePath := ""
+
+	if logObj.ifIncludeHour {
+		fileName = fmt.Sprintf("%s.%s.%s", timeUtil.Format(now, "yyyy-MM-dd-HH"), logObj.level, con_FILE_SUFFIX)
+	} else {
+		fileName = fmt.Sprintf("%s.%s.%s", timeUtil.Format(now, "yyyy-MM-dd"), logObj.level, con_FILE_SUFFIX)
+	}
+
+	// 得到最终的文件绝对路径
+	fileAbsolutePath = filepath.Join(fileAbsoluteDirectory, fileName)
 
 	// 判断文件夹是否存在，如果不存在则创建
-	if !fileUtil.IsDirExists(filePath) {
-		if err := os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary); err != nil {
+	if !fileUtil.IsDirExists(fileAbsoluteDirectory) {
+		if err := os.MkdirAll(fileAbsoluteDirectory, os.ModePerm|os.ModeTemporary); err != nil {
 			return
 		}
 	}
 
 	// 打开文件(如果文件存在就以读写模式打开，并追加写入；如果文件不存在就创建，然后以写模式打开。)
-	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm|os.ModeTemporary)
+	f, err := os.OpenFile(fileAbsolutePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm|os.ModeTemporary)
 	if err != nil {
 		return
 	}
@@ -64,6 +130,24 @@ func writeLog(logObj *logObject) {
 
 	// 写入内容
 	f.WriteString(logObj.logInfo)
+
+	// 检查是否需要进行数据压缩
+	nowDate := timeUtil.GetDate(now).Unix()
+	if nowDate == preCompressDate {
+		return
+	}
+
+	compressLock.Lock()
+	defer compressLock.Unlock()
+
+	// 上一次压缩的时间
+	if nowDate == preCompressDate {
+		return
+	}
+	preCompressDate = nowDate
+
+	// 日志压缩
+	go compress()
 }
 
 // 设置日志存放的路径
