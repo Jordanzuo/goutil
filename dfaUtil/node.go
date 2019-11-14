@@ -1,33 +1,23 @@
 package dfaUtil
 
-// 节点类型
-type node struct {
-	// 字符
-	ch rune
+const (
+	INIT_TRIE_CHILDREN_NUM = 128	// Since we need to deal all kinds of language, so we use 128 instead of 26
+)
 
-	// 节点状态枚举
-	flag nodeFlag
+// TrieNode data structure
+// TrieNode itself doesn't have any value. The value is represented on the path
+type TrieNode struct {
+	// if this node is the end of a word
+	isEndOfWord bool
 
-	// 子节点集合
-	children map[rune]*node
+	// the collection of children of this node
+	children map[rune]*TrieNode
 }
 
-// 获取子节点
-func (this *node) getChild(ch rune) (child *node, exists bool) {
-	child, exists = this.children[ch]
-	return
-}
-
-// 添加子节点
-func (this *node) addChild(child *node) {
-	this.children[child.ch] = child
-}
-
-// 创建新节点
-func newNode(_ch rune, _flag nodeFlag) *node {
-	return &node{
-		ch:       _ch,
-		flag:     _flag,
-		children: make(map[rune]*node),
+// Create new TrieNode
+func newTrieNode() *TrieNode {
+	return &TrieNode{
+		isEndOfWord: false,
+		children: make(map[rune]*TrieNode, INIT_TRIE_CHILDREN_NUM),
 	}
 }
