@@ -1,11 +1,12 @@
 package dfaUtil
 
-// 匹配的索引对象
+// Match index object
 type matchIndex struct {
-	start int
-	end int
+	start int // start index
+	end int // end index
 }
 
+// Construct from scratch
 func newMatchIndex(start, end int) *matchIndex {
 	return &matchIndex{
 		start: start,
@@ -13,6 +14,7 @@ func newMatchIndex(start, end int) *matchIndex {
 	}
 }
 
+// Construct from existing match index object
 func buildMatchIndex(obj *matchIndex) *matchIndex {
 	return &matchIndex {
 		start: obj.start,

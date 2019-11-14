@@ -1,18 +1,18 @@
 package dfaUtil
 
 /*
-Use dfa algorithm to verify whether a sentence has invalid words.
+DFA util, is used to verify whether a sentence has invalid words.
 The underlying data structure is trie.
 https://en.wikipedia.org/wiki/Trie
 */
 
-// dfa助手对象
+// dfa util
 type DFAUtil struct {
-	// 根节点
+	// The root node
 	root *TrieNode
 }
 
-func (this *DFAUtil) insert(word []rune) {
+func (this *DFAUtil) insertWord(word []rune) {
 	currNode := this.root
 	for _, ch := range word {
 		if childNode, exist := currNode.children[ch]; !exist {
@@ -27,7 +27,8 @@ func (this *DFAUtil) insert(word []rune) {
 	currNode.isEndOfWord = true
 }
 
-func (this *DFAUtil) search(word []rune) bool {
+// Search and make sure if a word is existed in the underlying trie.
+func (this *DFAUtil) searchWord(word []rune) bool {
 	currNode := this.root
 	for _, ch := range word {
 		if childNode, exist := currNode.children[ch]; !exist {
@@ -40,11 +41,10 @@ func (this *DFAUtil) search(word []rune) bool {
 	return currNode.isEndOfWord
 }
 
-// 搜索特殊字符
-// input:输入数据
-// 返回值:
-// 特殊字符所处的索引区间列表
-func (this *DFAUtil) SearchWord(sentence string) (matchIndexList []*matchIndex) {
+// Search a whole sentence and get all the matching words and their indices
+// Return:
+// A list of all the match index object
+func (this *DFAUtil) searchSentence(sentence string) (matchIndexList []*matchIndex) {
 	start, end := 0, 1
 	sentenceRuneList := []rune(sentence)
 	
@@ -53,7 +53,7 @@ func (this *DFAUtil) SearchWord(sentence string) (matchIndexList []*matchIndex) 
 	// If a word or phrase is matched, we still need to check whether a longer one will match or not.
 	var currMatchIndex *matchIndex
 	for end <= len(sentenceRuneList) {
-		if this.search(sentenceRuneList[start:end+1]) {
+		if this.searchWord(sentenceRuneList[start:end+1]) {
 			// When matching, we create a new MatchIndex object or extend the current end index
 			if currMatchIndex == nil {
 				currMatchIndex = newMatchIndex(start, end)
@@ -76,29 +76,25 @@ func (this *DFAUtil) SearchWord(sentence string) (matchIndexList []*matchIndex) 
 	return
 }
 
-// 判断输入数据是否匹配特殊字符
-// input:输入数据
-// 返回值:
-// 是否匹配
+// Judge if input sentence contains some special character
+// Return:
+// Match or not
 func (this *DFAUtil) IsMatch(sentence string) bool {
-	return len(this.SearchWord(sentence)) > 0
+	return len(this.searchSentence(sentence)) > 0
 }
 
-// 处理单词，用指定字符替换特殊字符
-// input:输入数据
-// replaceCh:替换的字符
-// 返回值:
-// 处理后的字符串
+// Handle sentence. Use specified character to replace those sensitive characters.
+// input: Input sentence
+// replaceCh: candidate
+// Return:
+// Sentence after manipulation
 func (this *DFAUtil) HandleWord(sentence string, replaceCh rune) string {
-	// 最终的索引范围列表<索引下限、索引上限>
-	matchIndexList := this.SearchWord(sentence)
-
-	// 判断是否需要替换
+	matchIndexList := this.searchSentence(sentence)
 	if len(matchIndexList) == 0 {
 		return sentence
 	}
 
-	// 获取输入内容的字符串数组
+	// Manipulate
 	sentenceList := []rune(sentence)
 	for _, matchIndexObj := range matchIndexList {
 		for index := matchIndexObj.start; index <= matchIndexObj.end; index ++ {
@@ -109,8 +105,8 @@ func (this *DFAUtil) HandleWord(sentence string, replaceCh rune) string {
 	return string(sentenceList)
 }
 
-// 创建新的dfaUtil对象
-// wordList:词语列表
+// Create new DfaUtil object
+// wordList:word list
 func NewDFAUtil(wordList []string) *DFAUtil {
 	this := &DFAUtil{
 		root: newTrieNode(),
@@ -119,7 +115,7 @@ func NewDFAUtil(wordList []string) *DFAUtil {
 	for _, word := range wordList {
 		wordRuneList := []rune(word)
 		if len(wordRuneList) > 0 {
-			this.insert(wordRuneList)
+			this.insertWord(wordRuneList)
 		}
 	}
 
