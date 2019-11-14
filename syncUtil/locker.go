@@ -37,7 +37,7 @@ func (this *Locker) Lock(timeout int) bool {
 }
 
 // 锁定（死等方式）
-func (this *Locker) WaitLock(){
+func (this *Locker) WaitLock() {
 	this.Lock(-1)
 }
 
