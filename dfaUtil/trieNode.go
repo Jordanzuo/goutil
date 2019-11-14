@@ -1,7 +1,7 @@
 package dfaUtil
 
 const (
-	INIT_TRIE_CHILDREN_NUM = 128	// Since we need to deal all kinds of language, so we use 128 instead of 26
+	INIT_TRIE_CHILDREN_NUM = 128 // Since we need to deal all kinds of language, so we use 128 instead of 26
 )
 
 // TrieNode data structure
@@ -18,6 +18,6 @@ type TrieNode struct {
 func newTrieNode() *TrieNode {
 	return &TrieNode{
 		isEndOfWord: false,
-		children: make(map[rune]*TrieNode, INIT_TRIE_CHILDREN_NUM),
+		children:    make(map[rune]*TrieNode, INIT_TRIE_CHILDREN_NUM),
 	}
 }
