@@ -9,14 +9,14 @@ https://en.wikipedia.org/wiki/Trie
 // dfa util
 type DFAUtil struct {
 	// The root node
-	root *TrieNode
+	root *trieNode
 }
 
 func (this *DFAUtil) insertWord(word []rune) {
 	currNode := this.root
 	for _, c := range word {
 		if cildNode, exist := currNode.children[c]; !exist {
-			cildNode = newTrieNode()
+			cildNode = newtrieNode()
 			currNode.children[c] = cildNode
 			currNode = cildNode
 		} else {
@@ -134,7 +134,7 @@ func (this *DFAUtil) HandleWord(sentence string, replaceCh rune) string {
 // wordList:word list
 func NewDFAUtil(wordList []string) *DFAUtil {
 	this := &DFAUtil{
-		root: newTrieNode(),
+		root: newtrieNode(),
 	}
 
 	for _, word := range wordList {
