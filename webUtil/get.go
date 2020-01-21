@@ -116,3 +116,58 @@ func GetWebData2(weburl string, data map[string]string, header map[string]string
 
 	return
 }
+
+// GET数据（新方法）
+// weburl:远程服务器地址
+// dataStr:参数字符串
+// header:包头内容
+// transport:transport对象
+// 返回值
+// http StatusCode
+// 字节数组
+// 错误对象
+func GetWebData3(weburl string, dataStr string, header map[string]string, transport *http.Transport) (statusCode int, result []byte, err error) {
+	if dataStr != "" {
+		if strings.Contains(weburl, "?") {
+			weburl = fmt.Sprintf("%s&%s", weburl, dataStr)
+		} else {
+			weburl = fmt.Sprintf("%s?%s", weburl, dataStr)
+		}
+	}
+
+	// 构造请求对象
+	var request *http.Request
+	request, err = http.NewRequest("GET", weburl, nil)
+	if err != nil {
+		return
+	}
+
+	// 处理头部
+	if header != nil {
+		for k, v := range header {
+			request.Header.Add(k, v)
+		}
+	}
+
+	// 构造httpClient对象
+	var client *http.Client
+	if transport == nil {
+		client = &http.Client{}
+	} else {
+		client = &http.Client{Transport: transport}
+	}
+
+	// 发送数据
+	var response *http.Response
+	response, err = client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	// 获取返回值
+	statusCode = response.StatusCode
+	result, err = ioutil.ReadAll(response.Body)
+
+	return
+}

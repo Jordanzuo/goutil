@@ -1,6 +1,6 @@
 /*
 这个包包含安全方面的util对象和方法，例如md5,sha1,rsa等。
-使用时需要先import "github.com/Jordanzuo.goutil.security"。
+使用时需要先import "moqikaka.com.goutil.security"。
 
 当前这里面包括有2个对象md5和sha1，在使用时，可以参照如下方式
 s := "hello world"

@@ -19,12 +19,12 @@ type XmlConfig struct {
 // error:错误信息
 func (this *XmlConfig) LoadFromFile(xmlFilePath string) error {
 	if this.root != nil {
-		return fmt.Errorf("have loaded")
+		return fmt.Errorf("There has been an xml file loaded.")
 	}
 
-	root, errMsg := xmlUtil.LoadFromFile(xmlFilePath)
-	if errMsg != nil {
-		return errMsg
+	root, err := xmlUtil.LoadFromFile(xmlFilePath)
+	if err != nil {
+		return err
 	}
 
 	this.root = root
@@ -38,7 +38,7 @@ func (this *XmlConfig) LoadFromFile(xmlFilePath string) error {
 // error:错误信息
 func (this *XmlConfig) LoadFromXmlNode(xmlRoot *xmlUtil.Node) error {
 	if this.root != nil {
-		return fmt.Errorf("have loaded")
+		return fmt.Errorf("There has been an xml file loaded.")
 	}
 
 	if xmlRoot == nil {
@@ -57,26 +57,27 @@ func (this *XmlConfig) LoadFromXmlNode(xmlRoot *xmlUtil.Node) error {
 // bool:结果
 // error:错误信息
 func (this *XmlConfig) Bool(xpath string, attrName string) (bool, error) {
-	val, errMsg := this.getVal(xpath, attrName)
-	if errMsg != nil {
-		return false, errMsg
+	value, err := this.getVal(xpath, attrName)
+	if err != nil {
+		return false, err
 	}
 
-	return typeUtil.Bool(val)
+	return typeUtil.Bool(value)
 }
 
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
+// defaultVal:默认值
 //　返回值：
 // bool:结果
-func (this *XmlConfig) DefaultBool(xpath string, attrName string, defaultval bool) bool {
-	v, err := this.Bool(xpath, attrName)
+func (this *XmlConfig) DefaultBool(xpath string, attrName string, defaultVal bool) bool {
+	value, err := this.Bool(xpath, attrName)
 	if err != nil {
-		return defaultval
+		return defaultVal
 	}
-	return v
+
+	return value
 }
 
 // 获取指定xpath路径下的值
@@ -86,27 +87,27 @@ func (this *XmlConfig) DefaultBool(xpath string, attrName string, defaultval boo
 // int:结果
 // error:错误信息
 func (this *XmlConfig) Int(xpath string, attrName string) (int, error) {
-	val, errMsg := this.getVal(xpath, attrName)
-	if errMsg != nil {
-		return 0, errMsg
+	value, err := this.getVal(xpath, attrName)
+	if err != nil {
+		return 0, err
 	}
 
-	return typeUtil.Int(val)
+	return typeUtil.Int(value)
 }
 
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
+// defaultVal:默认值
 //　返回值：
 // int:结果
-func (this *XmlConfig) DefaultInt(xpath string, attrName string, defaultval int) int {
-	v, err := this.Int(xpath, attrName)
+func (this *XmlConfig) DefaultInt(xpath string, attrName string, defaultVal int) int {
+	value, err := this.Int(xpath, attrName)
 	if err != nil {
-		return defaultval
+		return defaultVal
 	}
 
-	return v
+	return value
 }
 
 // 获取指定xpath路径下的值
@@ -116,27 +117,27 @@ func (this *XmlConfig) DefaultInt(xpath string, attrName string, defaultval int)
 // int64:结果
 // error:错误信息
 func (this *XmlConfig) Int64(xpath string, attrName string) (int64, error) {
-	val, errMsg := this.getVal(xpath, attrName)
-	if errMsg != nil {
-		return 0, errMsg
+	value, err := this.getVal(xpath, attrName)
+	if err != nil {
+		return 0, err
 	}
 
-	return typeUtil.Int64(val)
+	return typeUtil.Int64(value)
 }
 
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
+// defaultVal:默认值
 //　返回值：
 // int64:结果
-func (this *XmlConfig) DefaultInt64(xpath string, attrName string, defaultval int64) int64 {
-	v, err := this.Int64(xpath, attrName)
+func (this *XmlConfig) DefaultInt64(xpath string, attrName string, defaultVal int64) int64 {
+	value, err := this.Int64(xpath, attrName)
 	if err != nil {
-		return defaultval
+		return defaultVal
 	}
 
-	return v
+	return value
 
 }
 
@@ -147,27 +148,27 @@ func (this *XmlConfig) DefaultInt64(xpath string, attrName string, defaultval in
 // float64:结果
 // error:错误信息
 func (this *XmlConfig) Float(xpath string, attrName string) (float64, error) {
-	val, errMsg := this.getVal(xpath, attrName)
-	if errMsg != nil {
-		return 0, errMsg
+	value, err := this.getVal(xpath, attrName)
+	if err != nil {
+		return 0, err
 	}
 
-	return typeUtil.Float64(val)
+	return typeUtil.Float64(value)
 }
 
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
+// defaultVal:默认值
 //　返回值：
 // float64:结果
-func (this *XmlConfig) DefaultFloat(xpath string, attrName string, defaultval float64) float64 {
-	v, err := this.Float(xpath, attrName)
+func (this *XmlConfig) DefaultFloat(xpath string, attrName string, defaultVal float64) float64 {
+	value, err := this.Float(xpath, attrName)
 	if err != nil {
-		return defaultval
+		return defaultVal
 	}
 
-	return v
+	return value
 }
 
 // 获取指定xpath路径下的值
@@ -183,16 +184,16 @@ func (this *XmlConfig) String(xpath string, attrName string) (string, error) {
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
+// defaultVal:默认值
 //　返回值：
 // string:结果
-func (this *XmlConfig) DefaultString(xpath string, attrName string, defaultval string) string {
-	v, errMsg := this.String(xpath, attrName)
-	if errMsg != nil {
-		return defaultval
+func (this *XmlConfig) DefaultString(xpath string, attrName string, defaultVal string) string {
+	value, err := this.String(xpath, attrName)
+	if err != nil {
+		return defaultVal
 	}
 
-	return v
+	return value
 }
 
 // 获取指定位置的节点
@@ -217,7 +218,8 @@ func (this *XmlConfig) Node(xpath string) *xmlUtil.Node {
 // 返回值:
 // error:错误信息
 func (this *XmlConfig) Unmarshal(xpath string, data interface{}) error {
-	if nodeItem := this.Node(xpath); nodeItem == nil {
+	nodeItem := this.Node(xpath)
+	if nodeItem == nil {
 		return fmt.Errorf("节点不存在,XPATH:%s", xpath)
 	}
 
@@ -226,9 +228,9 @@ func (this *XmlConfig) Unmarshal(xpath string, data interface{}) error {
 		value = value.Elem()
 	}
 	dataType := value.Type()
-	var err error
 
 	// 依次设置字段值
+	var err error
 	fieldCount := value.NumField()
 	for i := 0; i < fieldCount; i++ {
 		fieldItem := value.Field(i)
@@ -266,24 +268,26 @@ func (this *XmlConfig) Unmarshal(xpath string, data interface{}) error {
 // 获取指定路径的之
 // xpath:xpath路径
 // attrName:要获取的属性值，如果为空，则返回内部文本
-func (this *XmlConfig) getVal(xpath string, attrName string) (string, error) {
+func (this *XmlConfig) getVal(xpath string, attrName string) (val string, err error) {
 	targetRoot := this.root.SelectElement(xpath)
 	if targetRoot == nil {
-		return "", fmt.Errorf("no find target node:%v", xpath)
+		err = fmt.Errorf("no find target node:%v", xpath)
+		return
 	}
 
-	val := ""
 	if attrName == "" {
-		return strings.TrimSpace(targetRoot.InnerText()), nil
+		val = strings.TrimSpace(targetRoot.InnerText())
+		return
 	}
 
 	exist := false
 	val, exist = targetRoot.SelectAttr(attrName)
 	if exist == false {
-		return "", fmt.Errorf("no find target attr, node:%v attr:%v", xpath, attrName)
+		err = fmt.Errorf("no find target attr, node:%v attr:%v", xpath, attrName)
+		return
 	}
 
-	return val, nil
+	return
 }
 
 // 创建新的xml配置对象

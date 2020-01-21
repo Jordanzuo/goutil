@@ -37,7 +37,7 @@ func TestSubstr(t *testing.T) {
 
 	guid1 := GetNewGUID()
 	guid2 := GetNewGUID()
-	fmt.Printf("guid1:%s, guid2:%s,", guid1, guid2)
+	fmt.Printf("guid1:%s, guid2:%s\n", guid1, guid2)
 	fmt.Printf("length of %s is %d\n", guid1, len(guid1))
 	if guid1 == guid2 {
 		t.Errorf("%s should not be equal with %s", guid1, guid2)
@@ -178,5 +178,101 @@ func TestIsDistinct_string(t *testing.T) {
 	fmt.Printf("list:%v,result:%v-------4\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------4")
+	}
+}
+
+func TestSplitToFloat64(t *testing.T) {
+	result, err := SplitToFloat64Slice("1.11,2.22", ",")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	fmt.Printf("%v\n", result)
+}
+
+func TestSimilarity(t *testing.T) {
+	source := ""
+	target := ""
+	expectedDistance := 0
+	expectedSimilarity := 0.0
+	gotDistance, gotSimilarity := Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
+	}
+
+	source = "Hello"
+	target = ""
+	expectedDistance = 5
+	expectedSimilarity = 0.0
+	gotDistance, gotSimilarity = Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
+	}
+
+	source = ""
+	target = "Hello"
+	expectedDistance = 5
+	expectedSimilarity = 0.0
+	gotDistance, gotSimilarity = Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
+	}
+
+	source = "Helo"
+	target = "Hello"
+	expectedDistance = 1
+	expectedSimilarity = 4.0 / 5.0
+	gotDistance, gotSimilarity = Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
+	}
+
+	source = "kitten"
+	target = "sitten"
+	expectedDistance = 1
+	expectedSimilarity = 5.0 / 6.0
+	gotDistance, gotSimilarity = Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
+	}
+
+	source = "Michael Jordan"
+	target = "Michael Jordan"
+	expectedDistance = 0
+	expectedSimilarity = 1
+	gotDistance, gotSimilarity = Similarity(source, target)
+	if gotDistance != expectedDistance {
+		t.Errorf("Expected to get %d, now got %d", expectedDistance, gotDistance)
+		return
+	}
+	if gotSimilarity != expectedSimilarity {
+		t.Errorf("Expected to get %f, now got %f", expectedSimilarity, gotSimilarity)
+		return
 	}
 }

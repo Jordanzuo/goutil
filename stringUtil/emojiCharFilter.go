@@ -4,7 +4,7 @@ package stringUtil
 var emojiData map[rune]rune
 
 func init() {
-	emojiData = make(map[rune]rune, 0)
+	emojiData = make(map[rune]rune, 1024)
 
 	addEmojiChar()
 }

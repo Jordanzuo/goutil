@@ -7,7 +7,6 @@ var (
 	re_idno = regexp.MustCompile("^[1-9]{1}[0-9]{14}$|^[1-9]{1}[0-9]{16}([0-9]|[xX])$")
 	// 邮箱
 	re_email = regexp.MustCompile(`^[0-9A-Za-z][\.-_0-9A-Za-z]*@[0-9A-Za-z]+(\.[0-9A-Za-z]+)+$`)
-
 	// 中国手机号验证
 	re_chinesePhoneNum = regexp.MustCompile(`^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9])\d{8}$`)
 )

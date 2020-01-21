@@ -32,7 +32,8 @@ func ValidateCharge(bundleIdentifierList []string, productId, receiptData string
 	}
 
 	// 获取Receipt对象
-	if receiptObj, err = getReceipt(receiptData, isSandBox); err != nil {
+	receiptObj, err = getReceipt(receiptData, isSandBox)
+	if err != nil {
 		return
 	}
 
@@ -54,10 +55,15 @@ func getReceipt(receiptData string, isSandBox bool) (receiptObj *Receipt, err er
 	if isSandBox {
 		weburl = con_SandBoxUrl
 	}
+
 	data := []byte(convertReceiptToPost(receiptData))
-	var returnBytes []byte
-	if returnBytes, err = webUtil.PostByteData(weburl, data, nil); err != nil {
+	statusCode, returnBytes, err := webUtil.PostByteData2(weburl, data, webUtil.ContentType_Form, nil)
+	if err != nil {
 		err = NetworkError
+		return
+	}
+	if statusCode != 200 {
+		err = fmt.Errorf("StatusCode is wrong:%d", statusCode)
 		return
 	}
 

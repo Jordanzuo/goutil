@@ -12,775 +12,1187 @@ import (
 // 字节数据类型转换(转换过程不是类型安全的)
 // val:待转换的值
 // 返回值:
-// byte:结果
-// error:错误数据
-func Byte(val interface{}) (byte, error) {
+// result:结果
+// err:错误数据
+func Byte(val interface{}) (result byte, err error) {
+	return Uint8(val)
+}
+
+// 字节数据类型转换(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func ByteArray(valArray []interface{}) (result []uint8, err error) {
+	return Uint8Array(valArray)
+}
+
+// 类型转换为int(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Int(val interface{}) (result int, err error) {
 	if val == nil {
-		return 0, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
-	case byte:
-		return val.(byte), nil
 	case int:
-		return byte(val.(int)), nil
-	case int32:
-		return byte(val.(int32)), nil
-	case uint32:
-		return byte(val.(uint32)), nil
-	case int64:
-		return byte(val.(int64)), nil
-	case uint64:
-		return byte(val.(uint64)), nil
+		result = int(val.(int))
+	case uint:
+		result = int(val.(uint))
 	case int8:
-		return byte(val.(int8)), nil
+		result = int(val.(int8))
+	case uint8:
+		result = int(val.(uint8))
 	case int16:
-		return byte(val.(int16)), nil
+		result = int(val.(int16))
 	case uint16:
-		return byte(val.(uint16)), nil
+		result = int(val.(uint16))
+	case int32:
+		result = int(val.(int32))
+	case uint32:
+		result = int(val.(uint32))
+	case int64:
+		result = int(val.(int64))
+	case uint64:
+		result = int(val.(uint64))
 	case float32:
-		return byte(val.(float32)), nil
+		result = int(val.(float32))
 	case float64:
-		return byte(val.(float64)), nil
+		result = int(val.(float64))
 	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
 		}
 
-		return byte(result), nil
+		result = int(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return 0, fmt.Errorf("val is not base type")
+	return
+}
+
+// 转换为Int列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func IntArray(valArray []interface{}) (result []int, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]int, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Int(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
+}
+
+// 类型转换为int8(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Int8(val interface{}) (result int8, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = int8(val.(int))
+	case uint:
+		result = int8(val.(uint))
+	case int8:
+		result = int8(val.(int8))
+	case uint8:
+		result = int8(val.(uint8))
+	case int16:
+		result = int8(val.(int16))
+	case uint16:
+		result = int8(val.(uint16))
+	case int32:
+		result = int8(val.(int32))
+	case uint32:
+		result = int8(val.(uint32))
+	case int64:
+		result = int8(val.(int64))
+	case uint64:
+		result = int8(val.(uint64))
+	case float32:
+		result = int8(val.(float32))
+	case float64:
+		result = int8(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = int8(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为int8列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func Int8Array(valArray []interface{}) (result []int8, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]int8, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Int8(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
+}
+
+// 类型转换为int16(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Int16(val interface{}) (result int16, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = int16(val.(int))
+	case uint:
+		result = int16(val.(uint))
+	case int8:
+		result = int16(val.(int8))
+	case uint8:
+		result = int16(val.(uint8))
+	case int16:
+		result = int16(val.(int16))
+	case uint16:
+		result = int16(val.(uint16))
+	case int32:
+		result = int16(val.(int32))
+	case uint32:
+		result = int16(val.(uint32))
+	case int64:
+		result = int16(val.(int64))
+	case uint64:
+		result = int16(val.(uint64))
+	case float32:
+		result = int16(val.(float32))
+	case float64:
+		result = int16(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = int16(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为int16列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func Int16Array(valArray []interface{}) (result []int16, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]int16, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Int16(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
 }
 
 // 类型转换为int32(转换过程不是类型安全的)
 // val:待转换的值
 // 返回值:
-// int:结果
-// error:错误数据
-func Int32(val interface{}) (int32, error) {
+// result:结果
+// err:错误数据
+func Int32(val interface{}) (result int32, err error) {
 	if val == nil {
-		return 0, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
-	case byte:
-		return int32(val.(byte)), nil
 	case int:
-		return int32(val.(int)), nil
+		result = int32(val.(int))
 	case uint:
-		return int32(val.(uint)), nil
-	case int32:
-		return val.(int32), nil
-	case uint32:
-		return int32(val.(uint32)), nil
-	case int64:
-		return int32(val.(int64)), nil
-	case uint64:
-		return int32(val.(uint64)), nil
+		result = int32(val.(uint))
 	case int8:
-		return int32(val.(int8)), nil
+		result = int32(val.(int8))
+	case uint8:
+		result = int32(val.(uint8))
 	case int16:
-		return int32(val.(int16)), nil
+		result = int32(val.(int16))
 	case uint16:
-		return int32(val.(uint16)), nil
+		result = int32(val.(uint16))
+	case int32:
+		result = int32(val.(int32))
+	case uint32:
+		result = int32(val.(uint32))
+	case int64:
+		result = int32(val.(int64))
+	case uint64:
+		result = int32(val.(uint64))
 	case float32:
-		return int32(val.(float32)), nil
+		result = int32(val.(float32))
 	case float64:
-		return int32(val.(float64)), nil
+		result = int32(val.(float64))
 	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
 		}
 
-		return int32(result), nil
+		result = int32(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return 0, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为int32列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []int:结果
-// error:错误数据
-func Int32Array(val []interface{}) ([]int32, error) {
-	array := make([]int32, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func Int32Array(valArray []interface{}) (result []int32, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Int32(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]int32, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Int32(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, nil
+	return
+}
+
+// 类型转换为int64(转换过程不是类型安全的)
+// 返回值:
+// result:结果
+// err:错误数据
+func Int64(val interface{}) (result int64, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = int64(val.(int))
+	case uint:
+		result = int64(val.(uint))
+	case int8:
+		result = int64(val.(int8))
+	case uint8:
+		result = int64(val.(uint8))
+	case int16:
+		result = int64(val.(int16))
+	case uint16:
+		result = int64(val.(uint16))
+	case int32:
+		result = int64(val.(int32))
+	case uint32:
+		result = int64(val.(uint32))
+	case int64:
+		result = int64(val.(int64))
+	case uint64:
+		result = int64(val.(uint64))
+	case float32:
+		result = int64(val.(float32))
+	case float64:
+		result = int64(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = int64(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为int64列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func Int64Array(valArray []interface{}) (result []int64, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]int64, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Int64(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
+}
+
+// 类型转换为uint(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Uint(val interface{}) (result uint, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = uint(val.(int))
+	case uint:
+		result = uint(val.(uint))
+	case int8:
+		result = uint(val.(int8))
+	case uint8:
+		result = uint(val.(uint8))
+	case int16:
+		result = uint(val.(int16))
+	case uint16:
+		result = uint(val.(uint16))
+	case int32:
+		result = uint(val.(int32))
+	case uint32:
+		result = uint(val.(uint32))
+	case int64:
+		result = uint(val.(int64))
+	case uint64:
+		result = uint(val.(uint64))
+	case float32:
+		result = uint(val.(float32))
+	case float64:
+		result = uint(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = uint(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为uint列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func UintArray(valArray []interface{}) (result []uint, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]uint, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Uint(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
+}
+
+// uint8数据类型转换(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Uint8(val interface{}) (result uint8, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = uint8(val.(int))
+	case uint:
+		result = uint8(val.(uint))
+	case int8:
+		result = uint8(val.(int8))
+	case uint8:
+		result = uint8(val.(uint8))
+	case int16:
+		result = uint8(val.(int16))
+	case uint16:
+		result = uint8(val.(uint16))
+	case int32:
+		result = uint8(val.(int32))
+	case uint32:
+		result = uint8(val.(uint32))
+	case int64:
+		result = uint8(val.(int64))
+	case uint64:
+		result = uint8(val.(uint64))
+	case float32:
+		result = uint8(val.(float32))
+	case float64:
+		result = uint8(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = uint8(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// uint8数据类型转换(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Uint8Array(valArray []interface{}) (result []uint8, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]uint8, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Uint8(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
+}
+
+// 类型转换为uint16(转换过程不是类型安全的)
+// val:待转换的值
+// 返回值:
+// result:结果
+// err:错误数据
+func Uint16(val interface{}) (result uint16, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = uint16(val.(int))
+	case uint:
+		result = uint16(val.(uint))
+	case int8:
+		result = uint16(val.(int8))
+	case uint8:
+		result = uint16(val.(uint8))
+	case int16:
+		result = uint16(val.(int16))
+	case uint16:
+		result = uint16(val.(uint16))
+	case int32:
+		result = uint16(val.(int32))
+	case uint32:
+		result = uint16(val.(uint32))
+	case int64:
+		result = uint16(val.(int64))
+	case uint64:
+		result = uint16(val.(uint64))
+	case float32:
+		result = uint16(val.(float32))
+	case float64:
+		result = uint16(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = uint16(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为uint16列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func Uint16Array(valArray []interface{}) (result []uint16, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]uint16, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Uint16(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
 }
 
 // 类型转换为uint32(转换过程不是类型安全的)
 // val:待转换的值
 // 返回值:
-// int:结果
-// error:错误数据
-func Uint32(val interface{}) (uint32, error) {
+// result:结果
+// err:错误数据
+func Uint32(val interface{}) (result uint32, err error) {
 	if val == nil {
-		return 0, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
-	case byte:
-		return uint32(val.(byte)), nil
 	case int:
-		return uint32(val.(int)), nil
+		result = uint32(val.(int))
 	case uint:
-		return uint32(val.(uint)), nil
-	case int32:
-		return uint32(val.(int32)), nil
-	case uint32:
-		return uint32(val.(uint32)), nil
-	case int64:
-		return uint32(val.(int64)), nil
-	case uint64:
-		return uint32(val.(uint64)), nil
+		result = uint32(val.(uint))
 	case int8:
-		return uint32(val.(int8)), nil
+		result = uint32(val.(int8))
+	case uint8:
+		result = uint32(val.(uint8))
 	case int16:
-		return uint32(val.(int16)), nil
+		result = uint32(val.(int16))
 	case uint16:
-		return uint32(val.(uint16)), nil
+		result = uint32(val.(uint16))
+	case int32:
+		result = uint32(val.(int32))
+	case uint32:
+		result = uint32(val.(uint32))
+	case int64:
+		result = uint32(val.(int64))
+	case uint64:
+		result = uint32(val.(uint64))
 	case float32:
-		return uint32(val.(float32)), nil
+		result = uint32(val.(float32))
 	case float64:
-		return uint32(val.(float64)), nil
+		result = uint32(val.(float64))
 	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
 		}
 
-		return uint32(result), nil
+		result = uint32(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return 0, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为uint32列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []int:结果
-// error:错误数据
-func Uint32Array(val []interface{}) ([]uint32, error) {
-	array := make([]uint32, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func Uint32Array(valArray []interface{}) (result []uint32, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Uint32(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]uint32, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Uint32(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, nil
-}
-
-// 类型转换为int(转换过程不是类型安全的)
-// 返回值:
-// int:结果
-// error:错误数据
-func Int(val interface{}) (int, error) {
-	if val == nil {
-		return 0, fmt.Errorf("val is nil")
-	}
-
-	switch val.(type) {
-	case byte:
-		return int(val.(byte)), nil
-	case int:
-		return val.(int), nil
-	case uint:
-		return int(val.(uint)), nil
-	case int32:
-		return int(val.(int32)), nil
-	case uint32:
-		return int(val.(uint32)), nil
-	case int64:
-		return int(val.(int64)), nil
-	case uint64:
-		return int(val.(uint64)), nil
-	case int8:
-		return int(val.(int8)), nil
-	case int16:
-		return int(val.(int16)), nil
-	case uint16:
-		return int(val.(uint16)), nil
-	case float32:
-		return int(val.(float32)), nil
-	case float64:
-		return int(val.(float64)), nil
-	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
-		}
-
-		return int(result), nil
-	}
-
-	return 0, fmt.Errorf("val is not base type")
-}
-
-// 转换为Int列表(转换过程不是类型安全的)
-// val:待转换的数据列表
-// 返回值:
-// []int:结果
-// error:错误数据
-func IntArray(val []interface{}) ([]int, error) {
-	array := make([]int, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
-	}
-
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Int(item)
-		if errMsg != nil {
-			return nil, errMsg
-		}
-
-		array = append(array, tmpResult)
-	}
-
-	return array, nil
-}
-
-// 类型转换为uint(转换过程不是类型安全的)
-// 返回值:
-// int:结果
-// error:错误数据
-func Uint(val interface{}) (uint, error) {
-	if val == nil {
-		return 0, fmt.Errorf("val is nil")
-	}
-
-	switch val.(type) {
-	case byte:
-		return uint(val.(byte)), nil
-	case int:
-		return uint(val.(int)), nil
-	case uint:
-		return uint(val.(uint)), nil
-	case int32:
-		return uint(val.(int32)), nil
-	case uint32:
-		return uint(val.(uint32)), nil
-	case int64:
-		return uint(val.(int64)), nil
-	case uint64:
-		return uint(val.(uint64)), nil
-	case int8:
-		return uint(val.(int8)), nil
-	case int16:
-		return uint(val.(int16)), nil
-	case uint16:
-		return uint(val.(uint16)), nil
-	case float32:
-		return uint(val.(float32)), nil
-	case float64:
-		return uint(val.(float64)), nil
-	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
-		}
-
-		return uint(result), nil
-	}
-
-	return 0, fmt.Errorf("val is not base type")
-}
-
-// 转换为uint列表(转换过程不是类型安全的)
-// val:待转换的数据列表
-// 返回值:
-// []int:结果
-// error:错误数据
-func UintArray(val []interface{}) ([]uint, error) {
-	array := make([]uint, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
-	}
-
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Uint(item)
-		if errMsg != nil {
-			return nil, errMsg
-		}
-
-		array = append(array, tmpResult)
-	}
-
-	return array, nil
-}
-
-// 类型转换为int64(转换过程不是类型安全的)
-// 返回值:
-// int:结果
-// error:错误数据
-func Int64(val interface{}) (int64, error) {
-	if val == nil {
-		return 0, fmt.Errorf("val is nil")
-	}
-
-	switch val.(type) {
-	case byte:
-		return int64(val.(byte)), nil
-	case int:
-		return int64(val.(int)), nil
-	case uint:
-		return int64(val.(uint)), nil
-	case int32:
-		return int64(val.(int32)), nil
-	case uint32:
-		return int64(val.(uint32)), nil
-	case int64:
-		return val.(int64), nil
-	case uint64:
-		return int64(val.(uint64)), nil
-	case int8:
-		return int64(val.(int8)), nil
-	case int16:
-		return int64(val.(int16)), nil
-	case uint16:
-		return int64(val.(uint16)), nil
-	case float32:
-		return int64(val.(float32)), nil
-	case float64:
-		return int64(val.(float64)), nil
-	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
-		}
-
-		return int64(result), nil
-	}
-
-	return 0, fmt.Errorf("val is not base type")
-}
-
-// 转换为int64列表(转换过程不是类型安全的)
-// val:待转换的数据列表
-// 返回值:
-// []int:结果
-// error:错误数据
-func Int64Array(val []interface{}) ([]int64, error) {
-	array := make([]int64, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
-	}
-
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Int64(item)
-		if errMsg != nil {
-			return nil, errMsg
-		}
-
-		array = append(array, tmpResult)
-	}
-
-	return array, nil
+	return
 }
 
 // 类型转换为uint64(转换过程不是类型安全的)
 // 返回值:
-// int:结果
-// error:错误数据
-func Uint64(val interface{}) (uint64, error) {
+// result:结果
+// err:错误数据
+func Uint64(val interface{}) (result uint64, err error) {
 	if val == nil {
-		return 0, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
-	case byte:
-		return uint64(val.(byte)), nil
 	case int:
-		return uint64(val.(int)), nil
+		result = uint64(val.(int))
 	case uint:
-		return uint64(val.(uint)), nil
-	case int32:
-		return uint64(val.(int32)), nil
-	case uint32:
-		return uint64(val.(uint32)), nil
-	case int64:
-		return uint64(val.(int64)), nil
-	case uint64:
-		return uint64(val.(uint64)), nil
+		result = uint64(val.(uint))
 	case int8:
-		return uint64(val.(int8)), nil
+		result = uint64(val.(int8))
+	case uint8:
+		result = uint64(val.(uint8))
 	case int16:
-		return uint64(val.(int16)), nil
+		result = uint64(val.(int16))
 	case uint16:
-		return uint64(val.(uint16)), nil
+		result = uint64(val.(uint16))
+	case int32:
+		result = uint64(val.(int32))
+	case uint32:
+		result = uint64(val.(uint32))
+	case int64:
+		result = uint64(val.(int64))
+	case uint64:
+		result = uint64(val.(uint64))
 	case float32:
-		return uint64(val.(float32)), nil
+		result = uint64(val.(float32))
 	case float64:
-		return uint64(val.(float64)), nil
+		result = uint64(val.(float64))
 	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
 		}
 
-		return uint64(result), nil
+		result = uint64(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return 0, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为uint64列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []int:结果
-// error:错误数据
-func Uint64Array(val []interface{}) ([]uint64, error) {
-	array := make([]uint64, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func Uint64Array(valArray []interface{}) (result []uint64, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Uint64(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]uint64, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Uint64(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, nil
+	return
+}
+
+// 类型转换为float32(转换过程不是类型安全的)
+// 返回值:
+// result:结果
+// err:错误数据
+func Float32(val interface{}) (result float32, err error) {
+	if val == nil {
+		err = fmt.Errorf("val is nil")
+		return
+	}
+
+	switch val.(type) {
+	case int:
+		result = float32(val.(int))
+	case uint:
+		result = float32(val.(uint))
+	case int8:
+		result = float32(val.(int8))
+	case uint8:
+		result = float32(val.(uint8))
+	case int16:
+		result = float32(val.(int16))
+	case uint16:
+		result = float32(val.(uint16))
+	case int32:
+		result = float32(val.(int32))
+	case uint32:
+		result = float32(val.(uint32))
+	case int64:
+		result = float32(val.(int64))
+	case uint64:
+		result = float32(val.(uint64))
+	case float32:
+		result = float32(val.(float32))
+	case float64:
+		result = float32(val.(float64))
+	case string:
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
+		}
+
+		result = float32(tmp)
+	default:
+		err = fmt.Errorf("val is not base type")
+	}
+
+	return
+}
+
+// 转换为float32列表(转换过程不是类型安全的)
+// valArray:待转换的数据列表
+// 返回值:
+// result:结果
+// err:错误数据
+func Float32Array(valArray []interface{}) (result []float32, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
+	}
+
+	result = make([]float32, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Float32(item)
+		if err1 != nil {
+			err = err1
+			return
+		}
+
+		result = append(result, tmp)
+	}
+
+	return
 }
 
 // 类型转换为float64(转换过程不是类型安全的)
 // 返回值:
-// float64:结果
-// error:错误数据
-func Float64(val interface{}) (float64, error) {
-
+// result:结果
+// err:错误数据
+func Float64(val interface{}) (result float64, err error) {
 	if val == nil {
-		return 0, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
 	case int:
-		return float64(val.(int)), nil
+		result = float64(val.(int))
 	case uint:
-		return float64(val.(uint)), nil
-	case int32:
-		return float64(val.(int32)), nil
-	case uint32:
-		return float64(val.(uint32)), nil
-	case int64:
-		return float64(val.(int64)), nil
-	case uint64:
-		return float64(val.(uint64)), nil
+		result = float64(val.(uint))
 	case int8:
-		return float64(val.(int8)), nil
+		result = float64(val.(int8))
 	case uint8:
-		return float64(val.(uint8)), nil
+		result = float64(val.(uint8))
 	case int16:
-		return float64(val.(int16)), nil
+		result = float64(val.(int16))
 	case uint16:
-		return float64(val.(uint16)), nil
+		result = float64(val.(uint16))
+	case int32:
+		result = float64(val.(int32))
+	case uint32:
+		result = float64(val.(uint32))
+	case int64:
+		result = float64(val.(int64))
+	case uint64:
+		result = float64(val.(uint64))
 	case float32:
-		return float64(val.(float32)), nil
+		result = float64(val.(float32))
 	case float64:
-		return float64(val.(float64)), nil
+		result = float64(val.(float64))
 	case string:
-		result, errMsg := strconv.ParseFloat(val.(string), 64)
-		if errMsg != nil {
-			return 0, fmt.Errorf("string convert error")
+		tmp, err1 := strconv.ParseFloat(val.(string), 64)
+		if err1 != nil {
+			err = fmt.Errorf("string convert error")
+			return
 		}
 
-		return result, nil
+		result = tmp
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return 0, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为Int列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []int:结果
-// error:错误数据
-func Float64Array(val []interface{}) ([]float64, error) {
-	array := make([]float64, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func Float64Array(valArray []interface{}) (result []float64, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Float64(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]float64, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Float64(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, nil
+	return
 }
 
 // 类型转换为bool(转换过程不是类型安全的)
 // 返回值:
-// bool:结果
-// error:错误数据
-func Bool(val interface{}) (bool, error) {
+// result:结果
+// err:错误数据
+func Bool(val interface{}) (result bool, err error) {
 	if val == nil {
-		return false, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
 	case int:
-		return (val.(int)) > 0, nil
+		result = (val.(int)) > 0
 	case uint:
-		return (val.(uint)) > 0, nil
-	case int32:
-		return (val.(int32)) > 0, nil
-	case uint32:
-		return (val.(uint32)) > 0, nil
-	case int64:
-		return (val.(int64)) > 0, nil
-	case uint64:
-		return (val.(uint64)) > 0, nil
+		result = (val.(uint)) > 0
 	case int8:
-		return (val.(int8)) > 0, nil
+		result = (val.(int8)) > 0
 	case uint8:
-		return (val.(uint8)) > 0, nil
+		result = (val.(uint8)) > 0
 	case int16:
-		return (val.(int16)) > 0, nil
+		result = (val.(int16)) > 0
 	case uint16:
-		return (val.(uint16)) > 0, nil
+		result = (val.(uint16)) > 0
+	case int32:
+		result = (val.(int32)) > 0
+	case uint32:
+		result = (val.(uint32)) > 0
+	case int64:
+		result = (val.(int64)) > 0
+	case uint64:
+		result = (val.(uint64)) > 0
 	case float32:
-		return int(val.(float32)) > 0, nil
+		result = int(val.(float32)) > 0
 	case float64:
-		return int(val.(float64)) > 0, nil
+		result = int(val.(float64)) > 0
 	case bool:
-		return val.(bool), nil
+		result = val.(bool)
 	case string:
-		result, errMsg := strconv.ParseBool(val.(string))
-		if errMsg != nil {
-			// 先尝试转换成数值值，再进行bool转换
-			var tmpVal float64
-			tmpVal, errMsg = strconv.ParseFloat(val.(string), 64)
-			if errMsg != nil {
-				return false, fmt.Errorf("string convert error")
+		tmp1, err1 := strconv.ParseBool(val.(string))
+		if err1 != nil {
+			// 先尝试转换成数值，再进行bool转换
+			tmp2, err2 := strconv.ParseFloat(val.(string), 64)
+			if err2 != nil {
+				err = fmt.Errorf("string convert error")
+				return
 			}
 
-			result = int(tmpVal) > 0
+			result = int(tmp2) > 0
+			break
 		}
-
-		return result, nil
+		result = tmp1
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return false, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为Int列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []bool:结果
-// error:错误数据
-func BoolArray(val []interface{}) ([]bool, error) {
-	array := make([]bool, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func BoolArray(valArray []interface{}) (result []bool, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := Bool(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]bool, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := Bool(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, nil
+	return
 }
 
 // 类型转换为字符串(转换过程不是类型安全的)
 // 返回值:
-// string:结果
-// error:错误数据
-func String(val interface{}) (string, error) {
+// result:结果
+// err:错误数据
+func String(val interface{}) (result string, err error) {
 	if val == nil {
-		return "", fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
 	case int:
-		return string(val.(int)), nil
+		result = strconv.FormatInt(int64(val.(int)), 10)
 	case uint:
-		return string(val.(uint)), nil
-	case int32:
-		return string(val.(int32)), nil
-	case uint32:
-		return string(val.(uint32)), nil
-	case int64:
-		return string(val.(int64)), nil
-	case uint64:
-		return string(val.(uint64)), nil
+		result = strconv.FormatUint(uint64(val.(uint)), 10)
 	case int8:
-		return string(val.(int8)), nil
+		result = strconv.FormatInt(int64(val.(int8)), 10)
 	case uint8:
-		return string(val.(uint8)), nil
+		result = strconv.FormatUint(uint64(val.(uint8)), 10)
 	case int16:
-		return string(val.(int16)), nil
+		result = strconv.FormatInt(int64(val.(int16)), 10)
 	case uint16:
-		return string(val.(uint16)), nil
+		result = strconv.FormatUint(uint64(val.(uint16)), 10)
+	case int32:
+		result = strconv.FormatInt(int64(val.(int32)), 10)
+	case uint32:
+		result = strconv.FormatUint(uint64(val.(uint32)), 10)
+	case int64:
+		result = strconv.FormatInt(int64(val.(int64)), 10)
+	case uint64:
+		result = strconv.FormatUint(uint64(val.(uint64)), 10)
 	case float32:
-		return strconv.FormatFloat(float64(val.(float32)), 'F', 5, 32), nil
+		result = strconv.FormatFloat(float64(val.(float32)), 'f', -1, 32)
 	case float64:
-		return strconv.FormatFloat(val.(float64), 'F', 5, 64), nil
+		result = strconv.FormatFloat(val.(float64), 'f', -1, 64)
 	case string:
-		return val.(string), nil
+		result = val.(string)
+	default:
+		err = fmt.Errorf("val is not base type")
 	}
 
-	return "", fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换为Int列表(转换过程不是类型安全的)
-// val:待转换的数据列表
+// valArray:待转换的数据列表
 // 返回值:
-// []string:结果
-// error:错误数据
-func StringArray(val []interface{}) ([]string, error) {
-	array := make([]string, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func StringArray(valArray []interface{}) (result []string, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := String(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]string, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := String(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换成时间格式
 // val:待转换的数据,如果是字符串，则要求是格式:2006-01-02 15:04:05
-// *time.Time:转换结果
-// error:转换的错误信息
-func DateTime(val interface{}) (time.Time, error) {
+// result:结果
+// err:错误数据
+func DateTime(val interface{}) (result time.Time, err error) {
 	if val == nil {
-		return time.Time{}, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
 	case time.Time:
-		return val.(time.Time), nil
+		result = val.(time.Time)
 	case string:
-		return timeUtil.ToDateTime(val.(string))
+		result, err = timeUtil.ToDateTime(val.(string))
 	case int, int64, float32, float64:
-		intVal, _ := Int64(val)
-		return time.Unix(intVal, 0).Local(), nil
+		intVal, err1 := Int64(val)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		result = time.Unix(intVal, 0).Local()
 	default:
-		return time.Time{}, fmt.Errorf("unknown data type")
+		err = fmt.Errorf("unknown data type")
 	}
+
+	return
 }
 
 // 转换成时间格式
-// val:待转换的数据,如果是字符串，则要求是格式:2006-01-02 15:04:05
-// *time.Time:转换结果
-// error:转换的错误信息
-func DateTimeArray(val []interface{}) ([]time.Time, error) {
-	array := make([]time.Time, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// valArray:待转换的数据,如果是字符串，则要求是格式:2006-01-02 15:04:05
+// result:结果
+// err:错误数据
+func DateTimeArray(valArray []interface{}) (result []time.Time, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := DateTime(item)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]time.Time, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := DateTime(item)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, fmt.Errorf("val is not base type")
+	return
 }
 
 // 转换成时间格式
 // val:待转换的数据,如果是字符串，则使用format进行转换
 // format:时间格式
-// *time.Time:转换结果
-// error:转换的错误信息
-func DateTimeByFormat(val interface{}, format string) (time.Time, error) {
+// result:结果
+// err:错误数据
+func DateTimeByFormat(val interface{}, format string) (result time.Time, err error) {
 	if val == nil {
-		return time.Time{}, fmt.Errorf("val is nil")
+		err = fmt.Errorf("val is nil")
+		return
 	}
 
 	switch val.(type) {
 	case time.Time:
-		return val.(time.Time), nil
+		result = val.(time.Time)
 	case string:
-		return time.ParseInLocation(val.(string), format, time.Local)
+		result, err = time.ParseInLocation(val.(string), format, time.Local)
 	case int, int64, float32, float64:
-		intVal, _ := Int64(val)
-		return time.Unix(intVal, 0).Local(), nil
+		intVal, err1 := Int64(val)
+		if err1 != nil {
+			err = err1
+			return
+		}
+		result = time.Unix(intVal, 0).Local()
 	default:
-		return time.Time{}, fmt.Errorf("unknown data type")
+		err = fmt.Errorf("unknown data type")
 	}
+
+	return
 }
 
 // 转换成时间格式
-// val:待转换的数据,如果是字符串，则使用format进行转换
+// valArray:待转换的数据,如果是字符串，则使用format进行转换
 // format:时间格式
-// *time.Time:转换结果
-// error:转换的错误信息
-func DateTimeArrayByFormat(val []interface{}, format string) ([]time.Time, error) {
-	array := make([]time.Time, 0, len(val))
-	if val == nil {
-		return array, fmt.Errorf("val is nil")
+// result:结果
+// err:错误数据
+func DateTimeArrayByFormat(valArray []interface{}, format string) (result []time.Time, err error) {
+	if valArray == nil {
+		err = fmt.Errorf("valArray is nil")
+		return
 	}
 
-	// 转换成数组
-	for _, item := range val {
-		tmpResult, errMsg := DateTimeByFormat(item, format)
-		if errMsg != nil {
-			return nil, errMsg
+	result = make([]time.Time, 0, len(valArray))
+	for _, item := range valArray {
+		tmp, err1 := DateTimeByFormat(item, format)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
-		array = append(array, tmpResult)
+		result = append(result, tmp)
 	}
 
-	return array, fmt.Errorf("val is not base type")
+	return
 }
 
 // 类型转换（基础数据类型）
@@ -789,52 +1201,39 @@ func DateTimeArrayByFormat(val []interface{}, format string) ([]time.Time, error
 // 返回值:
 // interface{}:结果
 // error:错误信息
-func Convert(val interface{}, targetType reflect.Kind) (interface{}, error) {
+func Convert(val interface{}, targetType reflect.Kind) (result interface{}, err error) {
 	switch targetType {
 	case reflect.Int:
-		return Int(val)
+		result, err = Int(val)
 	case reflect.Int8:
-		{
-			val, err := Int(val)
-			return int8(val), err
-		}
+		result, err = Int8(val)
 	case reflect.Int16:
-		{
-			val, err := Int(val)
-			return int16(val), err
-		}
+		result, err = Int16(val)
 	case reflect.Int32:
-		return Int32(val)
+		result, err = Int32(val)
 	case reflect.Int64:
-		return Int64(val)
+		result, err = Int64(val)
 	case reflect.Uint:
-		return Uint(val)
+		result, err = Uint(val)
 	case reflect.Uint8:
-		{
-			val, err := Uint(val)
-			return uint8(val), err
-		}
+		result, err = Uint8(val)
 	case reflect.Uint16:
-		{
-			val, err := Uint(val)
-			return uint16(val), err
-		}
+		result, err = Uint16(val)
 	case reflect.Uint32:
-		return Uint32(val)
+		result, err = Uint32(val)
 	case reflect.Uint64:
-		return Uint64(val)
+		result, err = Uint64(val)
 	case reflect.Float32:
-		{
-			val, err := Float64(val)
-			return float32(val), err
-		}
+		result, err = Float32(val)
 	case reflect.Float64:
-		return Float64(val)
+		result, err = Float64(val)
 	case reflect.Bool:
-		return Bool(val)
+		result, err = Bool(val)
 	case reflect.String:
-		return String(val)
+		result, err = String(val)
+	default:
+		err = fmt.Errorf("Unknown DataType:%s", targetType.String())
 	}
 
-	return nil, fmt.Errorf("Unknown DataType:%s", targetType.String())
+	return
 }

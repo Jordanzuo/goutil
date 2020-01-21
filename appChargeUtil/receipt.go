@@ -3,7 +3,6 @@ package appChargeUtil
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	"github.com/Jordanzuo/goutil/typeUtil"
 )
@@ -64,57 +63,55 @@ func (this *Receipt) String() string {
 // 收据对象
 // 错误对象
 func newReceipt(receiptInfo string) (receiptObj *Receipt, err error) {
+	// 创建空对象
+	receiptObj = &Receipt{}
+
 	// 将接收的数据转化为map类型的对象
 	receiptDataMap := make(map[string]interface{})
-	if err = json.Unmarshal([]byte(receiptInfo), &receiptDataMap); err != nil {
+	err = json.Unmarshal([]byte(receiptInfo), &receiptDataMap)
+	if err != nil {
 		return
 	}
 	mapData := typeUtil.NewMapData(receiptDataMap)
 
-	// 创建空对象
-	receiptObj = &Receipt{}
-
 	// 定义、并判断返回状态
-	var status int
-	if status, err = mapData.Int("status"); err != nil {
+	receiptObj.Status, err = mapData.Int("status")
+	if err != nil {
 		return
 	}
-
-	receiptObj.Status = status
-
-	if status != 0 {
-		err = fmt.Errorf("状态:%s不正确", status)
+	if receiptObj.Status != 0 {
+		err = fmt.Errorf("状态:%d不正确", receiptObj.Status)
 		return
 	}
 
 	// Receipt is actually a child
-	var ok bool
-	if receiptDataMap, ok = mapData["receipt"].(map[string]interface{}); !ok {
+	receiptDataMap, ok := mapData["receipt"].(map[string]interface{})
+	if !ok {
 		err = fmt.Errorf("receipt错误")
 		return
 	}
 	mapData = typeUtil.NewMapData(receiptDataMap)
 
 	// 用返回值对本对象的属性进行赋值
-	if receiptObj.Bvrs, err = mapData.String("bvrs"); err != nil {
+	receiptObj.Bvrs, err = mapData.String("bvrs")
+	if err != nil {
 		return
 	}
-	if receiptObj.BundleIdentifier, err = mapData.String("bid"); err != nil {
+	receiptObj.BundleIdentifier, err = mapData.String("bid")
+	if err != nil {
 		return
 	}
-	if receiptObj.ProductId, err = mapData.String("product_id"); err != nil {
+	receiptObj.ProductId, err = mapData.String("product_id")
+	if err != nil {
 		return
 	}
-	if receiptObj.TransactionId, err = mapData.String("transaction_id"); err != nil {
+	receiptObj.TransactionId, err = mapData.String("transaction_id")
+	if err != nil {
 		return
 	}
-	if quality, err1 := mapData.String("quantity"); err1 != nil {
-		err = err1
+	receiptObj.Quantity, err = mapData.Int("quantity")
+	if err != nil {
 		return
-	} else {
-		if receiptObj.Quantity, err = strconv.Atoi(quality); err != nil {
-			return
-		}
 	}
 
 	return

@@ -27,14 +27,15 @@ func ReadJsonConfig_Array(config_file_path string) ([]map[string]interface{}, er
 	return config, nil
 }
 
-func getConfigValue(config []map[string]interface{}, configName string) (configValue interface{}, exists bool, err error) {
+func getConfigValue(config []map[string]interface{}, configName string) (configValue interface{}, err error) {
+	var exist bool
 	for _, configItem := range config {
-		if configValue, exists = configItem[configName]; exists {
+		if configValue, exist = configItem[configName]; exist {
 			break
 		}
 	}
 
-	if !exists {
+	if !exist {
 		err = fmt.Errorf("不存在名为%s的配置或配置为空", configName)
 	}
 
@@ -47,18 +48,20 @@ func getConfigValue(config []map[string]interface{}, configName string) (configV
 // 返回值：
 // 配置值
 // 错误对象
-func ReadIntJsonValue_Array(config []map[string]interface{}, configName string) (int, error) {
-	configValue, exists, err := getConfigValue(config, configName)
-	if !exists {
-		return 0, err
+func ReadIntJsonValue_Array(config []map[string]interface{}, configName string) (value int, err error) {
+	configValue, err := getConfigValue(config, configName)
+	if err != nil {
+		return
 	}
 
 	configValue_float, ok := configValue.(float64)
 	if !ok {
-		return 0, fmt.Errorf("%s必须为int型", configName)
+		err = fmt.Errorf("%s必须为int型", configName)
+		return
 	}
+	value = int(configValue_float)
 
-	return int(configValue_float), nil
+	return
 }
 
 // 从config配置中获取string类型的配置值
@@ -67,18 +70,20 @@ func ReadIntJsonValue_Array(config []map[string]interface{}, configName string) 
 // 返回值：
 // 配置值
 // 错误对象
-func ReadStringJsonValue_Array(config []map[string]interface{}, configName string) (string, error) {
-	configValue, exists, err := getConfigValue(config, configName)
-	if !exists {
-		return "", err
+func ReadStringJsonValue_Array(config []map[string]interface{}, configName string) (value string, err error) {
+	configValue, err := getConfigValue(config, configName)
+	if err != nil {
+		return
 	}
 
 	configValue_string, ok := configValue.(string)
 	if !ok {
-		return "", fmt.Errorf("%s必须为string型", configName)
+		err = fmt.Errorf("%s必须为string型", configName)
+		return
 	}
+	value = configValue_string
 
-	return configValue_string, nil
+	return
 }
 
 // 从config配置中获取string类型的配置值
@@ -87,16 +92,18 @@ func ReadStringJsonValue_Array(config []map[string]interface{}, configName strin
 // 返回值：
 // 配置值
 // 错误对象
-func ReadBoolJsonValue_Array(config []map[string]interface{}, configName string) (bool, error) {
-	configValue, exists, err := getConfigValue(config, configName)
-	if !exists {
-		return false, err
+func ReadBoolJsonValue_Array(config []map[string]interface{}, configName string) (value bool, err error) {
+	configValue, err := getConfigValue(config, configName)
+	if err != nil {
+		return
 	}
 
 	configValue_bool, ok := configValue.(bool)
 	if !ok {
-		return false, fmt.Errorf("%s必须为bool型", configName)
+		err = fmt.Errorf("%s必须为bool型", configName)
+		return
 	}
+	value = configValue_bool
 
-	return configValue_bool, nil
+	return
 }

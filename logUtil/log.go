@@ -8,10 +8,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/Jordanzuo/goutil/debugUtil"
 	"github.com/Jordanzuo/goutil/fileUtil"
 	"github.com/Jordanzuo/goutil/stringUtil"
 	"github.com/Jordanzuo/goutil/timeUtil"
@@ -26,77 +24,34 @@ const (
 
 var (
 	logPath = "DefaultLogPath"
-
-	// 用于控制压缩文件的并发逻辑
-	mutex sync.Mutex
-
-	// 上一次日志压缩的日期 时间戳
-	preCompressDate int64
-
-	// 压缩锁对象
-	compressLock sync.Mutex
+	logCh   = make(chan *logObject, 10240)
 )
 
-// 日志压缩
-func compress() {
-	defer func() {
-		if r := recover(); r != nil {
-			// 将错误输出，而不是记录到文件，是因为可能导致死循环
-			fmt.Println(r)
+func init() {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				// 将错误输出，而不是记录到文件，是因为可能导致死循环
+				fmt.Println(r)
+			}
+		}()
+
+		for {
+			select {
+			case logItem := <-logCh:
+				writeLog(logItem)
+			default:
+				time.Sleep(5 * time.Second)
+			}
 		}
 	}()
-
-	// 获取昨天的日期，并获取昨天对应的文件夹
-	yesterday := time.Now().AddDate(0, 0, -1)
-	dateString := timeUtil.Format(yesterday, "yyyy-MM-dd")
-	fileAbsoluteDirectory := filepath.Join(logPath, strconv.Itoa(yesterday.Year()), strconv.Itoa(int(yesterday.Month())))
-
-	mutex.Lock()
-	defer mutex.Unlock()
-
-	// 判断是否已经存在压缩文件
-	compressFileName := fmt.Sprintf("%s.tar.gz", dateString)
-	compressAbsolutePath := filepath.Join(fileAbsoluteDirectory, compressFileName)
-	if exists, err := fileUtil.IsFileExists(compressAbsolutePath); err == nil && exists {
-		return
-	}
-
-	// 获取昨天的文件列表
-	fileList, err := fileUtil.GetFileList2(fileAbsoluteDirectory, dateString, con_FILE_SUFFIX)
-	if err != nil {
-		fmt.Printf("logUtil.compress.fileUtil.GetFileList2 err:%s\n", err)
-		return
-	}
-	if len(fileList) == 0 {
-		return
-	}
-
-	// 进行tar操作，得到yyyy-MM-dd.tar
-	tarFileName := fmt.Sprintf("%s.tar", dateString)
-	tarAbsolutePath := filepath.Join(fileAbsoluteDirectory, tarFileName)
-	if err := fileUtil.Tar(fileList, tarAbsolutePath); err != nil {
-		fmt.Printf("logUtil.compress.fileUtil.Tar err:%s\n", err)
-	}
-
-	// 进行gzip操作，得到yyyy-MM-dd.tar.gz
-	if err := fileUtil.Gzip(tarAbsolutePath, ""); err != nil {
-		fmt.Printf("logUtil.compress.fileUtil.Gzip err:%s\n", err)
-	}
-
-	// 删除原始文件
-	for _, item := range fileList {
-		fileUtil.DeleteFile(item)
-	}
-
-	// 删除tar文件
-	fileUtil.DeleteFile(tarAbsolutePath)
 }
 
 // 写日志
 // logObj:日志对象
 func writeLog(logObj *logObject) {
 	if logObj.level == Warn || logObj.level == Error || logObj.level == Fatal {
-		debugUtil.Println(logObj.logInfo)
+		fmt.Println(logObj.logInfo)
 	}
 
 	// 获取当前时间
@@ -131,23 +86,8 @@ func writeLog(logObj *logObject) {
 	// 写入内容
 	f.WriteString(logObj.logInfo)
 
-	// 检查是否需要进行数据压缩
-	nowDate := timeUtil.GetDate(now).Unix()
-	if nowDate == preCompressDate {
-		return
-	}
-
-	compressLock.Lock()
-	defer compressLock.Unlock()
-
-	// 上一次压缩的时间
-	if nowDate == preCompressDate {
-		return
-	}
-	preCompressDate = nowDate
-
 	// 日志压缩
-	go compress()
+	compress()
 }
 
 // 设置日志存放的路径
@@ -182,7 +122,7 @@ func Log(logInfo string, level logType, ifIncludeHour bool) {
 	newLogInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	writeLog(newLogObject(newLogInfo, level, ifIncludeHour))
+	logCh <- newLogObject(newLogInfo, level, ifIncludeHour)
 }
 
 // 常规的日志记录接口(ifIncludeHour=true)
@@ -234,5 +174,5 @@ func LogUnknownError(r interface{}, args ...string) {
 	logInfo += stringUtil.GetNewLineString()
 
 	// 构造对象并添加到队列中
-	writeLog(newLogObject(logInfo, Error, true))
+	logCh <- newLogObject(logInfo, Error, true)
 }

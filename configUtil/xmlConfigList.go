@@ -13,43 +13,44 @@ import (
 //　返回值：
 // []bool:结果
 // error:错误信息
-func (this *XmlConfig) BoolList(xpath string, attrName string) (result []bool, errMsg error) {
+func (this *XmlConfig) BoolList(xpath string, attrName string) (result []bool, err error) {
 	result = make([]bool, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		return result, errMsg
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		return
 	}
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Bool(valItem)
-		if errMsg != nil {
-			return result, errMsg
+		resultItem, err1 := typeUtil.Bool(valItem)
+		if err1 != nil {
+			err = err1
+			return
 		}
 
 		result = append(result, resultItem)
 	}
 
-	return result, nil
+	return
 }
 
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
-// ifAddDefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
+// defaultVal:默认值
+// ifAdddefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
 //　返回值：
 // []bool:结果
-func (this *XmlConfig) DefaultBoolList(xpath string, attrName string, defaultval bool, ifAddDefaultVal bool) []bool {
-	result := make([]bool, 0)
+func (this *XmlConfig) DefaultBoolList(xpath string, attrName string, defaultVal bool, ifAdddefaultVal bool) (result []bool) {
+	result = make([]bool, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		if ifAddDefaultVal {
-			result = append(result, defaultval)
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		if ifAdddefaultVal {
+			result = append(result, defaultVal)
 		}
 
 		return result
@@ -57,10 +58,10 @@ func (this *XmlConfig) DefaultBoolList(xpath string, attrName string, defaultval
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Bool(valItem)
-		if errMsg != nil {
-			if ifAddDefaultVal {
-				result = append(result, defaultval)
+		resultItem, err := typeUtil.Bool(valItem)
+		if err != nil {
+			if ifAdddefaultVal {
+				result = append(result, defaultVal)
 			}
 
 			continue
@@ -78,20 +79,20 @@ func (this *XmlConfig) DefaultBoolList(xpath string, attrName string, defaultval
 //　返回值：
 // []int:结果
 // error:错误信息
-func (this *XmlConfig) IntList(xpath string, attrName string) ([]int, error) {
-	result := make([]int, 0)
+func (this *XmlConfig) IntList(xpath string, attrName string) (result []int, err error) {
+	result = make([]int, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		return result, errMsg
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		return result, err
 	}
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Int(valItem)
-		if errMsg != nil {
-			return result, errMsg
+		resultItem, err := typeUtil.Int(valItem)
+		if err != nil {
+			return result, err
 		}
 
 		result = append(result, resultItem)
@@ -103,18 +104,18 @@ func (this *XmlConfig) IntList(xpath string, attrName string) ([]int, error) {
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
-// ifAddDefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
+// defaultVal:默认值
+// ifAdddefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
 //　返回值：
 // []int:结果
-func (this *XmlConfig) DefaultIntList(xpath string, attrName string, defaultval int, ifAddDefaultVal bool) []int {
+func (this *XmlConfig) DefaultIntList(xpath string, attrName string, defaultVal int, ifAdddefaultVal bool) []int {
 	result := make([]int, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		if ifAddDefaultVal {
-			result = append(result, defaultval)
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		if ifAdddefaultVal {
+			result = append(result, defaultVal)
 		}
 
 		return result
@@ -122,10 +123,10 @@ func (this *XmlConfig) DefaultIntList(xpath string, attrName string, defaultval 
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Int(valItem)
-		if errMsg != nil {
-			if ifAddDefaultVal {
-				result = append(result, defaultval)
+		resultItem, err := typeUtil.Int(valItem)
+		if err != nil {
+			if ifAdddefaultVal {
+				result = append(result, defaultVal)
 			}
 
 			continue
@@ -147,16 +148,16 @@ func (this *XmlConfig) Int64List(xpath string, attrName string) ([]int64, error)
 	result := make([]int64, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		return result, errMsg
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		return result, err
 	}
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Int64(valItem)
-		if errMsg != nil {
-			return result, errMsg
+		resultItem, err := typeUtil.Int64(valItem)
+		if err != nil {
+			return result, err
 		}
 
 		result = append(result, resultItem)
@@ -168,18 +169,18 @@ func (this *XmlConfig) Int64List(xpath string, attrName string) ([]int64, error)
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
-// ifAddDefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
+// defaultVal:默认值
+// ifAdddefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
 //　返回值：
 // []int64:结果
-func (this *XmlConfig) DefaultInt64List(xpath string, attrName string, defaultval int64, ifAddDefaultVal bool) []int64 {
+func (this *XmlConfig) DefaultInt64List(xpath string, attrName string, defaultVal int64, ifAdddefaultVal bool) []int64 {
 	result := make([]int64, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		if ifAddDefaultVal {
-			result = append(result, defaultval)
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		if ifAdddefaultVal {
+			result = append(result, defaultVal)
 		}
 
 		return result
@@ -187,10 +188,10 @@ func (this *XmlConfig) DefaultInt64List(xpath string, attrName string, defaultva
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Int64(valItem)
-		if errMsg != nil {
-			if ifAddDefaultVal {
-				result = append(result, defaultval)
+		resultItem, err := typeUtil.Int64(valItem)
+		if err != nil {
+			if ifAdddefaultVal {
+				result = append(result, defaultVal)
 			}
 
 			continue
@@ -212,16 +213,16 @@ func (this *XmlConfig) FloatList(xpath string, attrName string) ([]float64, erro
 	result := make([]float64, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		return result, errMsg
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		return result, err
 	}
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Float64(valItem)
-		if errMsg != nil {
-			return result, errMsg
+		resultItem, err := typeUtil.Float64(valItem)
+		if err != nil {
+			return result, err
 		}
 
 		result = append(result, resultItem)
@@ -233,18 +234,18 @@ func (this *XmlConfig) FloatList(xpath string, attrName string) ([]float64, erro
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
-// ifAddDefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
+// defaultVal:默认值
+// ifAdddefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
 //　返回值：
 // []float64:结果
-func (this *XmlConfig) DefaultFloatList(xpath string, attrName string, defaultval float64, ifAddDefaultVal bool) []float64 {
+func (this *XmlConfig) DefaultFloatList(xpath string, attrName string, defaultVal float64, ifAdddefaultVal bool) []float64 {
 	result := make([]float64, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		if ifAddDefaultVal {
-			result = append(result, defaultval)
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		if ifAdddefaultVal {
+			result = append(result, defaultVal)
 		}
 
 		return result
@@ -252,10 +253,10 @@ func (this *XmlConfig) DefaultFloatList(xpath string, attrName string, defaultva
 
 	// 转换成指定类型
 	for _, valItem := range valList {
-		resultItem, errMsg := typeUtil.Float64(valItem)
-		if errMsg != nil {
-			if ifAddDefaultVal {
-				result = append(result, defaultval)
+		resultItem, err := typeUtil.Float64(valItem)
+		if err != nil {
+			if ifAdddefaultVal {
+				result = append(result, defaultVal)
 			}
 
 			continue
@@ -281,18 +282,18 @@ func (this *XmlConfig) StringList(xpath string, attrName string) ([]string, erro
 // 获取指定xpath路径下的值
 // xpath:xpath路径
 // attrName:属性名，如果为空，则返回节点的内部文本
-// defaultval:默认值
-// ifAddDefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
+// defaultVal:默认值
+// ifAdddefaultVal:如果某项值转换失败，是否把默认值添加到结果集合中
 //　返回值：
 // string:结果
-func (this *XmlConfig) DefaultStringList(xpath string, attrName string, defaultval string, ifAddDefaultVal bool) []string {
+func (this *XmlConfig) DefaultStringList(xpath string, attrName string, defaultVal string, ifAdddefaultVal bool) []string {
 	result := make([]string, 0)
 
 	// 获取值列表
-	valList, errMsg := this.getValList(xpath, attrName)
-	if errMsg != nil {
-		if ifAddDefaultVal {
-			result = append(result, defaultval)
+	valList, err := this.getValList(xpath, attrName)
+	if err != nil {
+		if ifAdddefaultVal {
+			result = append(result, defaultVal)
 		}
 
 		return result

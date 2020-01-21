@@ -12,7 +12,8 @@ type DFAUtil struct {
 	root *trieNode
 }
 
-func (this *DFAUtil) insertWord(word []rune) {
+// Insert new word into object
+func (this *DFAUtil) InsertWord(word []rune) {
 	currNode := this.root
 	for _, c := range word {
 		if cildNode, exist := currNode.children[c]; !exist {
@@ -28,7 +29,7 @@ func (this *DFAUtil) insertWord(word []rune) {
 }
 
 // Check if there is any word in the trie that starts with the given prefix.
-func (this *DFAUtil) startsWith(prefix []rune) bool {
+func (this *DFAUtil) StartsWith(prefix []rune) bool {
 	currNode := this.root
 	for _, c := range prefix {
 		if cildNode, exist := currNode.children[c]; !exist {
@@ -68,7 +69,7 @@ func (this *DFAUtil) searcSentence(sentence string) (matchIndexList []*matchInde
 		// Check if a sensitive word starts with word range from [start:end)
 		// We find the longest possible path
 		// Then we check any sub word is the sensitive word from long to short
-		if this.startsWith(sentenceRuneList[start:end]) {
+		if this.StartsWith(sentenceRuneList[start:end]) {
 			startsWith = true
 			end += 1
 		} else {
@@ -140,7 +141,7 @@ func NewDFAUtil(wordList []string) *DFAUtil {
 	for _, word := range wordList {
 		wordRuneList := []rune(word)
 		if len(wordRuneList) > 0 {
-			this.insertWord(wordRuneList)
+			this.InsertWord(wordRuneList)
 		}
 	}
 

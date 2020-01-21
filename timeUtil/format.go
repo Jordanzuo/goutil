@@ -134,7 +134,26 @@ func ToDateString(timeVal time.Time) string {
 	return timeVal.Local().Format("2006-01-02")
 }
 
-// 转换成时间字符串
+// 忽略时区，转换成日期字符串
+// timeVal：待转换的时间
+// 返回值：
+// string:格式形如：2016-10-10
+/*
+前面是含义，后面是 go 的表示值,多种表示,逗号","分割
+月份 1,01,Jan,January
+日　 2,02,_2
+时　 3,03,15,PM,pm,AM,am
+分　 4,04
+秒　 5,05
+年　 06,2006
+时区 -07,-0700,Z0700,Z07:00,-07:00,MST
+周几 Mon,Monday
+*/
+func ToDateString2(timeVal time.Time) string {
+	return timeVal.Format("2006-01-02")
+}
+
+// 以本地时区为准，转换成时间字符串
 // timeVal：待转换的时间
 // 返回值：
 // string:格式形如：2016-10-10 10:10:10
@@ -150,7 +169,45 @@ func ToDateString(timeVal time.Time) string {
 周几 Mon,Monday
 */
 func ToDateTimeString(timeVal time.Time) string {
+	return ToDateTimeStringEx(timeVal, false)
+}
+
+func ToDateTimeStringEx(timeVal time.Time, flagT bool) string {
+	if flagT {
+		val := timeVal.Local().Format("2006-01-02 15:04:05")
+		return strings.Replace(val, " ", "T", -1)
+	}
+
 	return timeVal.Local().Format("2006-01-02 15:04:05")
+}
+
+// 忽略时区，转换成时间字符串
+// timeVal：待转换的时间
+// 返回值：
+// string:格式形如：2016-10-10 10:10:10
+/*
+前面是含义，后面是 go 的表示值,多种表示,逗号","分割
+月份 1,01,Jan,January
+日　 2,02,_2
+时　 3,03,15,PM,pm,AM,am
+分　 4,04
+秒　 5,05
+年　 06,2006
+时区 -07,-0700,Z0700,Z07:00,-07:00,MST
+周几 Mon,Monday
+*/
+func ToDateTimeString2(timeVal time.Time) string {
+	return ToDateTimeStringEx2(timeVal, false)
+}
+
+// 日期和时间中间带T方式
+func ToDateTimeStringEx2(timeVal time.Time, flagT bool) string {
+	if flagT {
+		val := timeVal.Format("2006-01-02 15:04:05")
+		return strings.Replace(val, " ", "T", -1)
+	}
+
+	return timeVal.Format("2006-01-02 15:04:05")
 }
 
 // 转换成日期格式
@@ -162,6 +219,15 @@ func ToDateTime(timeVal string) (time.Time, error) {
 	return time.ParseInLocation("2006-01-02 15:04:05", timeVal, time.Local)
 }
 
+// 以指定时区，转换成日期格式
+func ToDateTime2(timeVal string, location *time.Location) (time.Time, error) {
+	if stringUtil.IsEmpty(timeVal) {
+		return time.Time{}, fmt.Errorf("timeval is empty")
+	}
+
+	return time.ParseInLocation("2006-01-02 15:04:05", timeVal, location)
+}
+
 // 转换成时间格式
 func ToDate(timeVal string) (time.Time, error) {
 	if stringUtil.IsEmpty(timeVal) {
@@ -169,6 +235,15 @@ func ToDate(timeVal string) (time.Time, error) {
 	}
 
 	return time.ParseInLocation("2006-01-02", timeVal, time.Local)
+}
+
+// 转换成时间格式
+func ToDate2(timeVal string, location *time.Location) (time.Time, error) {
+	if stringUtil.IsEmpty(timeVal) {
+		return time.Time{}, fmt.Errorf("timeval is empty")
+	}
+
+	return time.ParseInLocation("2006-01-02", timeVal, location)
 }
 
 // 转换成yyyyMMddHHmmssms的格式

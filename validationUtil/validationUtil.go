@@ -68,3 +68,20 @@ func Require(errList *([]error), val string, msg string) bool {
 
 	return false
 }
+
+// 检查数据是否存在重复项(此函数效率较低，如有效率要求请不要调用此函数)
+func IsDistinct(count int, isEqualFunc func(i, j int) bool) bool {
+	for i := 0; i < count; i++ {
+		for j := 0; j < count; j++ {
+			if i == j {
+				continue
+			}
+
+			if isEqualFunc(i, j) {
+				return false
+			}
+		}
+	}
+
+	return true
+}

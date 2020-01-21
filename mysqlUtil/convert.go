@@ -15,16 +15,16 @@ func ConvertConnectionStringFromCSharpToGo(connString string) string {
 
 	// 将字符串按;进行切割
 	connStringList := strings.Split(connString, ";")
-	var datasource string
-	var port string
-	var userid string
-	var password string
-	var database string
-	var charset string
-	var pooling string
-	var minimumpoolsize string
-	var maximumpoolsize string
-	var commandtimeout string
+	var datasource string      // DataSource=10.162.2.205;
+	var port string            // port=3306;
+	var userid string          // UserId=admin;
+	var password string        // Password=MOQIkaka$#@!1234;
+	var database string        // Database=s201_dzz_log;
+	var charset string         // charset=utf8;
+	var pooling string         // pooling=true;
+	var minimumpoolsize string // MinimumPoolSize=20; or min pool size=20;
+	var maximumpoolsize string // maximumpoolsize=200; or max pool size=200;
+	var commandtimeout string  // command timeout=60;
 
 	// 遍历处理
 	for _, item := range connStringList {

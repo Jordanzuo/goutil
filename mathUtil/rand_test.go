@@ -7,7 +7,7 @@ import (
 
 func TestGetRandRangeInt(t *testing.T) {
 	lower, upper := 10, 100
-	rand := GetRandRangeInt(lower, upper)
+	rand := GetRand().GetRandRangeInt(lower, upper)
 	if rand < lower || rand >= upper {
 		t.Errorf("Expected a num between %d and %d, but got %d", lower, upper, rand)
 	}
@@ -15,7 +15,7 @@ func TestGetRandRangeInt(t *testing.T) {
 
 func TestGetRandInt(t *testing.T) {
 	var n int = 100
-	var rand int = GetRandInt(n)
+	var rand int = GetRand().GetRandInt(n)
 	if rand >= n {
 		t.Errorf("Expected a num < %d, but got %d", n, rand)
 	}
@@ -23,7 +23,7 @@ func TestGetRandInt(t *testing.T) {
 
 func TestGetRandInt32(t *testing.T) {
 	var n int32 = 100
-	var rand int32 = GetRandInt32(n)
+	var rand int32 = GetRand().GetRandInt32(n)
 	if rand >= n {
 		t.Errorf("Expected a num < %d, but got %d", n, rand)
 	}
@@ -31,71 +31,71 @@ func TestGetRandInt32(t *testing.T) {
 
 func TestGetRandInt64(t *testing.T) {
 	var n int64 = 100
-	var rand int64 = GetRandInt64(n)
+	var rand int64 = GetRand().GetRandInt64(n)
 	if rand >= n {
 		t.Errorf("Expected a num < %d, but got %d", n, rand)
 	}
 }
 
 func TestGetRandFloat32(t *testing.T) {
-	var rand float32 = GetRandFloat32()
+	var rand float32 = GetRand().GetRandFloat32()
 	if rand >= 1 {
 		t.Errorf("Expected a num < 1, but got %f", rand)
 	}
 }
 
 func TestGetRandFloat64(t *testing.T) {
-	var rand float64 = GetRandFloat64()
+	var rand float64 = GetRand().GetRandFloat64()
 	if rand >= 1 {
 		t.Errorf("Expected a num < 1, but got %f", rand)
 	}
 }
 
 func TestGetRandNumList(t *testing.T) {
-	if _, err := GetRandNumList(11, 10, 11, false); err.Error() != "minValue can't be bigger than maxValue." {
+	if _, err := GetRand().GetRandNumList(11, 10, 11, false); err.Error() != "minValue can't be bigger than maxValue." {
 		t.Error("Expected err, but got nil")
 	}
 
-	if _, err := GetRandNumList(1, 10, 11, false); err.Error() != "随机的数量超过区间的元素数量" {
+	if _, err := GetRand().GetRandNumList(1, 10, 11, false); err.Error() != "随机的数量超过区间的元素数量" {
 		t.Error("Expected err, but got nil")
 	}
 
-	if _, err := GetRandNumList(1, 10001, 10, false); err.Error() != "随机数的区间不能大于10000" {
+	if _, err := GetRand().GetRandNumList(1, 10001, 10, false); err.Error() != "随机数的区间不能大于10000" {
 		t.Error("Expected err, but got nil")
 	}
 
-	randNumList, _ := GetRandNumList(1, 10, 1, false)
+	randNumList, _ := GetRand().GetRandNumList(1, 10, 1, false)
 	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRandNumList(1, 10, 3, false)
+	randNumList, _ = GetRand().GetRandNumList(1, 10, 3, false)
 	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRandNumList(1, 10, 5, false)
+	randNumList, _ = GetRand().GetRandNumList(1, 10, 5, false)
 	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRandNumList(1, 10, 7, false)
+	randNumList, _ = GetRand().GetRandNumList(1, 10, 7, false)
 	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRandNumList(1, 10, 9, false)
+	randNumList, _ = GetRand().GetRandNumList(1, 10, 9, false)
 	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRandNumList(1, 10, 10, true)
+	randNumList, _ = GetRand().GetRandNumList(1, 10, 11, true)
 	fmt.Printf("randNumList:%v\n", randNumList)
 }
 
 func TestGetRandIntList(t *testing.T) {
 	source := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-	if _, err := GetRandIntList(source, 11, false); err.Error() != "随机的数量超过列表的元素数量" {
+	if _, err := GetRand().GetRandIntList(source, 11, false); err.Error() != "随机的数量超过列表的元素数量" {
 		t.Error("Expected err, but got nil")
 	}
 
-	randIntList, _ := GetRandIntList(source, 1, false)
+	randIntList, _ := GetRand().GetRandIntList(source, 1, false)
 	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRandIntList(source, 3, false)
+	randIntList, _ = GetRand().GetRandIntList(source, 3, false)
 	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRandIntList(source, 5, false)
+	randIntList, _ = GetRand().GetRandIntList(source, 5, false)
 	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRandIntList(source, 7, false)
+	randIntList, _ = GetRand().GetRandIntList(source, 7, false)
 	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRandIntList(source, 9, false)
+	randIntList, _ = GetRand().GetRandIntList(source, 9, false)
 	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRandIntList(source, 10, true)
+	randIntList, _ = GetRand().GetRandIntList(source, 10, true)
 	fmt.Printf("randIntList:%v\n", randIntList)
 }
 
@@ -123,27 +123,27 @@ func TestGetRandInterfaceList(t *testing.T) {
 	source = append(source, item9)
 	source = append(source, item10)
 
-	if _, err := GetRandInterfaceList(source, 11, false); err.Error() != "随机的数量超过列表的元素数量" {
+	if _, err := GetRand().GetRandInterfaceList(source, 11, false); err.Error() != "随机的数量超过列表的元素数量" {
 		t.Error("Expected err, but got nil")
 	}
 
-	randInterfaceList, _ := GetRandInterfaceList(source, 1, false)
+	randInterfaceList, _ := GetRand().GetRandInterfaceList(source, 1, false)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRandInterfaceList(source, 3, false)
+	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 3, false)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRandInterfaceList(source, 5, false)
+	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 5, false)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRandInterfaceList(source, 7, false)
+	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 7, false)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRandInterfaceList(source, 9, false)
+	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 9, false)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRandInterfaceList(source, 10, true)
+	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 10, true)
 	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
 }
 
 func TestGetRandWeight(t *testing.T) {
 	source := make([]IWeight, 0, 10)
-	if _, err := GetRandWeight(source); err == nil {
+	if _, err := GetRand().GetRandWeight(source); err == nil {
 		t.Errorf("err should not be nil, but it's nil")
 	}
 
@@ -171,7 +171,7 @@ func TestGetRandWeight(t *testing.T) {
 
 	data := make(map[int]int)
 	for i := 0; i < 10000; i++ {
-		if result, err := GetRandWeight(source); err != nil {
+		if result, err := GetRand().GetRandWeight(source); err != nil {
 			t.Errorf("err should be nil, but it's not:%s", err)
 		} else {
 			if item, ok := result.(*Item); !ok {
