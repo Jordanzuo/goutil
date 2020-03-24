@@ -6,15 +6,15 @@ import (
 )
 
 func TestNewRedisConfig(t *testing.T) {
-	redisConfigStr := "ConnectionString=10.1.0.21:6379;Password=redis_pwd;Database=3;MaxActive=50;MaxIdle=20;IdleTimeout=300;DialConnectTimeout=10;"
+	redisConfigStr := "ConnectionString=localhost:6379;Password=redis_pwd;Database=0;MaxActive=50;MaxIdle=20;IdleTimeout=300;DialConnectTimeout=10;"
 	redisConfig, err := NewRedisConfig(redisConfigStr)
 	if err != nil {
 		t.Errorf("there should be no err, but now has:%s", err)
 	}
 
-	connectionString := "10.1.0.21:6379"
+	connectionString := "localhost:6379"
 	password := "redis_pwd"
-	database := 3
+	database := 0
 	maxActive := 50
 	maxIdle := 20
 	idleTimeout := 300 * time.Second

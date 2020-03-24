@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	redisPoolObj_hash = NewRedisPool("testPool", "10.1.0.21:6379", "redis_pwd", 5, 500, 200, 10*time.Second, 5*time.Second)
+	redisPoolObj_hash = NewRedisPool("testPool", "localhost:6379", "redis_pwd", 0, 500, 200, 10*time.Second, 5*time.Second)
 }
 
 func TestHSet(t *testing.T) {

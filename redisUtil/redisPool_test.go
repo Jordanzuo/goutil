@@ -10,7 +10,7 @@ var (
 )
 
 func init() {
-	redisPoolObj = NewRedisPool("testPool", "10.1.0.21:6379", "redis_pwd", 5, 500, 200, 10*time.Second, 5*time.Second)
+	redisPoolObj = NewRedisPool("testPool", "localhost:6379", "redis_pwd", 0, 500, 200, 10*time.Second, 5*time.Second)
 }
 
 func TestGetName(t *testing.T) {
@@ -23,7 +23,7 @@ func TestGetName(t *testing.T) {
 }
 
 func TestGetAddress(t *testing.T) {
-	expected := "10.1.0.21:6379"
+	expected := "localhost:6379"
 	got := redisPoolObj.GetAddress()
 	if expected != got {
 		t.Errorf("Expected to get %s, but got %s", expected, got)

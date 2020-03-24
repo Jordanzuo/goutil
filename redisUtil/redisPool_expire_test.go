@@ -10,7 +10,7 @@ var (
 )
 
 func init() {
-	redisPoolObj_expire = NewRedisPool("testPool", "10.1.0.21:6379", "redis_pwd", 5, 500, 200, 10*time.Second, 5*time.Second)
+	redisPoolObj_expire = NewRedisPool("testPool", "localhost:6379", "redis_pwd", 0, 500, 200, 10*time.Second, 5*time.Second)
 }
 
 func TestExpire(t *testing.T) {
@@ -472,7 +472,7 @@ func TestPExpireAt(t *testing.T) {
 	   redis> PTTL mykey          # PTTL 返回毫秒
 	   (integer) 223157079318
 	*/
-	expected2 := int64(86400 - 5)
+	expected2 := int64(86400 - 10)
 	got2, exist, _, err := redisPoolObj_expire.TTL(key)
 	if err != nil {
 		t.Fail()
@@ -486,7 +486,7 @@ func TestPExpireAt(t *testing.T) {
 		return
 	}
 
-	expected2 = int64(86400000 - 5)
+	expected2 = int64(86400000 - 1000)
 	got2, exist, _, err = redisPoolObj_expire.PTTL(key)
 	if err != nil {
 		t.Fail()
