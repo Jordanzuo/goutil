@@ -10,7 +10,7 @@ var (
 )
 
 func init() {
-	redisPoolObj_set = NewRedisPool("testPool", "10.1.0.21:6379", "redis_pwd", 5, 500, 200, 10*time.Second, 5*time.Second)
+	redisPoolObj_set = NewRedisPool("testPool", "localhost:6379", "redis_pwd", 0, 500, 200, 10*time.Second, 5*time.Second)
 }
 
 func TestSAdd(t *testing.T) {
