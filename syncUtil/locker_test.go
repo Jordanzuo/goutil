@@ -2,98 +2,97 @@ package syncUtil
 
 import (
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 )
 
-var (
-	count       = 10000000
-	round       = 3
-	resultCount = 0
-)
+func TestNewLocker1(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 1
 
-func init() {
-	chCount := 1
-	ch := make(chan bool, chCount)
+	lockerObj := NewLocker()
+	ch := make(chan bool, goroutineCount)
 
-	obj := newT4()
-	go benchmark(obj, "T4", count, ch)
-
-	for i := 0; i < chCount; i++ {
-		_ = <-ch
+	for i := 0; i < goroutineCount; i++ {
+		go lockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
 	}
 
-	resultCount = int(obj.count)
-}
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
 
-func TestNewLocker(t *testing.T) {
-	if round*count != resultCount {
-		t.Errorf("Expected %d, but got %d.", count, resultCount)
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
 	}
 }
 
-func benchmark(obj IIncrease, name string, count int, ch chan bool) {
-	start := time.Now().Unix()
+func TestNewLocker2(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 100
 
-	var wg sync.WaitGroup
-	wg.Add(round)
+	lockerObj := NewLocker()
+	ch := make(chan bool, goroutineCount)
 
-	go func() {
-		defer wg.Done()
-		for i := 0; i < count; i++ {
-			obj.Increase()
-		}
-	}()
+	for i := 0; i < goroutineCount; i++ {
+		go lockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
+	}
 
-	go func() {
-		defer wg.Done()
-		for i := 0; i < count; i++ {
-			obj.Increase()
-		}
-	}()
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
 
-	go func() {
-		defer wg.Done()
-		for i := 0; i < count; i++ {
-			obj.Increase()
-		}
-	}()
-
-	wg.Wait()
-
-	end := time.Now().Unix()
-
-	fmt.Printf("%s:%s use:%d\n", name, obj.ToString(), end-start)
-
-	ch <- true
-}
-
-type IIncrease interface {
-	Increase()
-	ToString() string
-}
-
-type T4 struct {
-	count int32
-	lock  *Locker
-}
-
-func newT4() *T4 {
-	return &T4{
-		count: 0,
-		lock:  NewLocker(),
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
 	}
 }
-func (this *T4) Increase() {
-	if this.lock.Lock(20) == false {
-		fmt.Println("T4 Lock failed.")
+
+func TestNewLocker3(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 10000
+
+	lockerObj := NewLocker()
+	ch := make(chan bool, goroutineCount)
+
+	for i := 0; i < goroutineCount; i++ {
+		go lockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
+	}
+
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
+
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
+	}
+}
+
+func TestNewLocker4(t *testing.T) {
+	lockerObj := NewLocker()
+	if successful, _, _ := lockerObj.Lock(100); successful == false {
+		t.Errorf("Lock should be successful, but now it fails.")
+	}
+
+	if successful, _, _ := lockerObj.Lock(100); successful {
+		t.Errorf("Lock should be failed, but now it succeeds.")
+	}
+}
+
+func lockerTest(lockerObj *Locker, succeedCount *int, count int, ch chan bool) {
+	if success, _, _ := lockerObj.Lock(10000); !success {
+		fmt.Printf("[%v]获取锁超时\n", time.Now())
 		return
 	}
-	defer this.lock.Unlock()
-	this.count++
-}
+	defer lockerObj.Unlock()
 
-func (this *T4) ToString() string {
-	return fmt.Sprintf("%d", this.count)
+	for i := 0; i < count; i++ {
+		*succeedCount += 1
+	}
+
+	ch <- true
 }

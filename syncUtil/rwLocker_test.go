@@ -3,48 +3,119 @@ package syncUtil
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
-func init() {
-	chCount := 1
-	ch := make(chan bool, chCount)
+func TestRWNewLocker1(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 1
 
-	obj := newT5()
-	go benchmark(obj, "T5", count, ch)
+	lockerObj := NewRWLocker()
+	ch := make(chan bool, goroutineCount)
 
-	for i := 0; i < chCount; i++ {
-		_ = <-ch
+	for i := 0; i < goroutineCount; i++ {
+		go rwLockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
 	}
 
-	resultCount = int(obj.count)
-}
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
 
-func TestNewRWLocker(t *testing.T) {
-	if round*count != resultCount {
-		t.Errorf("Expected %d, but got %d.", count, resultCount)
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
 	}
 }
 
-type T5 struct {
-	count int32
-	lock  *RWLocker
-}
+func TestRWNewLocker2(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 100
 
-func newT5() *T5 {
-	return &T5{
-		count: 0,
-		lock:  NewRWLocker(),
+	lockerObj := NewRWLocker()
+	ch := make(chan bool, goroutineCount)
+
+	for i := 0; i < goroutineCount; i++ {
+		go rwLockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
+	}
+
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
+
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
 	}
 }
-func (this *T5) Increase() {
-	if this.lock.Lock(20) == false {
-		fmt.Println("T5 Lock failed.")
+
+func TestRWNewLocker3(t *testing.T) {
+	count := 1000000
+	succeedCount := 0
+	expected := 1000000
+	goroutineCount := 10000
+
+	lockerObj := NewRWLocker()
+	ch := make(chan bool, goroutineCount)
+
+	for i := 0; i < goroutineCount; i++ {
+		go rwLockerTest(lockerObj, &succeedCount, count/goroutineCount, ch)
+	}
+
+	for i := 0; i < goroutineCount; i++ {
+		<-ch
+	}
+
+	if succeedCount != expected {
+		t.Errorf("Expected %d, but got %d", expected, succeedCount)
+	}
+}
+
+func TestRWNewLocker4(t *testing.T) {
+	lockerObj := NewRWLocker()
+	if successful, _, _ := lockerObj.RLock(100); successful == false {
+		t.Errorf("It should be successful to get a read lock, but now it fails.")
 		return
 	}
-	defer this.lock.Unlock()
-	this.count++
+	if successful, _, _ := lockerObj.RLock(100); successful == false {
+		t.Errorf("It should be successful to get a read lock, but now it fails.")
+		return
+	}
+	if successful, _, _ := lockerObj.RLock(100); successful == false {
+		t.Errorf("It should be successful to get a read lock, but now it fails.")
+		return
+	}
+	lockerObj.RUnlock()
+	lockerObj.RUnlock()
+	lockerObj.RUnlock()
+
+	if successful, _, _ := lockerObj.Lock(100); successful == false {
+		t.Errorf("It should be successful to get a write lock, but now it fails.")
+		return
+	}
+	if successful, _, _ := lockerObj.Lock(100); successful {
+		t.Errorf("It should be failed to get a write lock, but now it succeeds.")
+		return
+	}
+	if successful, _, _ := lockerObj.RLock(100); successful {
+		t.Errorf("It should be failed to get a read lock, but now it succeeds.")
+		return
+	}
+
+	lockerObj.Unlock()
 }
 
-func (this *T5) ToString() string {
-	return fmt.Sprintf("%d", this.count)
+func rwLockerTest(lockerObj *RWLocker, succeedCount *int, count int, ch chan bool) {
+	if success, _, _ := lockerObj.Lock(10000); !success {
+		fmt.Printf("[%v]获取锁超时\n", time.Now())
+		return
+	}
+	defer lockerObj.Unlock()
+
+	for i := 0; i < count; i++ {
+		*succeedCount += 1
+	}
+
+	ch <- true
 }
