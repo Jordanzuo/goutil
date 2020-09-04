@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"public.com/goutil/mathUtil"
+	"github.com/Jordanzuo/goutil/mathUtil"
 )
 
 // 使用多分隔符来进行分割(默认分隔符为：",", ";", ":", "|", "||")

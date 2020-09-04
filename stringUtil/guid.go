@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"public.com/goutil/securityUtil"
+	"github.com/Jordanzuo/goutil/securityUtil"
 )
 
 // 获取新的GUID字符串
