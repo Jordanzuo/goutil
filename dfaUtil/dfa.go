@@ -12,6 +12,61 @@ type DFAUtil struct {
 	root *trieNode
 }
 
+// 由于go不支持tuple，所以为了避免定义多余的struct，特别使用两个list来分别返回匹配的索引的上界和下界
+// 在处理此方法的返回值时，需要两者配合使用
+func (this *DFAUtil) searcSentence(sentence string) (startIndexList, endIndexList []int) {
+	// Point current node to the root node and initialize some variables.
+	currNode := this.root
+	start, end, valid := 0, 0, false
+
+	// Iterate the setence to handle each letter
+	sentenceRuneList := []rune(sentence)
+	for i := 0; i < len(sentenceRuneList); {
+		// If the letter can be found in current node's children, then continue to find along this path.
+		if child, exists := currNode.children[sentenceRuneList[i]]; exists {
+			// If the letter is end of a word, then it's a valid match.
+			// Then set valid to true, and assign the index to the end variable.
+			if child.isEndOfWord {
+				end = i
+				valid = true
+			}
+
+			// If the child doesn't have any child, it means it's the end of a path. Then add the last valid index pair into list.
+			// And continue to handle the next letter from the root node.
+			// Otherwise, continue to handle along this path.
+			if len(child.children) == 0 {
+				startIndexList = append(startIndexList, start)
+				endIndexList = append(endIndexList, end)
+				currNode = this.root
+
+				// Reset variables, and starts from the next letter.
+				start, end, valid = i+1, 0, false
+			} else {
+				currNode = child
+			}
+
+			// Handle the next letter.
+			i++
+		} else {
+			// When the letter can't be found in current node's children, there are two possibilities:
+			// 1. There is already a valid match index pair. Then add them to list. And rehandle this letter again from the root node.
+			// 2. There is no valid match index pair. Then continue to handle next letter from the root node.
+			if valid {
+				startIndexList = append(startIndexList, start)
+				endIndexList = append(endIndexList, end)
+				currNode = this.root
+				start, end, valid = i, 0, false
+			} else {
+				currNode = this.root
+				start, end, valid = i+1, 0, false
+				i++
+			}
+		}
+	}
+
+	return
+}
+
 // Insert new word into object
 func (this *DFAUtil) InsertWord(word []rune) {
 	currNode := this.root
@@ -42,71 +97,12 @@ func (this *DFAUtil) StartsWith(prefix []rune) bool {
 	return true
 }
 
-// Searc and make sure if a word is existed in the underlying trie.
-func (this *DFAUtil) searcWord(word []rune) bool {
-	currNode := this.root
-	for _, c := range word {
-		if cildNode, exist := currNode.children[c]; !exist {
-			return false
-		} else {
-			currNode = cildNode
-		}
-	}
-
-	return currNode.isEndOfWord
-}
-
-// Searc a whole sentence and get all the matcing words and their indices
-// Return:
-// A list of all the matc index object
-func (this *DFAUtil) searcSentence(sentence string) (matchIndexList []*matchIndex) {
-	start, end := 0, 1
-	sentenceRuneList := []rune(sentence)
-
-	// Iterate the sentence from the beginning to the end.
-	startsWith := false
-	for end <= len(sentenceRuneList) {
-		// Check if a sensitive word starts with word range from [start:end)
-		// We find the longest possible path
-		// Then we check any sub word is the sensitive word from long to short
-		if this.StartsWith(sentenceRuneList[start:end]) {
-			startsWith = true
-			end += 1
-		} else {
-			if startsWith == true {
-				// Check any sub word is the sensitive word from long to short
-				for index := end - 1; index > start; index-- {
-					if this.searcWord(sentenceRuneList[start:index]) {
-						matchIndexList = append(matchIndexList, newMatchIndex(start, index-1))
-						break
-					}
-				}
-			}
-			start, end = end-1, end+1
-			startsWith = false
-		}
-	}
-
-	// If finishing not because of unmatching, but reaching the end, we need to
-	// check if the previous startsWith is true or not.
-	// If it's true, we need to check if there is any candidate?
-	if startsWith {
-		for index := end - 1; index > start; index-- {
-			if this.searcWord(sentenceRuneList[start:index]) {
-				matchIndexList = append(matchIndexList, newMatchIndex(start, index-1))
-				break
-			}
-		}
-	}
-
-	return
-}
-
 // Judge if input sentence contains some special caracter
 // Return:
 // Matc or not
 func (this *DFAUtil) IsMatch(sentence string) bool {
-	return len(this.searcSentence(sentence)) > 0
+	startIndexList, _ := this.searcSentence(sentence)
+	return len(startIndexList) > 0
 }
 
 // Handle sentence. Use specified caracter to replace those sensitive caracters.
@@ -115,15 +111,15 @@ func (this *DFAUtil) IsMatch(sentence string) bool {
 // Return:
 // Sentence after manipulation
 func (this *DFAUtil) HandleWord(sentence string, replaceCh rune) string {
-	matchIndexList := this.searcSentence(sentence)
-	if len(matchIndexList) == 0 {
+	startIndexList, endIndexList := this.searcSentence(sentence)
+	if len(startIndexList) == 0 {
 		return sentence
 	}
 
 	// Manipulate
 	sentenceList := []rune(sentence)
-	for _, matchIndexObj := range matchIndexList {
-		for index := matchIndexObj.start; index <= matchIndexObj.end; index++ {
+	for i := 0; i < len(startIndexList); i++ {
+		for index := startIndexList[i]; index <= endIndexList[i]; index++ {
 			sentenceList[index] = replaceCh
 		}
 	}

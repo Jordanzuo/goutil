@@ -4,31 +4,11 @@ import (
 	"testing"
 )
 
-func TestIsMatch(t *testing.T) {
-	sensitiveList := []string{"中国", "中国人"}
-	input := "我来自中国cd"
+var (
+	sensitiveList = make([]string, 0, 1024)
+)
 
-	util := NewDFAUtil(sensitiveList)
-	if util.IsMatch(input) == false {
-		t.Errorf("Expected true, but got false")
-	}
-}
-
-func TestHandleWord(t *testing.T) {
-	sensitiveList := []string{"中国", "中国人", "习近平的", "习近平", "会议"}
-	input := "我来自中国cd，习近平出席了会议,习近平"
-
-	util := NewDFAUtil(sensitiveList)
-	newInput := util.HandleWord(input, '*')
-	expected := "我来自**cd，***出席了**,***"
-	if newInput != expected {
-		t.Errorf("Expected %s, but got %s", expected, newInput)
-	}
-}
-
-func BenchmarkIsMatch(b *testing.B) {
-	sensitiveList := make([]string, 0, 1024)
-
+func init() {
 	sensitiveList = append(sensitiveList, "&")
 	sensitiveList = append(sensitiveList, "*鏉?娲?蹇?闃挎墎")
 	sensitiveList = append(sensitiveList, "01gh.com")
@@ -2029,7 +2009,36 @@ func BenchmarkIsMatch(b *testing.B) {
 	sensitiveList = append(sensitiveList, "娣?娣玝")
 	sensitiveList = append(sensitiveList, "娣伄鏂圭▼寮?娣笢鏂?娣笣鑽¤")
 	sensitiveList = append(sensitiveList, "娣功")
+}
 
+func TestIsMatch(t *testing.T) {
+	sensitiveList := []string{"血", "毒"}
+	input := "明天血"
+
+	util := NewDFAUtil(sensitiveList)
+	if util.IsMatch(input) == false {
+		t.Errorf("Expected true, but got false")
+	}
+
+	input = "血明"
+	if util.IsMatch(input) == false {
+		t.Errorf("Expected true, but got false")
+	}
+}
+
+func TestHandleWord(t *testing.T) {
+	sensitiveList := []string{"血", "毒"}
+	input := "血明天血"
+
+	util := NewDFAUtil(sensitiveList)
+	newInput := util.HandleWord(input, '*')
+	expected := "*明天*"
+	if newInput != expected {
+		t.Errorf("Expected %s, but got %s", expected, newInput)
+	}
+}
+
+func BenchmarkIsMatch(b *testing.B) {
 	input := "椰林摇曳，沙滩延绵。印度西海岸，阿拉伯海之畔。10月15日至16日，国家主席习近平出席在印度果阿举行的金砖国家领导人第八次会晤。从南非德班到巴西福塔莱萨，从俄罗斯乌法到印度果阿，这是习近平主席第4次出席金砖国家领导人会晤。今年恰逢金砖国家合作10周年。十年磨一剑。金砖国家合作正面临拓展深化的重要任务。习近平主席出席峰会，发表重要讲话，同各方深入交流，高瞻远瞩、切中肯綮，为金砖发展把脉开方。习近平"
 
 	util := NewDFAUtil(sensitiveList)
