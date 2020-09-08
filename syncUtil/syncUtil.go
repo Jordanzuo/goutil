@@ -9,12 +9,8 @@ const (
 	// 默认超时的毫秒数(1小时)
 	con_Default_Timeout_Milliseconds = 60 * 60 * 1000
 
-	// 写锁每次休眠的时间比读锁的更短，这样是因为写锁有更高的优先级，所以尝试的频率更大
-	// 写锁每次休眠的毫秒数
-	con_Lock_Sleep_Millisecond = 1
-
-	// 读锁每次休眠的毫秒数
-	con_RLock_Sleep_Millisecond = 2
+	// 写锁保护时间（纳秒）
+	con_Write_Protect_Nanoseconds = 5 * 1000 * 1000
 )
 
 // 获取超时时间

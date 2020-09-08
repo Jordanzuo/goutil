@@ -9,7 +9,7 @@ import (
 
 // 写锁对象
 type Locker struct {
-	write     int // 使用int而不是bool值的原因，是为了与RWLocker中的read保持类型的一致；
+	locking   bool
 	prevStack []byte
 	mutex     sync.Mutex
 }
@@ -22,12 +22,12 @@ func (this *Locker) lock() bool {
 	defer this.mutex.Unlock()
 
 	// 如果已经被锁定，则返回失败
-	if this.write == 1 {
+	if this.locking {
 		return false
 	}
 
-	// 否则，将写锁数量设置为１，并返回成功
-	this.write = 1
+	// 否则进行锁定，并返回成功
+	this.locking = true
 
 	// 记录Stack信息
 	this.prevStack = debug.Stack()
@@ -45,15 +45,15 @@ func (this *Locker) Lock(timeout int) (successful bool, prevStack string, currSt
 	timeout = getTimeout(timeout)
 
 	// 遍历指定的次数（即指定的超时时间）
-	for i := 0; i < timeout; i = i + con_Lock_Sleep_Millisecond {
+	for i := 0; i < timeout; i++ {
 		// 如果锁定成功，则返回成功
 		if this.lock() {
 			successful = true
 			break
 		}
 
-		// 如果锁定失败，则休眠con_Lock_Sleep_Millisecond ms，然后再重试
-		time.Sleep(con_Lock_Sleep_Millisecond * time.Millisecond)
+		// 如果锁定失败，则休眠1ms，然后再重试
+		time.Sleep(time.Millisecond)
 	}
 
 	// 如果时间结束仍然是失败，则返回上次成功的堆栈信息，以及当前的堆栈信息
@@ -77,7 +77,7 @@ func (this *Locker) WaitLock() {
 func (this *Locker) Unlock() {
 	this.mutex.Lock()
 	defer this.mutex.Unlock()
-	this.write = 0
+	this.locking = false
 }
 
 // 创建新的锁对象

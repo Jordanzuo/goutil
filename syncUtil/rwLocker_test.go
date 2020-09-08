@@ -106,6 +106,39 @@ func TestRWNewLocker4(t *testing.T) {
 	lockerObj.Unlock()
 }
 
+func TestRWNewLocker5(t *testing.T) {
+	count := 100
+	rwLockerObj := NewRWLocker()
+	ch := make(chan bool, 100)
+
+	for i := 0; i < count; i++ {
+		go func(num int, ch chan bool) {
+			if num%2 == 0 {
+				if successful, _, _ := rwLockerObj.Lock(100); successful {
+					fmt.Println("I get write lock.")
+					time.Sleep(2 * time.Millisecond)
+					rwLockerObj.Unlock()
+				} else {
+					fmt.Println("Write lock timeout")
+				}
+			} else {
+				if successful, _, _ := rwLockerObj.RLock(100); successful {
+					fmt.Println("I get read lock.")
+					time.Sleep(2 * time.Millisecond)
+					rwLockerObj.RUnlock()
+				} else {
+					fmt.Println("Read lock timeout")
+				}
+			}
+			ch <- true
+		}(i, ch)
+	}
+
+	for i := 0; i < count; i++ {
+		<-ch
+	}
+}
+
 func rwLockerTest(lockerObj *RWLocker, succeedCount *int, count int, ch chan bool) {
 	if success, _, _ := lockerObj.Lock(10000); !success {
 		fmt.Printf("[%v]获取锁超时\n", time.Now())
