@@ -30,7 +30,9 @@ func (this *Locker) lock() bool {
 	this.locking = true
 
 	// 记录Stack信息
-	this.prevStack = debug.Stack()
+	if if_record_stack_info {
+		this.prevStack = debug.Stack()
+	}
 
 	return true
 }
@@ -58,7 +60,9 @@ func (this *Locker) Lock(timeout int) (successful bool, prevStack string, currSt
 
 	// 如果时间结束仍然是失败，则返回上次成功的堆栈信息，以及当前的堆栈信息
 	if successful == false {
-		prevStack = string(this.prevStack)
+		if this.prevStack != nil && len(this.prevStack) > 0 {
+			prevStack = string(this.prevStack)
+		}
 		currStack = string(debug.Stack())
 	}
 

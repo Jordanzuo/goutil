@@ -13,6 +13,11 @@ const (
 	con_Write_Protect_Nanoseconds = 5 * 1000 * 1000
 )
 
+var (
+	// 是否记录堆栈信息的状态
+	if_record_stack_info = false
+)
+
 // 获取超时时间
 func getTimeout(timeout int) int {
 	if timeout > 0 {
@@ -20,4 +25,9 @@ func getTimeout(timeout int) int {
 	} else {
 		return con_Default_Timeout_Milliseconds
 	}
+}
+
+// 设置是否记录堆栈信息的状态
+func SetIfRecordStackInfo(value bool) {
+	if_record_stack_info = value
 }
