@@ -265,130 +265,135 @@ func TestParse(t *testing.T) {
 	base62, _ := NewBase62()
 
 	expected := uint64(0)
-	got := base2.Parse("0")
+	got, _ := base2.Parse("0")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base8.Parse("0")
+	got, _ = base8.Parse("0")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base16.Parse("0")
+	got, _ = base16.Parse("0")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base26.Parse("a")
+	got, _ = base26.Parse("a")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base36.Parse("0")
+	got, _ = base36.Parse("0")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base62.Parse("0")
+	got, _ = base62.Parse("0")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
 
 	expected = uint64(1)
-	got = base2.Parse("1")
+	got, _ = base2.Parse("1")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base8.Parse("1")
+	got, _ = base8.Parse("1")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base16.Parse("1")
+	got, _ = base16.Parse("1")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base26.Parse("b")
+	got, _ = base26.Parse("b")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base36.Parse("1")
+	got, _ = base36.Parse("1")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base62.Parse("1")
+	got, _ = base62.Parse("1")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
 
 	expected = uint64(2)
-	got = base2.Parse("10")
+	got, _ = base2.Parse("10")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base8.Parse("2")
+	got, _ = base8.Parse("2")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base16.Parse("2")
+	got, _ = base16.Parse("2")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base26.Parse("c")
+	got, _ = base26.Parse("c")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base36.Parse("2")
+	got, _ = base36.Parse("2")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base62.Parse("2")
+	got, _ = base62.Parse("2")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
 
 	expected = uint64(100)
-	got = base2.Parse("1100100")
+	got, _ = base2.Parse("1100100")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base8.Parse("144")
+	got, _ = base8.Parse("144")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base16.Parse("64")
+	got, _ = base16.Parse("64")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base26.Parse("dw")
+	got, _ = base26.Parse("dw")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base36.Parse("2s")
+	got, _ = base36.Parse("2s")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
 		return
 	}
-	got = base62.Parse("1C")
+	got, _ = base62.Parse("1C")
 	if got != expected {
 		t.Errorf("Expected to get %d, but got %d", expected, got)
+		return
+	}
+	got, err := base62.Parse("1)")
+	if err == nil {
+		t.Errorf("There should be an error, but now there isn't.")
 		return
 	}
 }

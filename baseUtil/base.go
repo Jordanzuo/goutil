@@ -10,8 +10,9 @@ import (
 
 // 进制对象定义
 type Base struct {
-	elementList []string
-	base        uint64
+	elementItemIndexMap map[string]uint64
+	elementIndexItemMap map[uint64]string
+	base                uint64
 }
 
 // 将10进制的uint64类型数据转换为字符串形式
@@ -23,7 +24,7 @@ func (this *Base) Transform(source uint64) (result string) {
 
 	for {
 		quotient, remainder = remainder/this.base, remainder%this.base
-		result = this.elementList[remainder] + result
+		result = this.elementIndexItemMap[remainder] + result
 		if quotient == 0 {
 			break
 		}
@@ -35,8 +36,10 @@ func (this *Base) Transform(source uint64) (result string) {
 
 // 将字符串解析为10进制的uint64类型
 // source:对应进制的字符串形式
-// 返回值:10进制的uint64类型数据
-func (this *Base) Parse(source string) (result uint64) {
+// 返回值:
+// 10进制的uint64类型数据
+// 错误对象
+func (this *Base) Parse(source string) (result uint64, err error) {
 	if source == "" {
 		return
 	}
@@ -50,10 +53,12 @@ func (this *Base) Parse(source string) (result uint64) {
 		sourceItem := sourceList[idx]
 
 		// Find the source item in the elementList
-		for i, v := range this.elementList {
-			if sourceItem == v {
-				result += uint64(float64(i) * math.Pow(float64(this.base), float64(exp)))
-			}
+		if index, exists := this.elementItemIndexMap[sourceItem]; exists {
+			result += uint64(float64(index) * math.Pow(float64(this.base), float64(exp)))
+		} else {
+			// If the character can't be found in the elementItemIndexMap, return an error
+			err = fmt.Errorf("Unknown character:%s", sourceItem)
+			return
 		}
 	}
 
@@ -67,21 +72,24 @@ func New(elements string) (baseObj *Base, err error) {
 		return
 	}
 
-	elementList := make([]string, 0, len(elements))
-	elementMap := make(map[rune]struct{}, len(elements))
-	for _, v := range elements {
-		if _, exist := elementMap[v]; exist {
-			err = fmt.Errorf("输入的字符串中含有重复的字符:%s", string(v))
+	elementItemIndexMap := make(map[string]uint64, len(elements))
+	elementIndexItemMap := make(map[uint64]string, len(elements))
+	for i, v := range elements {
+		i_uint64 := uint64(i)
+		v_string := string(v)
+		if _, exist := elementItemIndexMap[v_string]; exist {
+			err = fmt.Errorf("输入的字符串中含有重复的字符:%s", v_string)
 			return
 		} else {
-			elementMap[v] = struct{}{}
-			elementList = append(elementList, string(v))
+			elementItemIndexMap[v_string] = i_uint64
+			elementIndexItemMap[i_uint64] = v_string
 		}
 	}
 
 	baseObj = &Base{
-		elementList: elementList,
-		base:        uint64(len(elementList)),
+		elementItemIndexMap: elementItemIndexMap,
+		elementIndexItemMap: elementIndexItemMap,
+		base:                uint64(len(elements)),
 	}
 
 	return
