@@ -64,6 +64,12 @@ func (this *DFAUtil) searcSentence(sentence string) (startIndexList, endIndexLis
 		}
 	}
 
+	// Check if there is any valid pairs which hasn't been processed.
+	if valid {
+		startIndexList = append(startIndexList, start)
+		endIndexList = append(endIndexList, end)
+	}
+
 	return
 }
 
