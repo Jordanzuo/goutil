@@ -13,6 +13,10 @@ type Player struct {
 	Level int
 }
 
+func (this *Player) Equal(other *Player) bool {
+	return this.Id == other.Id && this.Name == other.Name && this.Level == other.Level
+}
+
 func (this *Player) String() string {
 	return fmt.Sprintf("{Id:%d, Name:%s, Level:%d}", this.Id, this.Name, this.Level)
 }
@@ -142,6 +146,42 @@ func (this *CspPlayer) AddPlayer(playerObj *Player) {
 func (this *CspPlayer) addPlayerCallback(requestObj *Request) {
 	playerObj, _ := requestObj.Parameter.(*Player)
 	this.playerMap[playerObj.Id] = playerObj
+}
+
+func TestMutexPlayer(t *testing.T) {
+	mutexPlayerObj := NewMutexPlayer()
+	playerObj := NewPlayer(1, "Jordan", 100)
+	mutexPlayerObj.AddPlayer(playerObj)
+	playerList := mutexPlayerObj.GetPlayerList()
+	if len(playerList) != 1 {
+		t.Fatalf("Expected %d items in the list, now got:%d", 1, len(playerList))
+	}
+
+	gotPlayerObj, exists := mutexPlayerObj.GetPlayerById(1)
+	if !exists {
+		t.Fatalf("Expected:%v, Got:%v", true, exists)
+	}
+	if gotPlayerObj.Equal(playerObj) == false {
+		t.Fatalf("Expected:%s, Got:%s", playerObj, gotPlayerObj)
+	}
+}
+
+func TestCspPlayer(t *testing.T) {
+	cspPlayerObj := NewCspPlayer()
+	playerObj := NewPlayer(1, "Jordan", 100)
+	cspPlayerObj.AddPlayer(playerObj)
+	playerList := cspPlayerObj.GetPlayerList()
+	if len(playerList) != 1 {
+		t.Fatalf("Expected %d items in the list, now got:%d", 1, len(playerList))
+	}
+
+	gotPlayerObj, exists := cspPlayerObj.GetPlayerById(1)
+	if !exists {
+		t.Fatalf("Expected:%v, Got:%v", true, exists)
+	}
+	if gotPlayerObj.Equal(playerObj) == false {
+		t.Fatalf("Expected:%s, Got:%s", playerObj, gotPlayerObj)
+	}
 }
 
 func BenchmarkMutexPlayer(b *testing.B) {
