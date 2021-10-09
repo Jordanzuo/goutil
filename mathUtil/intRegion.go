@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+/*
+There is a new package: rangeUtil dedicated to handle data range.
+So please use the new package instead of this one.
+*/
 // int类型区间对象，表示连续的int类型区间
 type IntRegion struct {
 	Lower int
