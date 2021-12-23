@@ -260,7 +260,7 @@ func WriteFile4Byte(filePath, fileName string, ifAppend bool, args ...[]byte) er
 	// 判断文件夹是否存在，如果不存在则创建
 	mutex.Lock()
 	if !IsDirExists(filePath) {
-		os.MkdirAll(filePath, os.ModePerm|os.ModeTemporary)
+		os.MkdirAll(filePath, 0o755)
 	}
 	mutex.Unlock()
 
@@ -268,9 +268,9 @@ func WriteFile4Byte(filePath, fileName string, ifAppend bool, args ...[]byte) er
 	var f *os.File
 	var err error
 	if ifAppend == false {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o644)
 	} else {
-		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm|os.ModeTemporary)
+		f, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
 	}
 
 	if err != nil {
