@@ -1,4 +1,4 @@
-package rangeUtil
+package intervalUtil
 
 import (
 	"errors"
@@ -7,14 +7,14 @@ import (
 )
 
 // We use int64 as the underlying data type
-type IntRange struct {
-	Lower     int64
-	Upper     int64
-	RangeType RangeType
+type IntInterval struct {
+	Lower        int64
+	Upper        int64
+	IntervalType IntervalType
 }
 
-func (this IntRange) IsValid(value int64) bool {
-	switch this.RangeType {
+func (this IntInterval) IsValid(value int64) bool {
+	switch this.IntervalType {
 	case InclusiveInclusive:
 		return this.Lower <= value && value <= this.Upper
 	case InclusiveExclusive:
@@ -28,42 +28,36 @@ func (this IntRange) IsValid(value int64) bool {
 	return false
 }
 
-func NewIntRange(input string) (value IntRange, err error) {
-	if IsEmptyRange(input) {
-		err = errors.New("Empty range expression")
-		return
-	}
-
+func NewIntInterval(input string) (value IntInterval, err error) {
 	if !IsValidFormat(input) {
-		err = errors.New("Invalid range expression format")
+		err = errors.New("Invalid interval expression format")
 		return
 	}
 
-	rangeType := parseRangeType(input)
-
+	intervalType := parseIntervalType(input)
 	input = removeBracket(input)
 	itemList := strings.Split(input, Delimiter)
 	if len(itemList) != 2 {
-		err = errors.New("Invalid range expression format")
+		err = errors.New("Invalid interval expression format")
 		return
 	}
 
 	lower, err := strconv.ParseInt(itemList[0], 10, 64)
 	if err != nil {
-		err = errors.New("Parse range expression to int64 failed.")
+		err = errors.New("Parse interval expression to int64 failed.")
 		return
 	}
 
 	upper, err := strconv.ParseInt(itemList[1], 10, 64)
 	if err != nil {
-		err = errors.New("Parse range expression to int64 failed.")
+		err = errors.New("Parse interval expression to int64 failed.")
 		return
 	}
 
-	value = IntRange{
-		Lower:     lower,
-		Upper:     upper,
-		RangeType: rangeType,
+	value = IntInterval{
+		Lower:        lower,
+		Upper:        upper,
+		IntervalType: intervalType,
 	}
 	return
 }
