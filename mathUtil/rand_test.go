@@ -65,17 +65,18 @@ func TestGetRandNumList(t *testing.T) {
 	}
 
 	randNumList, _ := GetRand().GetRandNumList(1, 10, 1, false)
-	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRand().GetRandNumList(1, 10, 3, false)
-	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRand().GetRandNumList(1, 10, 5, false)
-	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRand().GetRandNumList(1, 10, 7, false)
-	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRand().GetRandNumList(1, 10, 9, false)
-	fmt.Printf("randNumList:%v\n", randNumList)
-	randNumList, _ = GetRand().GetRandNumList(1, 10, 11, true)
-	fmt.Printf("randNumList:%v\n", randNumList)
+	_ = randNumList
+	// fmt.Printf("randNumList:%v\n", randNumList)
+	// randNumList, _ = GetRand().GetRandNumList(1, 10, 3, false)
+	// fmt.Printf("randNumList:%v\n", randNumList)
+	// randNumList, _ = GetRand().GetRandNumList(1, 10, 5, false)
+	// fmt.Printf("randNumList:%v\n", randNumList)
+	// randNumList, _ = GetRand().GetRandNumList(1, 10, 7, false)
+	// fmt.Printf("randNumList:%v\n", randNumList)
+	// randNumList, _ = GetRand().GetRandNumList(1, 10, 9, false)
+	// fmt.Printf("randNumList:%v\n", randNumList)
+	// randNumList, _ = GetRand().GetRandNumList(1, 10, 11, true)
+	// fmt.Printf("randNumList:%v\n", randNumList)
 }
 
 func TestGetRandIntList(t *testing.T) {
@@ -86,17 +87,18 @@ func TestGetRandIntList(t *testing.T) {
 	}
 
 	randIntList, _ := GetRand().GetRandIntList(source, 1, false)
-	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRand().GetRandIntList(source, 3, false)
-	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRand().GetRandIntList(source, 5, false)
-	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRand().GetRandIntList(source, 7, false)
-	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRand().GetRandIntList(source, 9, false)
-	fmt.Printf("randIntList:%v\n", randIntList)
-	randIntList, _ = GetRand().GetRandIntList(source, 10, true)
-	fmt.Printf("randIntList:%v\n", randIntList)
+	_ = randIntList
+	// fmt.Printf("randIntList:%v\n", randIntList)
+	// randIntList, _ = GetRand().GetRandIntList(source, 3, false)
+	// fmt.Printf("randIntList:%v\n", randIntList)
+	// randIntList, _ = GetRand().GetRandIntList(source, 5, false)
+	// fmt.Printf("randIntList:%v\n", randIntList)
+	// randIntList, _ = GetRand().GetRandIntList(source, 7, false)
+	// fmt.Printf("randIntList:%v\n", randIntList)
+	// randIntList, _ = GetRand().GetRandIntList(source, 9, false)
+	// fmt.Printf("randIntList:%v\n", randIntList)
+	// randIntList, _ = GetRand().GetRandIntList(source, 10, true)
+	// fmt.Printf("randIntList:%v\n", randIntList)
 }
 
 func TestGetRandInterfaceList(t *testing.T) {
@@ -128,17 +130,18 @@ func TestGetRandInterfaceList(t *testing.T) {
 	}
 
 	randInterfaceList, _ := GetRand().GetRandInterfaceList(source, 1, false)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 3, false)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 5, false)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 7, false)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 9, false)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
-	randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 10, true)
-	fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	_ = randInterfaceList
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	// randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 3, false)
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	// randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 5, false)
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	// randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 7, false)
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	// randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 9, false)
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
+	// randInterfaceList, _ = GetRand().GetRandInterfaceList(source, 10, true)
+	// fmt.Printf("randInterfaceList:%v\n", randInterfaceList)
 }
 
 func TestGetRandWeight(t *testing.T) {
@@ -186,51 +189,51 @@ func TestGetRandWeight(t *testing.T) {
 		}
 	}
 
-	total := 0
-	for _, v := range data {
-		total += v
-	}
+	// total := 0
+	// for _, v := range data {
+	// 	total += v
+	// }
 
-	k := 1
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 2
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 3
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 4
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 5
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 6
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 7
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 8
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 9
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
-	k = 10
-	if v, ok := data[k]; ok {
-		fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
-	}
+	// k := 1
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 2
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 3
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 4
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 5
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 6
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 7
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 8
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 9
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
+	// k = 10
+	// if v, ok := data[k]; ok {
+	// 	fmt.Printf("%d:%d, ratio:%d\n", k, v, v*100/total)
+	// }
 }
 
 type Item struct {

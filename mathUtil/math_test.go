@@ -1,7 +1,6 @@
 package mathUtil
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -149,28 +148,28 @@ func TestIsOddFullConvered(t *testing.T) {
 func TestIsDistinct_byte(t *testing.T) {
 	list := make([]byte, 0, 8)
 	result := IsDistinct_byte(list)
-	fmt.Printf("list:%v,result:%v-------1\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------1\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------1")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_byte(list)
-	fmt.Printf("list:%v,result:%v-------2\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------2\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------2")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_byte(list)
-	fmt.Printf("list:%v,result:%v-------3\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------3\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------3")
 	}
 
 	list = append(list, 0)
 	result = IsDistinct_byte(list)
-	fmt.Printf("list:%v,result:%v-------4\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------4\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------4")
 	}
@@ -179,28 +178,28 @@ func TestIsDistinct_byte(t *testing.T) {
 func TestIsDistinct_int(t *testing.T) {
 	list := make([]int, 0, 8)
 	result := IsDistinct_int(list)
-	fmt.Printf("list:%v,result:%v-------1\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------1\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------1")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int(list)
-	fmt.Printf("list:%v,result:%v-------2\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------2\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------2")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int(list)
-	fmt.Printf("list:%v,result:%v-------3\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------3\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------3")
 	}
 
 	list = append(list, 0)
 	result = IsDistinct_int(list)
-	fmt.Printf("list:%v,result:%v-------4\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------4\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------4")
 	}
@@ -209,28 +208,28 @@ func TestIsDistinct_int(t *testing.T) {
 func TestIsDistinct_int32(t *testing.T) {
 	list := make([]int32, 0, 8)
 	result := IsDistinct_int32(list)
-	fmt.Printf("list:%v,result:%v-------1\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------1\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------1")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int32(list)
-	fmt.Printf("list:%v,result:%v-------2\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------2\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------2")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int32(list)
-	fmt.Printf("list:%v,result:%v-------3\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------3\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------3")
 	}
 
 	list = append(list, 0)
 	result = IsDistinct_int32(list)
-	fmt.Printf("list:%v,result:%v-------4\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------4\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------4")
 	}
@@ -239,28 +238,28 @@ func TestIsDistinct_int32(t *testing.T) {
 func TestIsDistinct_int64(t *testing.T) {
 	list := make([]int64, 0, 8)
 	result := IsDistinct_int64(list)
-	fmt.Printf("list:%v,result:%v-------1\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------1\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------1")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int64(list)
-	fmt.Printf("list:%v,result:%v-------2\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------2\n", list, result)
 	if result == false {
 		t.Errorf("it's should be true, but now false-------2")
 	}
 
 	list = append(list, 10)
 	result = IsDistinct_int64(list)
-	fmt.Printf("list:%v,result:%v-------3\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------3\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------3")
 	}
 
 	list = append(list, 0)
 	result = IsDistinct_int64(list)
-	fmt.Printf("list:%v,result:%v-------4\n", list, result)
+	// fmt.Printf("list:%v,result:%v-------4\n", list, result)
 	if result {
 		t.Errorf("it's should be false, but now true-------4")
 	}
