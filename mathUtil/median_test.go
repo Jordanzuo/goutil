@@ -4,6 +4,17 @@ import (
 	"testing"
 )
 
+// goos: linux
+// goarch: amd64
+// pkg: github.com/Jordanzuo/goutil/mathUtil
+// cpu: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+// BenchmarkGetMedian11-12                     2973            380075 ns/op
+// BenchmarkGetMedian21-12                   216384              5374 ns/op
+// BenchmarkGetMedian12-12                     2941            376629 ns/op
+// BenchmarkGetMedian22-12                    74910             15615 ns/op
+// BenchmarkGetNumOfOnes1_uint32-12        172763394            7.085 ns/op
+// BenchmarkGetNumOfOnes2_uint32-12        1000000000          0.7110 ns/op
+
 func TestGetMedian(t *testing.T) {
 	count := 10000
 	list := make([]int, count)
