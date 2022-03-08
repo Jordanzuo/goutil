@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// go test -bench .
 // goos: linux
 // goarch: amd64
 // pkg: github.com/Jordanzuo/goutil/mathUtil
