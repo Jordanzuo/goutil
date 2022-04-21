@@ -13,11 +13,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer batchFilePtr.Close()
 
 	for i := 0; i < 1000; i++ {
 		batchFilePtr.WriteString(fmt.Sprintf("line %d", i))
-		time.Sleep(10 * time.Millisecond)
 	}
+
+	time.Sleep(20 * time.Second)
 
 	bakFileNameList, err := batchFilePtr.GetBakFilePathList()
 	if err != nil {
