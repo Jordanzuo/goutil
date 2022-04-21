@@ -47,7 +47,7 @@ func (this *BigFile) initFile() error {
 	this.fileSize = 0
 
 	// 打开文件
-	file, err := os.OpenFile(this.getFullPath(), os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm|os.ModeTemporary)
+	file, err := os.OpenFile(this.getFullPath(), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("打开文件%s错误，错误信息为：%s", this.getFullPath(), err)
 	} else {

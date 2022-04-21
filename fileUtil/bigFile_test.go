@@ -7,7 +7,7 @@ import (
 
 func BenchmarkSaveMessage(b *testing.B) {
 	path := GetCurrentPath()
-	fmt.Printf("CurrPath:%s\n", path)
+	fmt.Printf("BenchmarkSaveMessage CurrPath:%s\n", path)
 	bigFileObj, err := NewBigFile(path, 1024*1024*1024)
 	if err != nil {
 		b.Errorf("there should no err, but not there is:%s", err)
@@ -20,7 +20,7 @@ func BenchmarkSaveMessage(b *testing.B) {
 
 func TestSaveMessage(t *testing.T) {
 	path := GetCurrentPath()
-	fmt.Printf("CurrPath:%s\n", path)
+	fmt.Printf("TestSaveMessage CurrPath:%s\n", path)
 	bigFileObj, err := NewBigFile(path, 1024)
 	if err != nil {
 		t.Errorf("there should no err, but not there is:%s", err)

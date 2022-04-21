@@ -330,7 +330,7 @@ func TestReadWriteSimultaneously(t *testing.T) {
 			}
 
 			//将byte[]转换为string，并添加到列表中
-			fmt.Printf("line %d:%s\n", offset, string(line))
+			//fmt.Printf("line %d:%s\n", offset, string(line))
 
 			offset += 1
 			if offset >= 10 {
