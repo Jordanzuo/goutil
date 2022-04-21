@@ -12,6 +12,7 @@ import (
 type BatchFile struct {
 	DirectoryName   string
 	FileName        string
+	FileSuffix      string
 	timeIntervalSec int64
 	currTimeSec     int64
 	maxTimeSec      int64
@@ -20,7 +21,7 @@ type BatchFile struct {
 	file            *os.File // The underlying file object
 }
 
-func NewBatchFile(directoryName, fileName string, size, intervalSec int64) (*BatchFile, error) {
+func NewBatchFile(directoryName, fileName, fileSuffix string, size, intervalSec int64) (*BatchFile, error) {
 	if !IsDirExists(directoryName) {
 		os.MkdirAll(directoryName, os.ModePerm|os.ModeTemporary)
 	}
@@ -28,6 +29,7 @@ func NewBatchFile(directoryName, fileName string, size, intervalSec int64) (*Bat
 	batchFilePtr := &BatchFile{
 		DirectoryName:   directoryName,
 		FileName:        fileName,
+		FileSuffix:      fileSuffix,
 		timeIntervalSec: intervalSec,
 		maxFileSize:     size,
 	}
@@ -41,12 +43,20 @@ func NewBatchFile(directoryName, fileName string, size, intervalSec int64) (*Bat
 	return batchFilePtr, nil
 }
 
+func (this *BatchFile) getFilePrefix() string {
+	return fmt.Sprintf("%s_", this.FileName)
+}
+
 func (this *BatchFile) getFilePath() string {
-	return filepath.Join(this.DirectoryName, this.FileName)
+	return filepath.Join(this.DirectoryName, fmt.Sprintf("%s.%s", this.FileName, this.FileSuffix))
 }
 
 func (this *BatchFile) getBakFilePath() string {
-	return filepath.Join(this.DirectoryName, fmt.Sprintf("%s_%d", this.FileName, time.Now().UnixNano()))
+	return filepath.Join(this.DirectoryName, fmt.Sprintf("%s_%d.%s", this.FileName, time.Now().UnixNano(), this.FileSuffix))
+}
+
+func (this *BatchFile) GetBakFilePathList() ([]string, error) {
+	return GetFileList2(this.DirectoryName, this.getFilePrefix(), this.FileSuffix)
 }
 
 func (this *BatchFile) initFile() error {
