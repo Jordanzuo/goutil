@@ -87,6 +87,9 @@ func (this *BatchFile) getBakFilePath() string {
 }
 
 func (this *BatchFile) GetBakFilePathList() ([]string, error) {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
+
 	return GetFileList2(this.DirectoryName, this.getFilePrefix(), this.FileSuffix)
 }
 
