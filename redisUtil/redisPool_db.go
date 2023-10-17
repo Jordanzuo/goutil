@@ -9,6 +9,18 @@ import (
 )
 
 /*
+// Do sends a command to the server and returns the received reply.
+// This function will use the timeout which was set when the connection is created
+*/
+func (this *RedisPool) Do(commandName string, args ...interface{}) (reply interface{}, err error) {
+	conn := this.GetConnection()
+	defer conn.Close()
+
+	reply, err = conn.Do(commandName, args...)
+	return
+}
+
+/*
 EXISTS key
 可用版本： >= 1.0.0
 时间复杂度： O(1)
